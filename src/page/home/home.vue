@@ -74,7 +74,7 @@
               <use xlink:href="#icon-zhuanyejigou"></use>
             </svg>
           </div>
-          <div>专业机构aaa</div>
+          <div>专业机构ff</div>
         </li>
       </ul>
       <div class="home_title_con1">
