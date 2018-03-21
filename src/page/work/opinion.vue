@@ -9,7 +9,7 @@
                 <textarea placeholder="请输入拒绝理由" v-model="textVal" maxlength="200"></textarea>
                 <p class="counts"><span>{{counts}} / 200</span></p>
             </div>
-            <a class="btn" @click="affirm">
+            <a class="btn" @click="affirm()">
                 确认拒绝
             </a>
         </div>
@@ -22,13 +22,27 @@ export default {
         data(){
             return {
                 counts : 0,
-                textVal : '',              
+                textVal : '',
+                leaveId : '',       
             }
         },
         methods : {
             affirm : function(){
-                console.log(this.textVal)
+                let that = this;
+                if(this.counts<=0){
+                    this.$toast("请填写拒绝理由!")
+                }else{
+                    this.axios.post('/work/leave /update?leaveId='+that.leaveId+'&type=3&reason='+that.textVal).then(function(res){
+                            window.location.href = "epipe://?&mark=workUpdate";
+                            setTimeout(()=>{
+                                history.back()
+                            },1000)      
+                    })
+                }
             }
+        },
+        mounted:function(){
+            this.leaveId = this.$route.query.id;
         },
         components:{
             TopHead

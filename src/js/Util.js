@@ -81,5 +81,11 @@ const Util = {
     let t2 = year2 + '/' + month2 + '/' + day2;
     return t2;
   },
+  getUrlValue:function(str){
+      let len = str.length;
+      str = location.href.slice(location.href.indexOf(str)+len)
+      return str = str.slice(0,( str.indexOf('&')))
+
+  }
 }
 module.exports = Util

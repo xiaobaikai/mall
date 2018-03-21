@@ -10,6 +10,17 @@
         <!--</wc-slide>-->
         <!--<pagination :dots="banners.length" :active="currentSlide" slot="pagination"/>-->
       <!--</wc-swiper>-->
+      <div class="header">
+            <div class="search-main">
+                <div class="search">
+                    <div class="search_icon">
+                        
+                    </div>
+                    <input ref="input"  type="text" @click="go_search()"  placeholder="请输入关键字">
+                </div>
+            </div>
+            
+        </div>
       <div class="banner-wrapper">
         <carousel-3d :autoplay="true" :autoplayTimeout="5000" :autoplayHoverPause="true" :width="config.width" :height="config.height" :border="0" :perspective="0">
           <slide v-for="(banner,index) in banners" :key="index" :index="index">
@@ -18,6 +29,14 @@
         </carousel-3d>
       </div>
       <ul class="home_nav_top">
+        <li @click="go_mall">
+          <div style="background: -webkit-linear-gradient(top, #fac370 0%,#ffa51e 100%);">
+            <svg style="width: 0.22rem;height: 0.22rem" class="icon" aria-hidden="false">
+              <use xlink:href="#icon-hangqing"></use>
+            </svg>
+          </div>
+          <div>优优商城</div>
+        </li>
         <li @click="go_exhibition">
           <div style="background: -webkit-linear-gradient(top, #51cdfc 0%,#27b1eb 100%);">
             <svg style="width: 0.22rem;height: 0.22rem" class="icon" aria-hidden="false">
@@ -42,7 +61,10 @@
           </div>
           <div>招投标</div>
         </li>
-        <li @click="go_market">
+      
+        </ul>
+        <ul class="home_nav_top">
+          <li @click="go_market">
           <div style="background: -webkit-linear-gradient(top, #fac370 0%,#ffa51e 100%);">
             <svg style="width: 0.22rem;height: 0.22rem" class="icon" aria-hidden="false">
               <use xlink:href="#icon-hangqing"></use>
@@ -50,8 +72,6 @@
           </div>
           <div>行情</div>
         </li>
-        </ul>
-        <ul class="home_nav_top">
         <li @click="go_interview">
           <div style="background: -webkit-linear-gradient(top, #45e3b5 0%,#22be8e 100%);">
             <svg style="width: 0.22rem;height: 0.22rem" class="icon" aria-hidden="false">
@@ -74,7 +94,7 @@
               <use xlink:href="#icon-zhuanyejigou"></use>
             </svg>
           </div>
-          <div>专业机构ff</div>
+          <div>专业机构</div>
         </li>
       </ul>
       <div class="home_title_con1">
@@ -152,6 +172,7 @@
     },
     methods: {
       onInfinite(){
+    
         let that = this;
         //首页头条
         setTimeout(() => {
@@ -193,10 +214,11 @@
       go_specialistAgencies(){ //首页跳专业机构
         window.location.href = "epipe://?&mark=specialistAgencies"
       },
+      go_mall(){  //首页跳商城
+        window.location.href = "epipe://?&mark=mallhome"
+      },
       go_newsdetail(item){
         if (item.h5Uri != "" && item.h5Uri) {
-            console.log(2222222222)
-          
           let title = Util.Title_format(item.title)
           console.log("epipe://?&mark=newsdetail&title=" + title + "&url=" + item.h5Uri)
           window.location.href = "epipe://?&mark=newsdetail&title=" + title+'&data='+ data + "&url=" + item.h5Uri;
@@ -211,26 +233,27 @@
             window.location.href = "epipe://?&mark=newsdetail&title=" + obj.title + "&url=" + item.url;
           }
         } else {
-          console.log(3333333)
           console.log("epipe://?&mark=newsdetail&title=" + title + "&_id=" + item.id)
           let title = Util.Title_format(item.title)
           window.location.href = "epipe://?&mark=newsdetail&title=" + title + "&_id=" + item.id;
         }
       },
       go_news(item){
-        console.log(item)
+
         let title = Util.Title_format(item.resTitle);
         let obj = {};
         obj.title = title;
         obj.imageUrl = item.coverImgUrl;
         obj.text = Util.Title_format(item.summary);
         let data = JSON.stringify(obj)
-        console.log(data)
         window.location.href = `epipe://?&mark=newsdetail&title=${title}&_id=${item.resId}TTTTTT`+'&data='+data;
       },
       transitionend (current) {
         this.currentSlide = current;
       },
+      go_search(){
+        window.location.href ="epipe://?mark=homeSearch"
+      }
     },
     created(){
       if (window.localStorage.banners) {
@@ -249,7 +272,7 @@
       let that = this;
       //轮播图
       this.axios.get(this.Service.content_show, {params: {type: 1, locationId: 10}}).then(function (data) {
-        console.log(data)
+      
         if (data.data.b) {
           for (var i = 0; i < data.data.b.length; i++) {
             data.data.b[i].imgUrl = data.data.b[i].imgUrl + '?imageslim&imageView2/1/w/750/h/320'
@@ -265,7 +288,6 @@
           lastId: ""
         }
       }).then(function (data) {
-        console.log(data)
         if (data.data.b) {
           that.newsData = data.data.b
           window.localStorage.newsData = JSON.stringify(that.newsData)
@@ -457,4 +479,67 @@
     display: flex;
     justify-content space-between;
   }
+
+  .header{
+        display flex;
+        padding 0.07rem 0.15rem;
+        height 0.44rem;
+        box-sizing: border-box;
+        line-height 0.3rem;
+
+
+        .search-main{
+            flex 1
+        }
+
+        .search{
+            position relative
+            width:3rem;
+            height 0.3rem;
+            border-radius 0.3rem;
+            overflow hidden;
+            margin 0 auto;
+            background-color:rgba(0,0,0,0.2);
+
+            .search_icon{
+                position absolute;
+                width:0.15rem;
+                height 0.15rem;
+                background-image url(../../assets/search_icon.png)
+                background-size 0.15rem 0.15rem;
+                top:8px;
+                left:10px;
+            }
+
+            input{
+                position absolute;
+                width 2.1rem;
+                height 100%;
+                color #fff;
+                font-size 0.14rem;
+                border none;
+                outline none;
+                left:0.3rem;
+                background-color:rgba(0,0,0,0);
+            }
+            input::-webkit-input-placeholder{
+            color:#fff;
+            }
+            input::-moz-placeholder{  
+                color:#fff;
+            }
+            input:-moz-placeholder{  
+                color:#fff;
+            }
+            input:-ms-input-placeholder{ 
+                color:#fff;
+            }
+        }
+
+        .search_btn{
+            font-size 0.16rem;
+            color:#fff;
+        }
+    }
+
 </style>

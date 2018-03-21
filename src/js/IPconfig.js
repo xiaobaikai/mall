@@ -1,9 +1,11 @@
 export const baseURL = {
-  mall: "http://192.168.3.111/epmall-front",  //梁焱升本地
+  //  mall: "http://192.168.3.193/epmall-front",  //梁焱升本地
 	//mall: "http://192.168.3.146/epmall-front",  //刘春祥本地
-	//mall: "http://192.168.3.167:8888",          //167测试环境
-  //mall: "https://mall.epipe.cn",                //正式环境
+	mall: "http://192.168.3.167:8888",          //167测试环境
+  // mall: "https://mall.epipe.cn",                //正式环境
 };
+
+
 export const mallToken = {
   setToken: function(token){
     localStorage.setItem("mallLoginToken",token);
@@ -14,8 +16,16 @@ export const mallToken = {
     if(!isApp.state){
 	    return token;
     }else{
-	    return  window.localStorage.auth_token + '=app';
+			// return this.getCookie("auth_token") +'=app';
+			return this.getCookie('auth_token') +'=app'
     }
+	},
+	getCookie: function (name) {
+    var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+    if (arr = document.cookie.match(reg))
+      return unescape(arr[2]);
+    else
+      return null;
   }
 };
 export const isApp = {

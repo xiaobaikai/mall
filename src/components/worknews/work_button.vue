@@ -38,15 +38,15 @@
   <section>
     <ul class="day_button">
       <li @click="left_click">
-        <svg v-if="noSvg" class="icon" style="font-size: 0.22rem"
-                                   aria-hidden="false">
+        <svg v-if="noSvg" class="icon" style="font-size: 0.22rem" aria-hidden="false">
         <use xlink:href="#icon-chucun"></use>
       </svg>{{left_title}}</li>
       <li @click="right_click" :style="{background:bgcolor}">
         <svg v-if="noSvg" class="icon" style="font-size: 0.22rem"
              aria-hidden="false">
           <use xlink:href="#icon-fasong"></use>
-        </svg>{{right_title}}</li>
+        </svg>
+        {{right_title}}</li>
     </ul>
   </section>
 </template>

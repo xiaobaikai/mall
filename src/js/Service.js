@@ -40,6 +40,9 @@ const Service = {
   slogan: "/organ/work/setting",  //工作台信息设置
   like: "/check/report/daily/rank/zan",  //点赞
   message: "/company/message/tolist",  //消息助手
+  saveLeave : '/work/leave/apply/save', //请假申请
+  leaveUpdate : '/work/leave /update', //同意，拒绝，撤销请假
+  affairsList:'/work/unhandle/list',//待办 已办事宜
   resource : "http://3msapi.epipe.cn/api/resourceMain/getWaterfallPagedListByProgramCode?programCodes=",  //首页的 专家库、专业机构、行情、访谈
   // resource : "http://192.168.3.166:8181/api/resourceMain/getWaterfallPagedListByProgramCode?programCodes=",
   queryString: function (params, postFlag) {

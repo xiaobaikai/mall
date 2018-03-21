@@ -23,6 +23,9 @@ import axios from "axios";
 import VueAxios from "vue-axios";
 Vue.use(VueAxios, axios);
 
+// 引用封装的插件
+import Util from "./js/Util";
+Vue.prototype.Util = Util;
 //引入echarts以及封装的echarts方法库
 import echartsLib from "./js/echartsLib";
 Vue.prototype.echartsLib = echartsLib;
@@ -46,6 +49,9 @@ Vue.use(Confirm);
 Vue.use(Toast);
 Vue.use(Alert);
 Vue.use(wcSwiper);
+
+import FastClick from 'fastclick';
+FastClick.attach(document.body)
 
 window.eventBus = new Vue();
 /* eslint-disable no-new */

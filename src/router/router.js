@@ -100,6 +100,9 @@ const SpecialistAgencies = r => require.ensure([], () => r(require('@/page/home/
 const GroupAgreement = r => require.ensure([], () => r(require('@/page/user/groupAgreement.vue')), 'group-foo')
 const ExpertList = r => require.ensure([], () => r(require('@/page/home/expertList.vue')), 'group-foo')
 const AgenciesList = r => require.ensure([], () => r(require('@/page/home/agenciesList.vue')), 'group-foo')
+const HomeSearch = r => require.ensure([], () => r(require('@/page/home/homeSearch.vue')), 'group-foo')
+const SearchRes = r => require.ensure([], () => r(require('@/page/home/searchRes.vue')), 'group-foo')
+const MyCollection = r => require.ensure([], () => r(require('@/page/user/myCollection.vue')), 'group-foo')
 
 export default new Router({
   routes: [
@@ -111,7 +114,7 @@ export default new Router({
       component: Home //首页
     }, {
       path: '/work',
-      component: Work //工作台
+      component: Work, //工作台
     }, {
       path: '/find',
       component: Find  //发现
@@ -438,7 +441,8 @@ export default new Router({
     },
     {
       path: '/leave',  //请假
-      component: Leave
+      component: Leave,
+      meta: {keepAlive: true}
     },
     {
       path: '/leaveDetails',  //请假
@@ -469,16 +473,27 @@ export default new Router({
       component: SpecialistAgencies
     },
     {
-      path:'/groupAgreement',//群服务协议
+      path:'/groupAgreement',   //群服务协议
       component : GroupAgreement
     },
     {
-      path:'/expertList',//专家列表
+      path:'/expertList',   //专家列表
       component : ExpertList
     },
     {
-      path:'/agenciesList',//机构列表
+      path:'/agenciesList',   //机构列表
       component : AgenciesList
     },
+    {
+      path:'/homeSearch',  //首页搜索
+      component : HomeSearch
+    },
+    {
+      path:'/searchRes',  //首页搜索结果
+      component : SearchRes
+    },{
+      path:'/myCollection', //我的收藏
+      component : MyCollection
+    }
   ]
 })

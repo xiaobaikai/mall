@@ -97,6 +97,7 @@
         color="#fd545c"
         :data_list=chosed_list
         v-on:remove_item="remove_item"
+        :types = '2'
       ></CopeMan>
       <WorkButton
         v-if="!has_journal"

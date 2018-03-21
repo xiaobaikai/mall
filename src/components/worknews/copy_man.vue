@@ -72,16 +72,16 @@
         <div class="day_div_one">
            <span v-if="types==2" class="title_h">抄送人</span>
            <span v-if="types==3" class="title_h">审批人</span>
-           <span v-if="(has_journal)&&(data_list.length)">（已添加{{data_list.length}}人）</span>
-           <span v-if="(!data_list.length)&&(types==2)">（审批通过后抄送相关人员）</span>
-           <span v-if="types==3">（请添加审批人）</span>
+           <span v-if="has_journal&data_list.length!=false">（已添加{{data_list.length}}人）</span>
+           <span v-if="!data_list.length&types==2">（审批通过后抄送相关人员）</span>
+           <span v-if="!data_list.length&types==3">（请添加审批人）</span>
            </div>
-        <div v-if="more_prople&data_list.length<4"  @click="open_people" class="day_div_two">点击收缩</div>
+        <div v-if="more_prople&data_list.length>4"  @click="open_people" class="day_div_two">点击收缩</div>
         <div v-if="!more_prople&data_list.length>4"  @click="open_people" class="day_div_two">
           查看全部
         </div>
       </li>
-      <ul class="day_chose_ul3">
+      <ul class="day_chose_ul3 open_ul3">
         <li @click="remove_man(item,index)" v-for="(item,index) in data_list">
           <p>
             <svg v-if="has_journal" style="font-size: 0.15rem" class="icon" aria-hidden="false">
@@ -111,17 +111,16 @@
     },
     props: [
       'color', 'data_list', 'has_journal','special_class','types'
+    //  颜色  选中的联系人数据  
     ],
     methods: {
       open_people: function () {
-        console.log(this.work_value)
         if (this.more_prople == false) {
-          document.getElementsByClassName("day_chose_ul3")[0].style.height = "auto"
+          document.getElementsByClassName("open_ul3")[0].style.height = "auto"
         } else {
-          document.getElementsByClassName("day_chose_ul3")[0].style.height = "0.77rem"
+          document.getElementsByClassName("open_ul3")[0].style.height = "0.77rem"
         }
         this.more_prople = !this.more_prople
-        console.log(this.more_prople)
       },
       go_imchoice: function () {
 //        window.location.href = "epipe://?&mark=imchoice"
@@ -136,9 +135,10 @@
     mounted(){
     },
     activated(){
+
       if (this.data_list > 4) {
         this.more_prople = true
-      } else {
+      } else {      
         this.more_prople = false
       }
     }

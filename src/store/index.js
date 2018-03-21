@@ -7,14 +7,19 @@ Vue.use(Vuex)
 
 const state = {
   chosed_man_state: [],  //选中抄送人
+  approver_man_state : [], //审批人
   application:{},
   create:{},
+  affairsNum :0,
   outputdaily:{},  //产出日报
 }
 
 const mutations = {
   change_man(state,array){  //抄送人替换
     state.chosed_man_state=array;
+  },
+  approver_man(state,array){  //审批人替换
+    state.approver_man_state=array;
   },
   edit_name(state,val){  //申请人姓名
     state.application.name = val;
@@ -72,6 +77,9 @@ const mutations = {
   },
   daily_workshop(state,val){  //选择产出日报车间
     state.outputdaily.workshop = val;
+  },
+  affairs_set(state,val){ //设置待办事宜数量
+    state.affairsNum = val;
   }
 }
 

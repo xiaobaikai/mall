@@ -11,10 +11,14 @@
       <div class="setting-title">收货地址管理</div>
       <i class="iconfont icon-jinru"></i>
     </router-link>
-    <router-link to="mallpassword" tag="div" class="setting-item">
+    <div class="setting-item" @click="go_mallpassword">
       <div class="setting-title">修改密码</div>
       <i class="iconfont icon-jinru"></i>
-    </router-link>
+    </div>
+    <!-- <router-link to="mallpassword" tag="div" class="setting-item">
+      <div class="setting-title">修改密码</div>
+      <i class="iconfont icon-jinru"></i>
+    </router-link> -->
     <div class="logout">
       <div class="btn-logout" @click="logout">退出登录</div>
     </div>
@@ -67,12 +71,22 @@
           console.log("退出登录",res);
           if(res.data.h.code === 200){
             if(this.isApp.state){
-              window.location.href = "epipe://?&mark=login";
+              window.location.href = "epipe://?&mark=logoutUser";
+              // this.$router.replace('/mallhome')
             }else{
               this.$router.replace("/accountlogin");
             }
           }
         })
+      },
+    // 判断是跳往app修改密码 还是 商城修改密码
+      go_mallpassword(){
+        if(this.isApp.state){
+          window.location.href = "epipe://?&mark=modificationPasswords";
+        }else{
+          this.$router.push({path:'mallpassword'})
+        }
+
       }
     }
   }

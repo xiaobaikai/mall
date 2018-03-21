@@ -11,9 +11,10 @@
         </div>
         <div class="affairs_content" v-show='this.btnShow'>
             <div :class='boxShadow' v-for="(item,index) in leaveData">
-                <div class="affirs_child">
+                 <div class="affirs_child">
                     <div class="affairs_title">
-                        <img :src="item[0]?item[3].value:item.profileImg"/>
+                        <img v-if="item[0]" :src="item[3].value" @click="go_user(item[1].value)"/>
+                        <img v-if="!item[0]" :src="item.profileImg" @click="go_user(item.userId)"/>
                         <h2 v-text="item[0]?item[2].value+'的请假审批':'我的请假审批'"></h2>
                         <time v-if="item[0]">{{item[9].value | timeFormat}}</time>
                         <time v-if="!item[0]">{{item.applyTime | timeFormat}}</time>
@@ -25,19 +26,21 @@
                         <p v-if="num&&!item[0]">结束时间:<span>{{item.endTime |slice}}</span></p>
                         <p v-if="num&&item[0]">结束时间:<span>{{item[7].value | slice}}</span></p>
                         <p v-if="!num">审批时间:<span>{{item[10].value}}</span></p>
-                        <p v-if="num&&num!=3" class="result">待审批</p>
                     </div>
                 </div>
-                <div class="skip">
-                    参看详情 
-                </div>
+                <router-link :to="{ path:'/leaveDetails', query: {leaveId:item[0].value,titleColor:titleColor}}" class="skip" tag="div" v-if="item[0]">
+                    查看详情
+                </router-link>
+                <router-link :to="{ path:'/leaveDetails', query: {leaveId:item.applyId,titleColor:titleColor}}" class="skip" tag="div" v-if="!item[0]">
+                    查看详情
+                </router-link>
             </div>
         </div>
         <div class="affairs_content" v-show='!this.btnShow'>
              <div :class='boxShadow' v-for="(item,index) in draftsData">
                 <div class="affirs_child">
                     <div class="affairs_title">
-                        <img :src="item.profileImg"/>
+                        <img :src="item.profileImg" @click="go_user(item.userId)"/>
                         <h2>我的请假审批</h2>
                         <time>{{item.applyTime | timeFormat}}</time>
                     </div>
@@ -47,18 +50,27 @@
                         <p>结束时间:<span>{{item.endTime |slice}}</span></p>
                     </div>
                 </div>
-                <div class="skip">
-                    参看详情 
+                <div class="skip" @click="draftDetails(item.applyId)">
+                    查看详情 
                 </div>
+
             </div>
         </div>
+        <div :class="types=='myApply'?'footLine marginBot':'footLine'" v-if="leaveData.length>2&&btnShow">
+            <span>我是有底线的</span>
+        </div>
+        <div :class="types=='myApply'?'footLine marginBot':'footLine'" v-if="draftsData.length>2&&!btnShow">
+            <span>我是有底线的</span>
+        </div>
 
-        <div :class="types=='myApply'?'footLine marginBot':'footLine'" v-if="leaveData.length>3&&btnShow">
-            <span>我是有底线的</span>
+
+        <div  class="footLine" v-if="btnShow&&!leaveData.length">
+            <span>暂无内容</span>
         </div>
-        <div :class="types=='myApply'?'footLine marginBot':'footLine'" v-if="draftsData.length>3&&!btnShow">
-            <span>我是有底线的</span>
-        </div>
+        <div class="footLine" v-if="!draftsData.length&&!btnShow">
+            <span>暂无内容</span>
+        </div> 
+
         <div class="footer" v-if='types == "myApply"'>
             <div :class='btnShow?"tab tab_user active":"tab tab_user"' @click="tabEven()">
 
@@ -79,76 +91,92 @@
     </div>
 </template>
 <script>
+
     export default{
         data(){
             return{
-                title : '',
-                types :'',
-                typeClass : '',
+                title : '', //标题
+                types :'', //展示类型
+                typeClass : '', 
                 boxShadow : '',
-                btnShow : true,
+                btnShow : true, 
                 num : 0,
-                leaveData : [],
-                draftsData : [],
+                leaveData : [], //待办，已办，我的申请数据
+                draftsData : [], //草稿箱数据
+                titleColor:'#fd545c'
             }   
         },
         mounted(){
-            this.types = 'myApply'
-            // this.title = location.href.slice(location.href.indexOf('?')+1)
-            if(this.types == 'finishAffairs'){
+            this.types = this.Util.getUrlValue('type=')
+
+             //判断跳转进来的那个页面
+            if(this.types == 'finishAffair'){
                 this.num = 0;
+                this.titleColor = '#0fc37c';
                 this.title = '已办事宜';
                 this.typeClass = 'header finish_head';
                 this.boxShadow = 'affairs_item finish_shadow';
                 let that = this;
-                this.axios.get('/work/unhandle/list').then(function(res){
-                        res.data.b.data.forEach((item,index) => {
-                            if(item.extend[8].value!=0&&item.extend[8].value!='00')  that.leaveData.push(item.extend)
-                            console.log(that.leaveData)   
-                            that.leaveData.length                    
-                        });
+                this.axios.get(that.Service.affairsList).then(function(res){
+                        let data = res.data.b.data;
+                        for(let i=0;i<data.length;i++){
+                            if(data[i].extend[8].value!='0'&&data[i].extend[8].value!='00'){
+                                that.leaveData.push(data[i].extend) 
+                            }
+                        }
                  })
-            
                 return
             }
 
-            if(this.types == 'unfinishAffairs'){
-                this.num = 1;                
+            if(this.types == 'unfinishAffair'){
+                this.num = 1; 
+                this.titleColor = '#fd545c';         
                 this.title = '待办事宜';
                 this.typeClass = 'header unfinish_head';
                 this.boxShadow = 'affairs_item unfinish_shadow';
                 let that = this;
-                this.axios.get('/work/unhandle/list').then(function(res){
-                        res.data.b.data.forEach((item,index) => {
-                            if(item.extend[8].value==0&&item.extend[8].value!='00')  that.leaveData.push(item.extend)     
-                            console.log(that.leaveData)                                                                 
-                        });
+                this.axios.get(that.Service.affairsList).then(function(res){      
+                        
+                        if(res.data.h.code===10){
+                            window.location.href = "epipe://?&mark=login_out"
+                        }else if(res.data.h.code===200){
+                       
+                            let data = res.data.b.data;
+                         
+                            for(let i=0;i<data.length;i++){
+
+                                if(data[i].extend[8].value=='0'){
+                                    
+                                    that.leaveData.push(data[i].extend) 
+                                }
+                            }
+                        }
                  })
                 return
             }
 
             if(this.types == 'myApply'){
-                this.num = 2;                                
+                this.titleColor = '#ff8800';
                 this.title = '我的申请';
+                this.num = 2;    
                 this.typeClass = 'header myaffairs_head';
                 this.boxShadow = 'affairs_item myaffairs_shadow';
                 let that = this;
                 this.axios.get('/work/my/apply/list').then(function(res){
                         that.leaveData = res.data.b.data
-                            console.log(that.leaveData)   
                         
                  })
                  this.axios.get('/work/apply/draft/list').then(function(res){
                         that.draftsData = res.data.b.data
-                            console.log(that.leaveData)   
                         
                  })
             }
 
+
         },
         methods : {
             goback(){
-                window.history.back(-1);
+                window.location.href = "epipe://?&mark=history_back"
             },
             tabEven(flag){
                 this.btnShow = !this.btnShow
@@ -160,37 +188,46 @@
                 this.num = 2;
                 this.title = '我的申请';
             },
-        },
-
-        computer : {
-
+            go_user(id){
+                window.location.href = "epipe://?&mark=userinfo&_id="+id;
+            },
+            draftDetails(id){
+                window.location.href = "epipe://?&mark=leave&_id="+id;
+            }
         },
         filters : {
             timeFormat : function(value) {
+                let arr = ['一','二','三','四','五','六','日']
                 let odate = value.split(" ")[0];
+                let otime = new Date(odate);
                 let time = new Date() - new Date(odate);
                 time = parseInt( time/(24*60*60*1000))
 
                 if(!time){
-                    return value.slice(-8,-4)
+                    return value.slice(-8,-3)
                 }else if(time == 1){
-                    return '昨天'
+                    return '昨天 '+ value.slice(-8,-3)
+                }else if(1<time<=7){
+                    return  '星期'+arr[otime.getDay()]
                 }else{ 
                     return value.slice(0,10)
                 }
             },
             
             slice : function(value){
-            //     value = value.slice(0,-3)
-                
-            //    let str = value.split(' ')
+                return value.slice(0,-3)
+            },
 
-            //     return  str[0]+' '+str[1]
-
-            return value.slice(0,-3)
+            statusName : function(value){
+                if(value==0){
+                    return '待审批'
+                }else if(value == 1){
+                    return '已同意'
+                }else if(value == 2){
+                    return '已拒绝'
+                }
             }
         }
-        
     }
 
 </script>

@@ -64,6 +64,8 @@
           </svg>
         </li>
       </ul>
+
+      
       <ul v-if="URL.length>0&has_journal" class="day_chose_img" @click="get_camera">
         <li class="day_chose_span">图片</li>
       </ul>
@@ -87,6 +89,7 @@
         color="#609ef7"
         :data_list=chosed_list
         v-on:remove_item="remove_item"
+        :types = '2'
       ></CopeMan>
       <WorkButton
         v-if="!has_journal"
@@ -130,7 +133,6 @@
           imgUrl: string_img,//图片串
           isDraft: index
         })).then(function (data) {
-        console.log(data)
         if (data.data.h.code == 200) {
           that.$alert(text).then(
             function () {
@@ -307,11 +309,12 @@
         }
       }
     },
-    computed: mapState(["chosed_man_state"]),
+    computed: mapState(["chosed_man_state"]), //监听 shosed_man_state 的变化
     /*
      * 被keep live了
      */
     activated(){
+      console.log('why')
       this.chosed_list = this.chosed_man_state
       if (window.sessionStorage.work_value) {
         this.journal_detail = Object.assign(this.journal_detail, {workSummary: window.sessionStorage.work_value})

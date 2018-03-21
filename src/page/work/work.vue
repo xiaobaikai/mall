@@ -39,6 +39,7 @@
      padding-top 0.2rem;
   }
   .tab_work_3con li{
+    position relative;
     width: 25%;
     display: flex;
     flex-direction: column;
@@ -48,6 +49,20 @@
     padding-top 0.1rem;
     margin-top -0.15rem;
     -webkit-tap-highlight-color: transpranet;
+  }
+
+  .tab_work_3con li .mes-num{
+      position absolute;
+      width 0.15rem;
+      height  0.15rem;
+      line-height 0.15rem;
+      border-radius 50%;
+      right 0.05rem;
+      top 0.05rem;
+      color #fff;
+      font-size 0.1rem;
+      text-align center;
+      background-color rgb(253, 84, 92); 
   }
   .tab_work_3con li:nth-child(n + 5){
     margin-top 0;
@@ -184,28 +199,51 @@
           </div>
         </div>
       </div>
- 			<div class="tab_work_con">
+
+
+ 		 <div class="tab_work_con">
+        <ul class="tab_work_3con first_tab_work_3con">
+          <li @click="go_unfinishAffairs">
+            <span v-if="mesNum" class="mes-num">{{mesNum}}</span>
+            <div>
+              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
+                <use xlink:href="#icon-daibanshiyi"></use>
+              </svg>
+            </div>
+            <div style="font-size:0.14rem;margin-top: 0.05rem">待办事宜</div>
+          </li> 
+          <li @click="go_finishAffairs">
+            <div>
+              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
+                <use xlink:href="#icon-yibanshiyi"></use>
+              </svg>
+            </div>
+            <div style="font-size:0.14rem;margin-top: 0.05rem">已办事宜</div>
+          </li> 
+          <li @click="go_myApply">
+            <div>
+              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
+                <use xlink:href="#icon-wodeshenqing-mian"></use>
+              </svg>
+            </div>
+            <div style="font-size:0.14rem;margin-top: 0.05rem">我的申请</div>
+          </li> 
+          <li @click="go_daily">
+            <div>
+              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
+                <use xlink:href="#icon-qiyeribao"></use>
+              </svg>
+            </div>
+            <div>企业日报</div>
+          </li>
+        </ul>
+      </div>
+      <div class="tab_work_con">
         <ul class="tab_work_2con">
           <li></li>
           <li>企业管理</li>
         </ul>
         <ul class="tab_work_3con">
-          <li @click="go_Maillist">
-            <div>
-              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
-                <use xlink:href="#icon-tongxunlu"></use>
-              </svg>
-            </div>
-            <div style="font-size:0.14rem;margin-top: 0.05rem">通讯录</div>
-          </li>
-          <li @click="go_Grouplist">
-            <div>
-              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
-                <use xlink:href="#icon-qunzu"></use>
-              </svg>
-            </div>
-            <div style="font-size:0.14rem;margin-top: 0.05rem">群组</div>
-          </li>
           <li @click="go_record">
             <div>
               <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
@@ -222,14 +260,30 @@
             </div>
             <div>外勤</div>
           </li>
-          <li @click="go_daily">
+          <li @click="go_leave">
             <div>
               <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
-                <use xlink:href="#icon-qiyeribao"></use>
+                <use xlink:href="#icon-qingjia"></use>
               </svg>
             </div>
-            <div>企业日报</div>
+            <div style="font-size:0.14rem;margin-top: 0.05rem">请假</div>
           </li>
+          <li @click="go_Grouplist">
+            <div>
+              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
+                <use xlink:href="#icon-qunzu"></use>
+              </svg>
+            </div>
+            <div style="font-size:0.14rem;margin-top: 0.05rem">群组</div>
+          </li>
+          <li @click="go_Maillist">
+            <div>
+              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
+                <use xlink:href="#icon-tongxunlu"></use>
+              </svg>
+            </div>
+            <div style="font-size:0.14rem;margin-top: 0.05rem">通讯录</div>
+          </li>  
         </ul>
       </div>
       <div class="tab_work_con">
@@ -357,9 +411,11 @@
     else
       return null;
   }
+  import {mapState, mapMutations} from 'vuex';
   export default {
     data () {
       return {
+        mesNum : 0,//待办事宜条数
         banner: '',
         loading: false,
         is_login: true,
@@ -569,7 +625,6 @@
       message(){
         let vm = this;
         this.axios.get(this.Service.message).then(res =>{
-          console.log("消息",res);
           if(res.data.h.code === 200){
             if(res.data.b.data.length>5){
               for(let i=0;i<5;i++){
@@ -599,12 +654,28 @@
           window.location.reload();
         },0);
       },
+      getAffairs(){
+        let vm = this;
+        vm.mesNum = 0;
+        this.axios.get(this.Service.affairsList).then(function(res){
+          let arrs = res.data.b.data;
+            vm.mesNum = arrs[0].count;
+            })
+
+        window["epipe_affairs_callback"] = () => {
+            vm.getAffairs();
+        }
+
+      },
+
     },
+ 
     mounted(){
-      this.getUserInfo();
       this.organization();
+      this.getUserInfo();
       this.slogan();
       this.message();
+      this.getAffairs();
     }
   }
 </script>

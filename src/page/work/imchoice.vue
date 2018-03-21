@@ -9,7 +9,7 @@
   }
 
   .bottom_button2:active {
-    opacity $opacity_common
+    opacity $opacity_common;
   }
 
   li:active {
@@ -24,15 +24,15 @@
     background-color $bg_color
   }
 
-  .seach_input {
-    animation seach_im 0.18s
-    opacity 1
-    background-color #fff
-    position relative
-    display flex
+  .seach_input{
+    animation seach_im 0.18s;
+    opacity 1;
+    background-color #fff;
+    position relative;
+    display flex;
     flex-direction row
-    justify-content center
-    padding 0.06rem 0.15rem 0.06rem 0.15rem
+    justify-content center;
+    padding 0.06rem 0.15rem 0.06rem 0.15rem;
   }
 
   .seach_input input {
@@ -236,7 +236,7 @@
                 </svg>
               </div>
             </li>
-            <div @click="chose_item(index,p,num)" v-show="item.open" v-for="(p,num) in item.persons" class="im_div3">
+            <div @click="chose_item(index,p,num)" v-show="item.open" v-for="(p,num) in item.persons" class="im_div3">  
               <svg v-show="p.mark_chose" style="font-size: 0.19rem;padding-right: 0.15rem" class="icon">
                 <use xlink:href="#icon-chenggong"></use>
               </svg>
@@ -252,15 +252,31 @@
       </div>
       <div style="padding-bottom: 0.84rem"></div>
       <ul class="im_bottom">
-        <div v-if="chose_array.length>0" @click="history_back" :style="{background: bgcolor}" class="bottom_button2">确定 <span
+
+        <div v-if="chose_array.length>0 & type_num" @click="history_back" :style="{background: bgcolor}" class="bottom_button2">确定 <span
         >({{chose_array.length}})</span>
         </div>
-        <div v-if="chose_array.length<=0" class="bottom_button2" :style="{opacity: 0.6,background: bgcolor}" style="">确定
+
+        <div v-if="approver_array.length>0 & !type_num" @click="history_back" :style="{background: bgcolor}" class="bottom_button2">确定 <span
+        >({{approver_array.length}})</span>
+        </div>
+
+        <div v-if="(chose_array.length<=0&type_num)|(approver_array.length<=0&!type_num)" class="bottom_button2" :style="{opacity: 0.6,background: bgcolor}" style="">确定{{chose_array.length}}
         </div>
         <div class="bottom_button">
 
         </div>
-        <li @click="reduce(item)" v-for="item in chose_array">
+        <li @click="reduce(item)"  v-if="type_num" v-for="item in chose_array" class="chose">
+          <div style="height: 0.15rem">
+            <svg style="font-size: 0.15rem;position: relative;top: 0.08rem;left: 0.135rem" class="icon">
+              <use xlink:href="#icon-shanchu"></use>
+            </svg>
+          </div>
+          <img src="../../assets/tou.png" v-show="!item.profileImg"/>
+          <img :src=item.profileImg|man_photo_format v-show="item.profileImg"/>
+          <div class="name">{{item.name}}</div>
+        </li>
+        <li @click="reduce(item)" v-if="!type_num"  v-for="item in approver_array" class="approver">
           <div style="height: 0.15rem">
             <svg style="font-size: 0.15rem;position: relative;top: 0.08rem;left: 0.135rem" class="icon">
               <use xlink:href="#icon-shanchu"></use>
@@ -308,6 +324,7 @@
   export default {
     data () {
       return {
+        type_num:1, //抄送人为1 审批人为0
         bgcolor: "",
         datalist: [], //获取的通讯录数据
         all_bool: true, //是否是展开的
@@ -315,6 +332,8 @@
         is_search: false,
         chosed_list_mark: [], //抄送人 备份一个
         chose_array: [],  //抄送人
+        approver_array : [], //审批人
+        approver_list_mark : [], //审批人 备份一个
         name: '',
         seach_list_man: [], //被搜索到的人
         states : ''
@@ -325,30 +344,64 @@
     },
     methods: {
       ...mapMutations([
-        'change_man'
+        'change_man','approver_man'
       ]),
-      open_item(index){
+      open_item(index){  //点开分组
         let array = []
         this.datalist.offices[index].open = !this.datalist.offices[index].open
       },
       chose_item(index, p, num){ //点击选中某个人  通过遍历改变mark_chose的布尔值
         let array = []
-        this.datalist.offices[index].persons[num].mark_chose = !this.datalist.offices[index].persons[num].mark_chose
-        for (let i = 0; i < this.datalist.offices.length; i++) {
-          for (let a = 0; a < this.datalist.offices[i].persons.length; a++) {
-            if (this.datalist.offices[i].persons[a].mark_chose == true) {
-              array = array.concat(this.datalist.offices[i].persons[a])
+        this.datalist.offices[index].persons[num].mark_chose = !this.datalist.offices[index].persons[num].mark_chose  //设置这个人是否被选中
+
+        if(this.type_num){
+
+          // debugger
+
+            for (let i = 0; i < this.datalist.offices.length; i++) {
+              for (let a = 0; a < this.datalist.offices[i].persons.length; a++) {
+                if (this.datalist.offices[i].persons[a].mark_chose == true) {
+                    this.datalist.offices[i].persons[a].receiverId = this.datalist.offices[i].persons[a].userId;
+                  array = array.concat(this.datalist.offices[i].persons[a])
+                }
+              }
             }
-          }
+            this.chose_array = array;
+            this.change_man(this.chose_array)
+
+        }else{
+            if(this.datalist.offices[index].persons[num].mark_chose){
+              
+              let flag = true;
+
+              for(let i =0;i<this.approver_array.length;i++){
+                if(this.approver_array[i].auditUserId === p.userId){
+                    flag = false;
+                }
+              }
+
+              if(flag){
+                  p.auditUserId = p.userId;
+                  this.approver_array.push(p)
+                  this.approver_man(this.approver_array)
+                  window.history.back()
+              }
+            
+            }else{
+              for(let i =0;i<this.approver_array.length;i++){
+                if(this.approver_array[i].auditUserId === p.userId){
+                    this.approver_array.splice(i,1)
+                    this.approver_man(this.approver_array)
+                    window.history.back()
+                }
+              }
+            }
         }
-        this.chose_array = array
-        this.change_man(this.chose_array)
-        console.log(this.chose_array)
       },
       open_all(){
         this.all_bool = !this.all_bool
       },
-      reduce(item){
+      reduce(item){ //删除选中人
         let array = []
         for (let i = 0; i < this.datalist.offices.length; i++) {
           for (let a = 0; a < this.datalist.offices[i].persons.length; a++) {
@@ -361,8 +414,13 @@
             }
           }
         }
-        this.chose_array = array
-        this.change_man(this.chose_array)
+        if(this.type_num){
+          this.chose_array = array;
+          this.change_man(this.chose_array)
+        }else{
+          this.approver_array = array;
+          this.approver_man(this.approver_array)
+        }
       },
       history_back: function () {
         if(this.states=='pro'){
@@ -372,17 +430,29 @@
           window.history.back()
         }
       },
-      history_back_click: function () {
-        this.change_man(this.chosed_list_mark)
+      history_back_click: function () {  //返回则数据不改变
+        if(this.type_num){
+          this.change_man(this.chosed_list_mark)
+        }else{
+          this.approver_man(this.approver_list_mark)
+        }
         window.history.back()
       },
       chose_select: function (item, index) { //搜索之后选中某个人
         let that = this;
         if (!item.mark_chose) {
           that.seach_list_man[index].mark_chose = true
-          let array = [item]
-          that.chose_array = array.concat(that.chose_array)
-          that.change_man(this.chose_array)
+
+          if(this.type_num){
+            item.receiverId = item.userId;
+            that.chose_array.push(item)
+            that.change_man(this.chose_array)
+          }else{
+            item.auditUserId = item.userId;
+            that.approver_array.push(item)
+            that.approver_man(this.approver_array)
+          }
+
           that.seach_value = ""
           for (let i = 0; i < that.datalist.offices.length; i++) {
             for (let a = 0; a < that.datalist.offices[i].persons.length; a++) {
@@ -391,7 +461,7 @@
               }
             }
           }
-          setTimeout(function () {
+          setTimeout(function () { //300毫秒后去掉搜索界面
             that.is_search = false
             that.seach_list_man = []
           }, 300)
@@ -402,21 +472,27 @@
         this.seach_list_man = []
         this.is_search = false
       },
-      value_change: function () {//模糊查询实时监听输入框变化
-        console.log(this.seach_value)
+      value_change: function () { //模糊查询实时监听输入框变化
         let that = this;
         if (this.seach_value != "") {
           this.axios.get(this.Service.selectReceiver, {params: {name: this.seach_value}}).then(function (data) {
             if (data.data.h.code == 200) {
-              console.log(data.data.b.data)
               that.seach_list_man = data.data.b.data
               for (let b = 0; b < that.seach_list_man.length; b++) {
                 that.seach_list_man[b].mark_chose = false
-                for (let a = 0; a < that.chose_array.length; a++) {
-                  //这是把默认抄送人加上
-                  if (that.seach_list_man[b].userId == that.chose_array[a].userId) {
-                    console.log(that.seach_list_man[b].name)
-                    that.seach_list_man[b].mark_chose = true
+
+                if(this.type_num){
+                  for (let a = 0; a < that.chose_array.length; a++) {
+                    //这是把默认抄送人加上
+                    if (that.seach_list_man[b].userId == that.chose_array[a].receiverId) {
+                      that.seach_list_man[b].mark_chose = true
+                    }
+                  }
+                }else{
+                  for (let a = 0; a < that.approver_array.length; a++) {
+                    if (that.seach_list_man[b].userId == that.approver_array[a].auditUserId) {
+                      that.seach_list_man[b].mark_chose = true
+                    }
                   }
                 }
               }
@@ -429,31 +505,59 @@
     mounted(){
       this.states = location.href.slice(location.href.indexOf('state=')+6)
       this.states = this.states.slice(0,(this.states.indexOf('&')))
-    console.log(this.states)
+        //以上代码判断是由什么入口进入该界面
       this.bgcolor = this.$route.query.bgcolor
-      this.chose_array = this.chosed_man_state
-      this.chosed_list_mark = this.chosed_man_state
+      if(this.$route.query.num){ //判断是审批人还是抄送人
+        //审批人
+        this.type_num = 0;
+        this.approver_array = this.approver_man_state
+        this.approver_list_mark = this.approver_man_state
+      }else{
+        //抄送人
+        this.chose_array = this.chosed_man_state
+        this.chosed_list_mark = this.chosed_man_state
+      }
+
       let that = this;
       this.axios.get(this.Service.organAddress).then(function (data) {
-        console.log(data)
-        if (data.data.h.code == 200) {
+        if(data.data.h.code == 200) {
           that.datalist = data.data.b
-          for (let i = 0; i < data.data.b.offices.length; i++) {
-            data.data.b.offices[i].open = false
-            for (let a = 0; a < data.data.b.offices[i].persons.length; a++) {
-              //这是把默认抄送人加上
-              for (let b = 0; b < that.chosed_man_state.length; b++) {
-                if (that.chosed_man_state[b].userId == data.data.b.offices[i].persons[a].userId) {
-                  console.log(data.data.b.offices[i].persons[a].name)
-                  data.data.b.offices[i].persons[a].mark_chose = true
+          let arrs = [];
+          if(that.type_num){
+            arrs = that.chosed_man_state;
+          }else{
+            arrs = that.approver_man_state;
+          }
+
+
+          if(that.type_num){
+            for (let i = 0; i < data.data.b.offices.length; i++) {
+              data.data.b.offices[i].open = false
+              for (let a = 0; a < data.data.b.offices[i].persons.length; a++) {
+                for (let b = 0; b <arrs.length; b++) {
+                  if (arrs[b].receiverId == data.data.b.offices[i].persons[a].userId) {
+                    data.data.b.offices[i].persons[a].mark_chose = true
+                  }
+                }
+              }
+            }
+          }else{
+            for (let i = 0; i < data.data.b.offices.length; i++) {
+              data.data.b.offices[i].open = false
+              for (let a = 0; a < data.data.b.offices[i].persons.length; a++) {
+                for (let b = 0; b <arrs.length; b++) {
+                  if (arrs[b].auditUserId == data.data.b.offices[i].persons[a].userId) {
+                    data.data.b.offices[i].persons[a].mark_chose = true
+                  }
                 }
               }
             }
           }
+
           that.datalist = JSON.parse(JSON.stringify(data.data.b))
         }
       });
     },
-    computed: mapState(["chosed_man_state"])
+    computed: mapState(["chosed_man_state",'approver_man_state'])  
   }
 </script>

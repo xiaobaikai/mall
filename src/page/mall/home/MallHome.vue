@@ -108,6 +108,7 @@
       }
     },
     created(){
+      
       document.title = '优优商城';
       this.getBanner();
       this.getFloor();
@@ -121,6 +122,8 @@
       this.$nextTick(() =>{
         this.getScrollTop();
       });
+
+     
     }
   }
 </script>

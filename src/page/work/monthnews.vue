@@ -97,6 +97,7 @@
         color="#0fc37c"
         :data_list=chosed_list
         v-on:remove_item="remove_item"
+        :types = '2'
       ></CopeMan>
       <WorkButton
         v-if="!has_journal"
@@ -334,6 +335,7 @@
     },
     computed: mapState(["chosed_man_state"]),
     activated(){
+      console.log(111)
       this.chosed_list = this.chosed_man_state
       if (window.sessionStorage.work_value) {
         this.journal_detail = Object.assign(this.journal_detail, {workSummary: window.sessionStorage.work_value})
