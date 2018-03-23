@@ -82,14 +82,15 @@
       }
     }
     .item-title{
-      margin-top 0.16rem;
-      font-size: 0.14rem;
-      line-height 0.18rem;
-      color: #666;
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 2;
-      overflow: hidden;
+        margin-top: .16rem;
+        font-size: .14rem;
+        line-height: .18rem;
+        color: #666;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+        height:.36rem;
     }
     .item-sub{
       display flex;
