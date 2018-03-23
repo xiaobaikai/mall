@@ -108,8 +108,7 @@
       }
     },
     created(){
-      
-      document.title = '优优商城';
+      document.title = '优商城';
       this.getBanner();
       this.getFloor();
     },

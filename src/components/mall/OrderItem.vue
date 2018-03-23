@@ -32,9 +32,14 @@
         <div class="btn btn-pay">订单详情</div>
       </div>
       <div class="btn-wrapper" v-show="showBtn" v-else-if="obj.orderState === 10">
-        <div class="btn">订单详情</div>
-        <div class="btn" @click.stop.prevent="cancleOrder">取消订单</div>
-        <div class="btn btn-pay" @click.stop.prevent="wepay">微信支付</div>
+          <div class="btn">订单详情</div>
+          <div class="btn" @click.stop.prevent="cancleOrder">取消订单</div>
+          <div class="btn btn-pay" @click.stop.prevent="wepay" v-if="!isNotApp">微信支付</div>
+          <form :action="formUrl" method="post"  v-if="isNotApp">
+              <input type="hidden" v-model="token" name="token">
+              <input type="hidden" v-model="obj.orderSn" name="orderSn">
+              <input type="submit" value="支付宝支付" class="btn btn-pay" style="height: 32px;line-height: 32px; font-size: 14px;" >
+          </form>
       </div>
       <div class="btn-wrapper" v-show="showBtn" v-else-if="obj.orderState === 20">
         <div class="btn" @click.stop.prevent="refund" v-if="!obj.returnRefundState && !obj.returnGoodsState">申请退款</div>
@@ -83,6 +88,9 @@
     data(){
       return{
         statusTitle: "",
+        isNotApp:false,
+        token:'',
+        formUrl:''
       }
     },
     filters:{
@@ -149,6 +157,9 @@
             this.$alert(res.data.h.msg);
           }
         })
+      },
+      submitzfb(){
+        console.log(11);
       },
       /*申请退款*/
       refund(){
@@ -267,10 +278,22 @@
         console.log("111111");
 //        this.$router.push({path:'/goodsdetail',query:{goodsId: item.goodsId}});
       },
+    },
+    created(){
+	    if(this.isApp.state){
+		    this.isNotApp=true;
+	    }
+	    this.token=this.mallToken.getToken();
+	    this.formUrl=this.baseURL.mall+"/m/my/h5AlipayByOrderListOrDetail";
     }
   }
 </script>
 <style lang="stylus" scoped>
+    input{
+        -webkit-appearance: none;
+        outline none;
+        background transparent;
+    }
   borderBottom(borderColor= #e9e9e9,borderWidth= 1px){
     content: "";
     position: absolute;

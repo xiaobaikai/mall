@@ -107,7 +107,7 @@
     },
     created(){
       document.title="个人中心";
-      this.$toast(this.mallToken.getToken())
+     //this.$toast(this.mallToken.getToken())
       this.getUserInfo();
     },
     methods:{

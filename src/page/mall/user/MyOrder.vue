@@ -4,7 +4,9 @@
       <div class="menu-item" :class="{'menu-active': index === selected}" v-for="(item,index) in menuList" :key="index" @click="tab(index)">{{item.title}}</div>
     </div>
     <div class="order-list">
-      <order-item v-for="(item,index) in orderList" :key="index" :obj="item" :imgPrefix="imgPrefix" @click.native.prevent="linkDetails(item)" @childCall="handleChildCall"></order-item>
+       <div v-for="(item,index) in orderList" :key="index"  @click="linkDetails(item)">
+           <order-item :obj="item" :imgPrefix="imgPrefix"  @childCall="handleChildCall"></order-item>
+       </div>
       <infinite-loading spinner="bubbles" @distance="0" @infinite="infiniteHandler" ref="infiniteLoading">
         <span slot="no-more">
           暂无更多数据
@@ -97,7 +99,7 @@
       },
       /*跳转订单详情*/
       linkDetails(item){
-        this.$router.push({path: '/orderdetails', query:{orderSn:item.orderSn,imgPrefix:this.imgPrefix}});
+       this.$router.push({path: '/orderdetails', query:{orderSn:item.orderSn,imgPrefix:this.imgPrefix}});
       }
     }
   }

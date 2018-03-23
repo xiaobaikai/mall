@@ -1,5 +1,5 @@
 export const baseURL = {
-  //  mall: "http://192.168.3.193/epmall-front",  //梁焱升本地
+	//mall: "http://192.168.3.201/epmall-front",  //梁焱升本地
 	//mall: "http://192.168.3.146/epmall-front",  //刘春祥本地
 	mall: "http://192.168.3.167:8888",          //167测试环境
   // mall: "https://mall.epipe.cn",                //正式环境
@@ -17,7 +17,7 @@ export const mallToken = {
 	    return token;
     }else{
 			// return this.getCookie("auth_token") +'=app';
-			return this.getCookie('auth_token') +'=app'
+			return this.getCookie('auth_token') +'=app';
     }
 	},
 	getCookie: function (name) {

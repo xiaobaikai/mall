@@ -52,22 +52,33 @@
       <div><span>运费</span><span>￥0.00</span></div>
       <div><span></span><span><i>总价：</i>￥{{goodsTotalPrice}}</span></div>
     </div>
-    <div class="wx-pay" @click="submitPay"><div>微信支付</div></div>
+    <div class="wx-pay" @click="submitPay"  v-if="!isNotApp"><div>微信支付</div></div>
+    <form  :action="formUrl" method="post" v-if="isNotApp">
+      <input type="hidden" v-model="token" name="token">
+      <input type="hidden" v-model="cartIds" name="cartIds">
+      <input type="hidden" v-model="addressId" name="addressId">
+      <input type="hidden" v-model="openInv" name="openInv">
+      <input type="hidden" v-model="invoiceId" name="invoiceId">
+      <div class="wx-pay"><input type="submit" value="支付宝支付"></div>
+    </form>
   </div>
 </template>
 <script>
   export default {
     data:function () {
       return{
-        imgPrefix:'',   //图片地址前缀
-        cartList:'',    //结算订单列表
-        addressList:'', //收件地址
-        goodsTotalPrice:'', //结算总额
-        invoiceType:'不开发票',
-        cartIds:[],
-        openInv:0,
-        invoiceId:''
-
+	      formUrl:'',
+	      token:'',
+	      addressId:'',
+	      imgPrefix:'',   //图片地址前缀
+	      cartList:'',    //结算订单列表
+	      addressList:'', //收件地址
+	      goodsTotalPrice:'', //结算总额
+	      invoiceType:'不开发票',
+	      cartIds:[],
+	      openInv:0,
+	      invoiceId:'',
+	      isNotApp:false
       }
     },
     methods:{
@@ -88,12 +99,16 @@
           console.log(res);
           if(res.data.h.code==200){
             this.addressList=res.data.b;
+            this.addressId=this.addressList[0].addressId;
           }else  if(res.data.h.code === 50 || res.data.h.code === 30){
             this.$router.replace("/accountlogin");
           }else{
             this.$toast(res.data.h.msg);
           }
         })
+      },
+      submitZfb(){
+        console.log(this.addressId);
       },
       submitPay(){
         //alert(this.openInv);
@@ -144,15 +159,26 @@
       }
     },
     created(){
-    	document.title="确认订单";
-      this.getSettlement();
-      this.queryInvoice();
+	    document.title="确认订单";
+	    if(this.isApp.state){
+		    this.isNotApp=true;
+	    }
+	    this.token=this.mallToken.getToken();
+	    this.formUrl=this.baseURL.mall+"/m/my/h5Alipay";
+	    this.getSettlement();
+	    this.queryInvoice();
     }
   }
 </script>
 <style lang="stylus" scoped>
+    input{
+        -webkit-appearance: none;
+        outline none;
+        background transparent;
+    }
   .confirm-order{
     overflow hidden;
+    -webkit-overflow-scrolling:tocuh;
     .receiving-info{
       display flex;
       justify-content space-between;
@@ -340,16 +366,16 @@
     .wx-pay{
       padding .25rem .1rem;
       background #fff;
-      div{
-        width 100%;
-        height .45rem;
-        line-height .45rem;
-        text-align center;
-        color #fff;
-        font-size .16rem;
-        background #54b736;
-        border-radius 4px;
+      div,input{
+          width 100%;
+          height .45rem;
+          line-height .45rem;
+          text-align center;
+          color #fff;
+          font-size .16rem;
+          background #54b736;
+          border-radius 4px;
       }
-    }
+     }
   }
 </style>
