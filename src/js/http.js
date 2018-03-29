@@ -8,7 +8,7 @@ axios.defaults.timeout = 5000;
 
 const dev = 'http://192.168.3.166:8280/member/v1'; //测试
 const product = "http://app.epipe.cn:18080/member/v1"; //正式
-// axios.defaults.baseURL = window.location.href.indexOf("app.epipe.cn")>0 ? product : dev;
+axios.defaults.baseURL = window.location.href.indexOf("app.epipe.cn")>0 ? product : dev;
 axios.defaults.baseURL = product;
 
 function getCookie(name) {
@@ -19,13 +19,9 @@ function getCookie(name) {
     return null;
 };
 
-
-localStorage.setItem('abc','11111')
-
-
 if (getCookie("auth_token")) {
   window.localStorage.setItem("auth_token",getCookie("auth_token"));
-}
+} 
 
 window["epipe_getcookie_callback"] = (value) => {
   window.localStorage.setItem("auth_tokens",value)
@@ -40,8 +36,8 @@ axios.interceptors.request.use(
       window.localStorage.setItem("auth_token",getCookie("auth_token"));
     }else{
       if(!config.headers.auth_token){
-        config.headers.auth_token = window.localStorage.auth_token;
-        //  config.headers.auth_token = "83107e8c-d101-447d-97ed-478233751c94";
+        // config.headers.auth_token = window.localStorage.auth_token;
+         config.headers.auth_token = "551a3c2b-77c1-4841-b875-abb740e4802a";
       }
     }
     return config;

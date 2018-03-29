@@ -19,7 +19,7 @@
                     <input ref="input"  type="text" @click="go_search()"  placeholder="请输入关键字">
                 </div>
             </div>
-            
+
         </div>
       <div class="banner-wrapper">
         <carousel-3d :autoplay="true" :autoplayTimeout="5000" :autoplayHoverPause="true" :width="config.width" :height="config.height" :border="0" :perspective="0">
@@ -32,10 +32,10 @@
         <li @click="go_mall">
           <div style="background: -webkit-linear-gradient(top, #fac370 0%,#ffa51e 100%);">
             <svg style="width: 0.22rem;height: 0.22rem" class="icon" aria-hidden="false">
-              <use xlink:href="#icon-hangqing"></use>
+              <use xlink:href="#icon-shangcheng"></use>
             </svg>
           </div>
-          <div>优优商城</div>
+          <div>优管优选</div>
         </li>
         <li @click="go_exhibition">
           <div style="background: -webkit-linear-gradient(top, #51cdfc 0%,#27b1eb 100%);">
@@ -64,7 +64,15 @@
       
         </ul>
         <ul class="home_nav_top">
-          <li @click="go_market">
+           <li @click="go_specialistAgencies">
+          <div style="background: -webkit-linear-gradient(top, #fd535b 0%,#fc757e 100%);">
+            <svg style="width: 0.22rem;height: 0.22rem" class="icon" aria-hidden="false">
+              <use xlink:href="#icon-zhuanyejigou"></use>
+            </svg>
+          </div>
+          <div>专业机构</div>
+        </li>
+        <li @click="go_market">
           <div style="background: -webkit-linear-gradient(top, #fac370 0%,#ffa51e 100%);">
             <svg style="width: 0.22rem;height: 0.22rem" class="icon" aria-hidden="false">
               <use xlink:href="#icon-hangqing"></use>
@@ -87,14 +95,6 @@
             </svg>
           </div>
           <div>专家库</div>
-        </li>
-        <li @click="go_specialistAgencies">
-          <div style="background: -webkit-linear-gradient(top, #fd535b 0%,#fc757e 100%);">
-            <svg style="width: 0.22rem;height: 0.22rem" class="icon" aria-hidden="false">
-              <use xlink:href="#icon-zhuanyejigou"></use>
-            </svg>
-          </div>
-          <div>专业机构</div>
         </li>
       </ul>
       <div class="home_title_con1">
@@ -172,7 +172,6 @@
     },
     methods: {
       onInfinite(){
-    
         let that = this;
         //首页头条
         setTimeout(() => {
@@ -182,7 +181,6 @@
               lastId: that.newsData[(that.newsData.length) - 1].id
             }
           }).then(function (data) {
-            console.log(data)
             if (data.data.b.length == 0) {
               console.log("加载完了")
               that.$refs.infiniteLoading.$emit('$InfiniteLoading:complete');
@@ -239,7 +237,7 @@
         }
       },
       go_news(item){
-
+        console.log(item.resId)
         let title = Util.Title_format(item.resTitle);
         let obj = {};
         obj.title = title;
@@ -252,7 +250,7 @@
         this.currentSlide = current;
       },
       go_search(){
-        window.location.href ="epipe://?mark=homeSearch"
+        window.location.href ="epipe://?&mark=homeSearch"
       }
     },
     created(){
