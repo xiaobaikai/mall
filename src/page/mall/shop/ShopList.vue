@@ -89,6 +89,8 @@
       },
       //购买商品加减
       add(i,j){
+       /* this.selGoodsNum=0;
+        this.totalPrice=0;*/
         this.shopList[i].list[j].goodsNum++;
         if(this.shopList[i].list[j].checked){
           this.totalPrice+=this.shopList[i].list[j].goodsPrice
@@ -115,6 +117,8 @@
         })
       },
       reduce(i,j){
+/*        this.selGoodsNum=0;
+        this.totalPrice=0;*/
         if(this.shopList[i].list[j].goodsNum!==1){
           this.shopList[i].list[j].goodsNum--;
           if(this.shopList[i].list[j].checked){
@@ -189,6 +193,8 @@
             this.shopList=shopList;
             console.log(this.shopList);
             this.imgPrefix=res.data.b.imgPrefix;
+            this.isChooseAll();
+            this.reset();
           }else  if(res.data.h.code === 50 || res.data.h.code === 30){
             if(this.isApp.state){
               window.location.href = "epipe://?&mark=login";

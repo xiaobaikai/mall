@@ -56,19 +56,20 @@
             returnGoodsState: this.returnStatus
           })).then(res =>{
             console.log("退货列表",res);
-            if(res.status === 200){
-              if(res.data.result.length<1){
+            if(res.data.h.code === 200){
+              if(res.data.b.result.length<1){
                 $state.complete();
               }else{
-                this.returnList = this.returnList.concat(res.data.result);
+                this.returnList = this.returnList.concat(res.data.b.result);
                 this.pageNo ++;
-                this.imgPrefix = res.data.imgPrefix;
+                this.imgPrefix = res.data.b.imgPrefix;
                 $state.loaded();
               }
             }else{
               $state.complete();
             }
           }).catch(err =>{
+            console.log(err);
             $state.complete();
           })
         },500);
