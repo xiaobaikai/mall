@@ -10,6 +10,10 @@
         <div class="search-btn" @click="handleSearch">搜索</div>
       </div>
       <div class="no-search" v-if="!hasSearch">
+        <div class="search-type">
+          <div :class="{'active-type':nowType===true}" @click="changeType">宝贝</div>
+          <div :class="{'active-type':nowType===false}" @click="changeType">店铺</div>
+        </div>
         <div class="suggestion-content" v-if="showSuggestion">
           <div class="history" v-if="historyList.length>0">
             <p class="sub-title">最近搜索</p>
@@ -52,12 +56,12 @@
             </div>
           </router-link>
           <infinite-loading spinner="bubbles" @distance="1" @infinite="loadMore" ref="infiniteLoading">
-        <span slot="no-more">
-          暂无更多数据
-        </span>
+            <span slot="no-more">
+              暂无更多数据
+            </span>
             <span slot="no-results">
-          暂无结果
-        </span>
+              暂无结果
+            </span>
           </infinite-loading>
           <!--<div class="no-result" v-if="resultList.length<1">暂无搜索结果</div>-->
         </div>
@@ -88,6 +92,7 @@
         pageNo: 1,
         order: "",
         sortField: "",
+	      nowType:true
       }
     },
     watch:{
@@ -122,6 +127,9 @@
       },
       clearInput(){
         this.searchKey = "";
+      },
+	    changeType(){
+      	this.nowType=!this.nowType;
       },
       /*搜索*/
       handleSearch(){
@@ -315,10 +323,29 @@
     text-align center;
   }
   .suggestion-content{
-    margin-top 46px;
     padding 0.2rem 0.15rem;
     background: white;
     border-bottom 1px solid #e5e5e5;
+  }
+  .search-type{
+    margin-top 46px;
+    height .4rem;
+    background #f5f5f5;
+    display flex;
+    justify-content center;
+    justify-items center;
+    div{
+      flex 1;
+      font-size .15rem;
+      color #999;
+      text-align center;
+      line-height .4rem;
+      margin 0 .4rem;
+    }
+    .active-type{
+      color #333;
+      border-bottom 2px solid #ff8800;
+    }
   }
   .sub-title{
     font-size: 0.11rem;
