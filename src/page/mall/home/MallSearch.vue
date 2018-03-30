@@ -1,19 +1,19 @@
 <template>
-  <div class="search-wrapper">
+  <div>
+    <div class="search-container">
+      <div class="search-bar-vice">
+        <i class="iconfont icon-sousuoicon"></i>
+        <input type="text" class="search-input-vice" maxlength="20" v-model="searchKey">
+        <i class="iconfont icon-guanbiicon" @click="clearInput" v-show="!showSuggestion"></i>
+      </div>
+      <div class="search-btn" @click="handleSearch">搜索</div>
+    </div>
     <div class="search-wrapper">
-      <div class="search-container">
-        <div class="search-bar-vice">
-          <i class="iconfont icon-sousuoicon"></i>
-          <input type="text" class="search-input-vice" maxlength="20" v-model="searchKey">
-          <i class="iconfont icon-guanbiicon" @click="clearInput" v-show="!showSuggestion"></i>
-        </div>
-        <div class="search-btn" @click="handleSearch">搜索</div>
+      <div class="search-type">
+        <div :class="{'active-type':nowType===true}" @click="changeType">宝贝</div>
+        <div :class="{'active-type':nowType===false}" @click="changeType">店铺</div>
       </div>
       <div class="no-search" v-if="!hasSearch">
-        <div class="search-type">
-          <div :class="{'active-type':nowType===true}" @click="changeType">宝贝</div>
-          <div :class="{'active-type':nowType===false}" @click="changeType">店铺</div>
-        </div>
         <div class="suggestion-content" v-if="showSuggestion">
           <div class="history" v-if="historyList.length>0">
             <p class="sub-title">最近搜索</p>
@@ -56,14 +56,25 @@
             </div>
           </router-link>
           <infinite-loading spinner="bubbles" @distance="1" @infinite="loadMore" ref="infiniteLoading">
-            <span slot="no-more">
-              暂无更多数据
-            </span>
+          <span slot="no-more">
+            暂无更多数据
+          </span>
             <span slot="no-results">
-              暂无结果
-            </span>
+            暂无结果
+          </span>
           </infinite-loading>
           <!--<div class="no-result" v-if="resultList.length<1">暂无搜索结果</div>-->
+        </div>
+        <div class="store-search-result">
+          <div class="store-name">
+            <div class="store-name-l">
+              <div><img src="https://qiniu.epipe.cn/5468136217256128512" alt="店铺头像"></div>
+              <div>深圳前海优管旗舰店</div>
+            </div>
+            <div class="store-name-r">进店逛逛</div>
+          </div>
+          <div class="store-flag"></div>
+          <div class="store-goods"></div>
         </div>
       </div>
     </div>
@@ -326,14 +337,18 @@
     padding 0.2rem 0.15rem;
     background: white;
     border-bottom 1px solid #e5e5e5;
+    margin-top 85px;
   }
   .search-type{
-    margin-top 46px;
-    height .4rem;
+    /*margin-top 45px;*/
+    height 40px;
     background #f5f5f5;
     display flex;
     justify-content center;
     justify-items center;
+    position fixed;
+    top 45px;
+    width 100%;
     div{
       flex 1;
       font-size .15rem;
@@ -397,7 +412,7 @@
     color: #b3b3b3;
   }
   .has-search{
-    margin-top 46px;
+    /*margin-top 46px;*/
     background: white;
   }
   .selections{
@@ -406,7 +421,7 @@
     align-items center;
     position fixed;
     left 0;
-    top 45px;
+    top 85px;
     z-index 9;
     width: 100%;
     height: 40px;
@@ -450,6 +465,14 @@
     font-size: 14px;
     line-height: 18px;
     color: #333;
+    display: -webkit-box;
+    /* autoprefixer: off */
+    -webkit-box-orient: vertical;
+    /* autoprefixer: on */
+    -webkit-line-clamp: 2;
+    word-break: break-all;
+    overflow: hidden;
+  
   }
   .goods-opr{
     display flex;
@@ -481,12 +504,25 @@
   }
   .search-result{
     -webkit-overflow-scrolling: touch;
-    padding-top 40px;
+    padding-top 125px;
   }
   .no-result{
     text-align: center;
     height: 1rem;
     line-height: 1rem;
     color: #999;
+  }
+  .store-search-result{
+    padding .08rem .15rem .15rem .15rem;
+    .store-name{
+      overflow hidden;
+      .store-name-l{
+        float left;
+        
+      }
+      .store-name-r{
+        float right;
+      }
+    }
   }
 </style>
