@@ -73,8 +73,15 @@
             </div>
             <div class="store-name-r">进店逛逛</div>
           </div>
-          <div class="store-flag"></div>
-          <div class="store-goods"></div>
+          <div class="store-flag">
+            <div>5年老店</div>
+            <div>收藏人数2150</div>
+          </div>
+          <div class="store-goods">
+            <div><img src="https://qiniu.epipe.cn/5468136217256128512" alt=""></div>
+            <div><img src="https://qiniu.epipe.cn/5468136217256128512" alt=""></div>
+            <div><img src="https://qiniu.epipe.cn/5468136217256128512" alt=""></div>
+          </div>
         </div>
       </div>
     </div>
@@ -514,14 +521,75 @@
   }
   .store-search-result{
     padding .08rem .15rem .15rem .15rem;
+    overflow hidden;
     .store-name{
       overflow hidden;
+      position relative;
       .store-name-l{
         float left;
-        
+        div:first-child{
+          width .3rem;
+          height .3rem;
+          border-radius 1px;
+          float left;
+          img{
+            width 100%;
+            height 100%;
+          }
+        }
+        div:last-child{
+          float left;
+          font-size .14rem;
+          color #333;
+          line-height .3rem;
+          margin-left .1rem;
+          font-weight bold;
+        }
       }
       .store-name-r{
         float right;
+        width .6rem;
+        height .23rem;
+        line-height .23rem;
+        border 1px solid #d74a45;
+        border-radius .2rem;
+        font-size .12rem;
+        color #d74a45;
+        text-align  center;
+        position absolute;
+        right 0;
+        top 50%;
+        transform translateY(-50%);
+      }
+    }
+    .store-flag{
+      margin-top .08rem;
+      overflow hidden;
+      div{
+        float left;
+        margin-right .1rem;
+        padding .08rem .1rem;
+        font-size .12rem;
+        color #999;
+        background #f5f5f5;
+        text-align center;
+        border-radius .2rem;
+      }
+    }
+    .store-goods{
+      margin-top .1rem;
+      display flex;
+      overflow hidden;
+      div{
+        flex 1;
+        margin-right .06rem;
+        img{
+          height 100%;
+          width 100%;
+        }
+      }
+      div:last-child{
+        margin-right 0;
       }
     }
   }

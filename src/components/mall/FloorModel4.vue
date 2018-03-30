@@ -87,10 +87,11 @@
         line-height: .18rem;
         color: #666;
         display: -webkit-box;
-        -webkit-box-orient: vertical;
+      /* autoprefixer: off */
+      -webkit-box-orient: vertical;
+      /* autoprefixer: on */
         -webkit-line-clamp: 2;
         overflow: hidden;
-        height:.36rem;
     }
     .item-sub{
       display flex;
