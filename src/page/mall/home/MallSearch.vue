@@ -423,6 +423,13 @@
     font-size: 14px;
     line-height: 18px;
     color: #333;
+    display: -webkit-box;
+    /* autoprefixer: off */
+    -webkit-box-orient: vertical;
+    /* autoprefixer: on */
+    -webkit-line-clamp: 2;
+    word-break: break-all;
+    overflow: hidden;
   }
   .goods-opr{
     display flex;
