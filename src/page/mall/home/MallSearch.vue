@@ -39,7 +39,7 @@
           <div class="selection-item" @click="handleSorting('salenum')">销量优先</div>
           <div class="selection-item" @click="handleSorting('goodsStorePrice')">价格优先</div>
         </div>
-        <div class="search-result" ref="result">
+        <div class="search-result" ref="result" v-if="nowType">
           <router-link :to="{path:'/goodsdetail',query:{goodsId: item.goodsId}}" class="result-item" v-for="(item,index) in resultList" :key="index" v-if="resultList.length>0">
             <div class="goods-picture">
               <img :src="imgPrefix + item.goodsImage" alt="商品">
@@ -65,23 +65,35 @@
           </infinite-loading>
           <!--<div class="no-result" v-if="resultList.length<1">暂无搜索结果</div>-->
         </div>
-        <div class="store-search-result">
-          <div class="store-name">
-            <div class="store-name-l">
-              <div><img src="https://qiniu.epipe.cn/5468136217256128512" alt="店铺头像"></div>
-              <div>深圳前海优管旗舰店</div>
+        <div class="store-search" v-else>
+          <router-link :to="{path:'/goodsdetail',query:{goodsId: item.goodsId}}"  v-for="(item,index) in resultListStore" :key="index" v-if="resultListStore.length>0"  class="store-search-result">
+            <div class="store-name">
+              <div class="store-name-l">
+                <div>
+                  <img :src="imgPrefix+item.storeImg" alt="店铺头像" v-if="item.storeImg">
+                  <img :src="imgUrl" alt="店铺头像" v-else>
+                </div>
+                <div>{{item.storeName}}</div>
+              </div>
+              <div class="store-name-r">进店逛逛</div>
             </div>
-            <div class="store-name-r">进店逛逛</div>
-          </div>
-          <div class="store-flag">
-            <div>5年老店</div>
-            <div>收藏人数2150</div>
-          </div>
-          <div class="store-goods">
-            <div><img src="https://qiniu.epipe.cn/5468136217256128512" alt=""></div>
-            <div><img src="https://qiniu.epipe.cn/5468136217256128512" alt=""></div>
-            <div><img src="https://qiniu.epipe.cn/5468136217256128512" alt=""></div>
-          </div>
+            <div class="store-flag">
+              <div>{{item.storeOpenTime}}年老店</div>
+              <div>收藏人数{{item.favNum}}</div>
+            </div>
+            <div class="store-goods">
+              <div v-for="(obj,index2) in item.goodsList" :key="index2"><img :src="imgPrefix + obj.goodsImage" alt=""></div>
+            </div>
+          </router-link>
+          <infinite-loading spinner="bubbles" @distance="1" @infinite="loadMoreStore" ref="infiniteLoading">
+          <span slot="no-more">
+            暂无更多数据
+          </span>
+            <span slot="no-results">
+            暂无结果
+          </span>
+          </infinite-loading>
+          <!--<div class="no-result" v-if="resultList.length<1">暂无搜索结果</div>-->
         </div>
       </div>
     </div>
@@ -90,6 +102,7 @@
 
 <script>
   const InfiniteLoading = () => import("vue-infinite-loading");
+  const imgUrl = require("../../../assets/defaultStore.png");
   export default{
     name: "Search",
     components:{
@@ -101,6 +114,7 @@
         searchKey: this.$route.query.key || "",
         hasSearch: false,
         resultList: [],
+	      resultListStore:[],
         imgPrefix: "",
         historyList: localStorage.getItem("historySearch") ? localStorage.getItem("historySearch").split(',') : [],
         hotList: [],
@@ -110,7 +124,8 @@
         pageNo: 1,
         order: "",
         sortField: "",
-	      nowType:true
+	      nowType:true,
+	      imgUrl:imgUrl
       }
     },
     watch:{
@@ -205,9 +220,37 @@
           });
         },200);
       },
+      //加载数据店铺
+	    loadMoreStore($state){
+		    setTimeout(() =>{
+			    this.axios.post(this.baseURL.mall+"/m/search/storeSearch"+this.Service.queryString({
+				    keyword: this.searchKey,
+				    pageNo: this.pageNo,
+            pageSize:10,
+				    sortField: this.sortField || "",
+				    sortOrder: this.order || ""
+			    })).then(res =>{
+				    console.log("搜索结果",res);
+				    if(res.data.h.code === 200){
+					    if( res.data.b.storeList.length<1){
+						    $state.complete();
+						    console.log(this.resultListStore.length);
+					    }else{
+						    this.pageNo ++;
+						    this.imgPrefix = res.data.b.imgPrefix;
+						    this.resultListStore = this.resultList.concat(res.data.b.storeList);
+						    $state.loaded();
+					    }
+				    }else{
+					    $state.complete();
+				    }
+			    });
+		    },200);
+      },
       changeFilter() {
         this.pageNo = 1;
         this.resultList = [];
+        this.resultListStore=[];
         this.$nextTick(() => {
           this.$refs.infiniteLoading.$emit('$InfiniteLoading:reset');
         });
@@ -215,6 +258,7 @@
       handleSuggestion(key){
         this.searchKey = key;
         this.resultList = [];
+        this.resultListStore=[];
         this.handleSearch();
       },
       /*请求热门搜索关键字*/
@@ -351,6 +395,7 @@
     height 40px;
     background #f5f5f5;
     display flex;
+    z-index 10;
     justify-content center;
     justify-items center;
     position fixed;
@@ -420,7 +465,7 @@
   }
   .has-search{
     /*margin-top 46px;*/
-    background: white;
+    //background: white;
   }
   .selections{
     display flex;
@@ -512,6 +557,7 @@
   .search-result{
     -webkit-overflow-scrolling: touch;
     padding-top 125px;
+    background #fff;
   }
   .no-result{
     text-align: center;
@@ -519,9 +565,15 @@
     line-height: 1rem;
     color: #999;
   }
+  .store-search{
+    margin-top 125px;
+  }
   .store-search-result{
     padding .08rem .15rem .15rem .15rem;
     overflow hidden;
+    margin-top .1rem;
+    display block;
+    background #fff;
     .store-name{
       overflow hidden;
       position relative;
@@ -592,5 +644,8 @@
         margin-right 0;
       }
     }
+  }
+  .store-search-result:first-child{
+    margin-top 0;
   }
 </style>
