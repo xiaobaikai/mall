@@ -36,6 +36,7 @@ export default {
             obj.title = Util.Title_format(item.title);
             obj.imageUrl = item.coverImgUrl;
             obj.text = Util.Title_format(item.summary.slice(0,40));
+            obj.collectState = item.collectState;
             let data = JSON.stringify(obj)
             window.location.href = "epipe://?&mark=newsdetail&title=" + obj.title + "&_id=" + item.id+'TTTTTT&data='+data;
             }

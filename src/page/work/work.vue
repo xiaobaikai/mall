@@ -200,6 +200,7 @@
         </div>
       </div>
 
+
  		 <div class="tab_work_con">
         <ul class="tab_work_3con first_tab_work_3con">
           <li @click="go_unfinishAffairs">
@@ -664,7 +665,9 @@
         window["epipe_affairs_callback"] = () => {
             vm.getAffairs();
         }
+
       },
+
     },
  
     mounted(){

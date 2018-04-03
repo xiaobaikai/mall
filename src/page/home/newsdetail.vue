@@ -50,36 +50,43 @@
     },
     mounted() {
       let _id = this.$route.query.id
-      let that = this;
-      if (_id.indexOf("TTTTTT")>0) {
-        console.log(_id)
-        _id=_id.replace("TTTTTT",'');
+       let that = this;
+      // if (_id.indexOf("TTTTTT")>0) {
+        
+      //   _id=_id.replace("TTTTTT",'');
         
         this.home = true;
         //改版头条
-        this.axios.get(this.Service.host + this.Service.detailNewHomeNews + _id).then(function (data) {
-          console.log(data.data)
+        this.axios.get('/content/getDetails?resId='+_id).then(function (data) {
+    
           if (data.data.b) {
             that.is_show = true;
             that.detail = data.data.b
             that.content = data.data.b.contents
             document.title = that.detail.title;
+
+            let obj = {};
+            obj.collectId = that.detail.collectId;
+            obj.collectState = that.detail.collectState;
+            let dataStr = JSON.stringify(obj)
+            console.log(dataStr)
+            window.location.href = "epipe://?&mark=isCollect"+'&data='+dataStr;
           }
         })
-      } else {
-        //首页头条
-        this.axios.get(this.Service.content_Detail, {
-          params: {
-            headlineId: _id
-          }
-        }).then(function (data) {
-          if (data.data.b) {      
-            that.is_show = true;
-            document.title = data.data.b.title;
-            that.content = Util.HTMLDecode(data.data.b.content)
-          }
-        })
-      }
+      // } else {
+      //   //首页头条
+      //   this.axios.get(this.Service.content_Detail, {
+      //     params: {
+      //       headlineId: _id
+      //     }
+      //   }).then(function (data) {
+      //     if (data.data.b) {      
+      //       that.is_show = true;
+      //       document.title = data.data.b.title;
+      //       that.content = Util.HTMLDecode(data.data.b.content)
+      //     }
+      //   })
+      // }
     }
   }
 </script>

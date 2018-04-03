@@ -44,11 +44,11 @@
         </div>
 
         <div class="search_res" v-if="!isShowPrompt">
-               <text-template v-for="item in searchData" v-if="item.resType"  :item="item"></text-template>
+               <text-template v-for="item in searchData"  :item="item"></text-template>
                <div class="no-more" v-if="!searchData.length">
                     暂无结果
                 </div>
-               <infinite-loading  v-if='searchData.length' spinner="bubbles" :on-infinite="onInfinite" ref="infiniteLoading">
+               <infinite-loading type='0' v-if='searchData.length' spinner="bubbles" :on-infinite="onInfinite" ref="infiniteLoading">
                     <span slot="no-more">
                     暂无更多加载
                     </span>
@@ -79,7 +79,7 @@ export default {
     mounted(){
         this.getHistory()
         let that = this;
-        this.axios.get('http://192.168.3.29:8280/member/v1/content/select/keyWord').then(function(res){
+        this.axios.get('/content/select/keyWord').then(function(res){
             if(res.data.h.code==200){
                 that.words = res.data.b.words;
             }
@@ -87,24 +87,23 @@ export default {
     },
     methods:{
         onInfinite(){
-       
+          
             let that = this;
 
             //首页头条
             setTimeout(() => {
-                that.axios.get('http://192.168.3.29:8280/member/v1/content/search?keyWord='+this.inputVal, {
+                that.axios.get('/content/search?keyWord='+this.inputVal, {
                     params: {
                     pageSize: 10,
                     lastId: that.searchData[(that.searchData.length) - 1].resId
                     }
                 }).then(function (data) {
-                    
                     if (data.data.b.length == 0) {
                    
                     that.$refs.infiniteLoading.$emit('$InfiniteLoading:complete');
                     } else if (data.data.b) {
-                    that.searchData = that.searchData.concat(data.data.b)
-                    that.$refs.infiniteLoading.$emit('$InfiniteLoading:loaded');
+                        that.searchData = that.searchData.concat(data.data.b)
+                        that.$refs.infiniteLoading.$emit('$InfiniteLoading:loaded');
                     }
                 })
             }, 200);
@@ -113,7 +112,9 @@ export default {
             window.location.href = "epipe://?&mark=history_back";
         },
         getHistory(){ //获取历史记录
-            this.historyData = localStorage.getItem('homeSearch').split('|')
+            let str = localStorage.getItem('homeSearch')
+            if(!str) return
+            this.historyData = str.split('|')
         },
         setHistory(str){ //存入历史记录
 
@@ -150,7 +151,7 @@ export default {
             this.$refs.input.blur();
             this.setHistory(this.inputVal)
             let that = this;
-            this.axios.get('http://192.168.3.29:8280/member/v1/content/search?keyWord='+this.inputVal).then(function(res){
+            this.axios.get('/content/search?keyWord='+this.inputVal).then(function(res){
                 that.searchData = res.data.b;
             })
 

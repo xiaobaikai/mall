@@ -34,6 +34,7 @@
         obj.title = Util.Title_format(item.title)   
         obj.imageUrl = item.coverImg;
         obj.text = Util.Title_format(item.content.slice(0,40));
+        obj.collectState = item.collectState;
         let data = JSON.stringify(obj)
         console.log(item.id)
         window.location.href = "epipe://?&mark=newsdetail&title=" + obj.title + "&_id=" + item.id+'&data='+data;

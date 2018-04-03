@@ -20,7 +20,6 @@
 
     </section>
 </template>
-
 <script>
 import Util from '../../js/Util.js'
 import TopHead  from '../../components/topheader.vue'  //header导航栏
@@ -37,8 +36,8 @@ export default {
             obj.imageUrl = item.coverImgUrl;
             obj.text = Util.Title_format(item.summary);
             let data = JSON.stringify(obj)
-            console.log(item,data);
-            window.location.href = "epipe://?&mark=newsdetail&title=" + obj.title + "&_id=" + item.id+'TTTTTT&data='+data;
+         
+            window.location.href = "epipe://?&mark=newsdetail&title=" + obj.title + "&_id=" + item.id+'&data='+data;
             }
         },
         mounted(){
@@ -48,7 +47,6 @@ export default {
             .then(function(res){
                   if(res.data.h.code == 200){
                     that.dataArr = res.data.b;
-                    console.log(that.dataArr)
                   }  
             })
         },

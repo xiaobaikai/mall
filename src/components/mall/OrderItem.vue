@@ -34,9 +34,7 @@
       <div class="btn-wrapper" v-show="showBtn" v-else-if="obj.orderState === 10">
           <div class="btn">订单详情</div>
           <div class="btn" @click.stop.prevent="cancleOrder">取消订单</div>
-          
           <div class="btn btn-pay" @click.stop.prevent="wepay" v-if="!isNotApp">微信支付</div>
-          
           <form  :action="formUrl" method="post"  v-if="isNotApp">
               <input type="hidden" v-model="token" name="token">
               <input type="hidden" v-model="obj.orderSn" name="orderSn">

@@ -2,10 +2,10 @@
  * Created by lenovo on 2017/6/12.
  */
 const Service = {
-  host: "http://3msapi.epipe.cn/api",
-  // host: "http://192.168.3.166:8181/api",
+  // host: "http://3msapi.epipe.cn/api",
+  host: "http://192.168.3.166:8181/api", //测试
   newHomeNews: "/topnews/getWaterfallPagedList",//新版首页新闻
-  detailNewHomeNews: "/resourceMain/getDetails/",//新版首页新闻详情
+  detailNewHomeNews: "/content/getDetails",//新版首页新闻详情
   content_show: "/content/show/index", //首页广告图
   category_banner: "/content/show/index", //二级页面广告图
   content_headline: "/content/headline/list", //新闻 分页
@@ -43,7 +43,8 @@ const Service = {
   saveLeave : '/work/leave/apply/save', //请假申请
   leaveUpdate : '/work/leave /update', //同意，拒绝，撤销请假
   affairsList:'/work/unhandle/list',//待办 已办事宜
-  resource : "http://3msapi.epipe.cn/api/resourceMain/getWaterfallPagedListByProgramCode?programCodes=",  //首页的 专家库、专业机构、行情、访谈
+  resource :'/content/getPagedListByProgramCode?programCodes=', //首页的 专家库、专业机构、行情、访谈
+  // resource : "http://3msapi.epipe.cn/api/resourceMain/getWaterfallPagedListByProgramCode?programCodes=",  //首页的 专家库、专业机构、行情、访谈
   // resource : "http://192.168.3.166:8181/api/resourceMain/getWaterfallPagedListByProgramCode?programCodes=",
   queryString: function (params, postFlag) {
     let paramUrl = "";

@@ -36,7 +36,7 @@
             obj.text = Util.Title_format(item.summary)
             let data = JSON.stringify(obj)
        
-            window.location.href = "epipe://?&mark=newsdetail&title=" + obj.title + "&_id=" + item.id+'TTTTTT&data='+data;
+            window.location.href = "epipe://?&mark=newsdetail&title=" + obj.title + "&_id=" + item.id+'&data='+data;
             }
         },
         mounted(){

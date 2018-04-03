@@ -25,7 +25,7 @@ const Util = {
   },
   Title_format: function (str) {  //去除标题里面的乱码
     if(!str){
-      return '';
+      return ''
     }
     var arrEntities={'lt':'<','gt':'>','nbsp':' ','amp':'&','quot':'"','ldquo':'"','rdquo':'"','mdash':'_','middot':'·','hellip':'......','rsquo':"'",'lsquo':"'"};
     str = str.replace(/&(lt|gt|nbsp|amp|quot|ldquo|rdquo|mdash|middot|hellip|rsquo|lsquo);/ig,function(all,t){ return arrEntities[t]});
@@ -89,6 +89,6 @@ const Util = {
       str = location.href.slice(location.href.indexOf(str)+len)
       return str = str.slice(0,( str.indexOf('&')))
 
-  },
+  }
 }
 module.exports = Util

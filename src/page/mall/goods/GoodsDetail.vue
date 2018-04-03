@@ -483,15 +483,23 @@
         color #333;
         line-height .24rem;
         text-align justify;
+        display: -webkit-box;
+        /* autoprefixer: off */
+        -webkit-box-orient: vertical;
+        /* autoprefixer: on */
+        -webkit-line-clamp: 2;
+        word-break: break-all;
+        overflow: hidden;
+<<<<<<< HEAD
+=======
+  
+>>>>>>> 63194bc4ba4866a8474f45c7c1750e2cb0ecd995
       }
       div{
-        margin-top .36rem;
+        margin-top .15rem;
         span{
           color #d74a45;
-          font-size .16rem;
-        }
-        span:first-child{
-          font-size .12rem;
+          font-size .18rem;
         }
       }
     }

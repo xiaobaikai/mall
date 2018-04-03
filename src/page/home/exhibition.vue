@@ -36,7 +36,7 @@
         let obj = {};
         obj.title = title;
         obj.imageUrl = item.coverImg;
-        obj.text = Util.Title_format(item.content.slice(0,40));
+        obj.text = Util.Title_format(item.summary);
         let data = JSON.stringify(obj)
         window.location.href = "epipe://?&mark=newsdetail&title=" + title + "&_id=" + item.id+'&data='+data;
       },
@@ -44,7 +44,7 @@
         let that = this;
         //首页头条
         console.log(pageNo)
-        this.axios.get(this.Service.content_headline, {
+        this.axios.get(that.Service.resource + '国际展会', {
           params: {
             type: 3,
             pageSize: 5,
@@ -57,7 +57,7 @@
             }
             if (data.data.b) {
               pageNo++
-              that.newsData = that.newsData.concat(data.data.b.data)
+              that.newsData = that.newsData.concat(data.data.b)
               that.$refs.infiniteLoading.$emit('$InfiniteLoading:loaded');
             }
           }, 700);
@@ -74,7 +74,7 @@
     mounted(){
       let that = this;
       //展会
-      this.axios.get(this.Service.content_headline, {
+      this.axios.get(that.Service.resource + '国际展会', {
         params: {
           type: 3,
           pageSize: 5,
@@ -83,11 +83,10 @@
       }).then(function (data) {
         console.log(data)
         if (data.data.b) {
-          that.newsData = data.data.b.data
-          window.localStorage.exhibition = JSON.stringify(data.data.b.data)
+          that.newsData = data.data.b
+          window.localStorage.exhibition = JSON.stringify(data.data.b)
         }
-      }).catch(function (error) {
-      });
+      })
     }
   }
 </script>
