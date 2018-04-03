@@ -8,8 +8,8 @@ axios.defaults.timeout = 5000;
 
 const dev = 'http://192.168.3.166:8280/member/v1'; //测试
 const product = "http://app.epipe.cn:18080/member/v1"; //正式
-// axios.defaults.baseURL = window.location.href.indexOf("app.epipe.cn")>0 ? product : dev;
-axios.defaults.baseURL = product;
+axios.defaults.baseURL = window.location.href.indexOf("app.epipe.cn")>0 ? product : dev;
+// axios.defaults.baseURL = product;
 
 function getCookie(name) {
   var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");

@@ -89,6 +89,7 @@ const ReturnList = r => require.ensure([], () => r(require('@/page/mall/user/Ret
 const RefundList = r => require.ensure([], () => r(require('@/page/mall/user/RefundList.vue')), 'mall-user')
 
 const StoreSearch = r => require.ensure([], () => r(require('@/page/mall/store/StoreSearch.vue')), 'mall-store')
+const StoreHome = r => require.ensure([], () => r(require('@/page/mall/store/StoreHome.vue')), 'mall-store')
 
 const Affairs = r => require.ensure([], () => r(require('@/page/work/affairs.vue')), 'group-work')
 const Leave = r => require.ensure([], () => r(require('@/page/work/leave.vue')), 'group-work')
@@ -440,6 +441,10 @@ export default new Router({
 	  {
 	  	path: '/storesearch', //商城店铺搜索
 		  component: StoreSearch
+	  },
+	  {
+		  path: '/storehome', //商城店铺首页
+		  component: StoreHome
 	  },
     {
       path: '/affairs',  //OA事宜
