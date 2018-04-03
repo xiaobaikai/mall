@@ -480,9 +480,12 @@
     word-break: break-all;
     overflow: hidden;
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
   
 >>>>>>> 63194bc4ba4866a8474f45c7c1750e2cb0ecd995
+=======
+>>>>>>> 33bd1a4a590a7c74bb9b554cf74effbeed804f03
   }
   .goods-opr{
     display flex;
