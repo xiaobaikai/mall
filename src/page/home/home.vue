@@ -2,24 +2,20 @@
   <!--<vue-pull-refresh :on-refresh="onRefresh">-->
   <div>
     <section class="home">
-      <!--<wc-swiper style="min-height: 1.59rem" @transitionend="transitionend">-->
-        <!--<wc-slide v-for="(banner,value) in banners" :key="value">-->
-          <!--<div>-->
-            <!--<img style="width: 100%;display: block;" @click="go_newsdetail(banner)" :src=banner.imgUrl>-->
-          <!--</div>-->
-        <!--</wc-slide>-->
-        <!--<pagination :dots="banners.length" :active="currentSlide" slot="pagination"/>-->
-      <!--</wc-swiper>-->
+  
       <div class="header">
             <div class="search-main">
-                <div class="search">
-                    <div class="search_icon">
+                <div class="search"  @click="go_search()">
+                    <!-- <div class="search_icon">
                         
-                    </div>
-                    <input ref="input"  type="text" @click="go_search()"  placeholder="请输入关键字">
+                    </div> -->
+                    <svg style="width: 0.15rem;height: 0.15rem;color:#666" class="icon" aria-hidden="false">
+                          <use xlink:href="#icon-sousuo"></use>
+                        </svg>
+                    <input ref="input"  disabled  type="text"  placeholder="请输入关键字">
                 </div>
             </div>
-            
+
         </div>
       <div class="banner-wrapper">
         <carousel-3d :autoplay="true" :autoplayTimeout="5000" :autoplayHoverPause="true" :width="config.width" :height="config.height" :border="0" :perspective="0">
@@ -30,73 +26,34 @@
       </div>
       <ul class="home_nav_top">
         <li @click="go_mall">
-          <div style="background: -webkit-linear-gradient(top, #fac370 0%,#ffa51e 100%);">
+          <div style="background: -webkit-linear-gradient(top, #fd535b 0%,#fc757e 100%);">
             <svg style="width: 0.22rem;height: 0.22rem" class="icon" aria-hidden="false">
-              <use xlink:href="#icon-hangqing"></use>
+              <use xlink:href="#icon-shangcheng"></use>
             </svg>
           </div>
-          <div>优优商城</div>
+          <div>优管优选</div>
         </li>
-        <li @click="go_exhibition">
-          <div style="background: -webkit-linear-gradient(top, #51cdfc 0%,#27b1eb 100%);">
+
+         <li @click="go_tender">
+          <div  style="background: -webkit-linear-gradient(top, #51cdfc 0%,#27b1eb 100%);">
             <svg style="width: 0.22rem;height: 0.22rem" class="icon" aria-hidden="false">
-              <use xlink:href="#icon-zhanhui"></use>
+              <use xlink:href="#icon-zhuanjiaku"></use>
             </svg>
           </div>
-          <div>展会</div>
+          <div>优管专题</div>
         </li>
-        <li @click="go_supply">
-          <div style="background: -webkit-linear-gradient(top, #fc757e 0%,#fd535b 100%);">
-            <svg style="width: 0.22rem;height: 0.22rem" class="icon" aria-hidden="false">
-              <use xlink:href="#icon-gongxu"></use>
-            </svg>
-          </div>
-          <div>供需</div>
-        </li>
+       
         <li @click="go_tender">
           <div style="background: -webkit-linear-gradient(top, #45e3b5 0%,#22be8e 100%);">
             <svg style="width: 0.22rem;height: 0.22rem" class="icon" aria-hidden="false">
               <use xlink:href="#icon-zhaotoubiao"></use>
             </svg>
           </div>
-          <div>招投标</div>
+          <div>优投标</div>
         </li>
       
         </ul>
-        <ul class="home_nav_top">
-          <li @click="go_market">
-          <div style="background: -webkit-linear-gradient(top, #fac370 0%,#ffa51e 100%);">
-            <svg style="width: 0.22rem;height: 0.22rem" class="icon" aria-hidden="false">
-              <use xlink:href="#icon-hangqing"></use>
-            </svg>
-          </div>
-          <div>行情</div>
-        </li>
-        <li @click="go_interview">
-          <div style="background: -webkit-linear-gradient(top, #45e3b5 0%,#22be8e 100%);">
-            <svg style="width: 0.22rem;height: 0.22rem" class="icon" aria-hidden="false">
-              <use xlink:href="#icon-fangtan"></use>
-            </svg>
-          </div>
-          <div>访谈</div>
-        </li>
-        <li @click="go_expert">
-          <div style="background: -webkit-linear-gradient(top, #51cdfc 0%,#27b1eb 100%);">
-            <svg style="width: 0.22rem;height: 0.22rem" class="icon" aria-hidden="false">
-              <use xlink:href="#icon-zhuanjiaku"></use>
-            </svg>
-          </div>
-          <div>专家库</div>
-        </li>
-        <li @click="go_specialistAgencies">
-          <div style="background: -webkit-linear-gradient(top, #fd535b 0%,#fc757e 100%);">
-            <svg style="width: 0.22rem;height: 0.22rem" class="icon" aria-hidden="false">
-              <use xlink:href="#icon-zhuanyejigou"></use>
-            </svg>
-          </div>
-          <div>专业机构</div>
-        </li>
-      </ul>
+       
       <div class="home_title_con1">
         <div></div>
         <div>头条</div>
@@ -172,19 +129,17 @@
     },
     methods: {
       onInfinite(){
-    
         let that = this;
         //首页头条
         setTimeout(() => {
-          that.axios.get(that.Service.host + that.Service.newHomeNews, {
+          that.axios.get('/content/getWaterfallPagedList', {
             params: {
               pageSize: 10,
               lastId: that.newsData[(that.newsData.length) - 1].id
             }
           }).then(function (data) {
-            console.log(data)
             if (data.data.b.length == 0) {
-              console.log("加载完了")
+           
               that.$refs.infiniteLoading.$emit('$InfiniteLoading:complete');
             } else if (data.data.b) {
               that.newsData = that.newsData.concat(data.data.b)
@@ -193,34 +148,17 @@
           })
         }, 200);
       },
-      go_exhibition(){ //首页跳展会
-        window.location.href = "epipe://?&mark=exhibition"
-      },
-      go_supply(){  //首页跳供需
-        window.location.href = "epipe://?&mark=supply"
-      },
       go_tender(){  //首页跳招投标
         window.location.href = "epipe://?&mark=tender"
-      },
-      go_market(){ //首页跳行情
-        window.location.href = "epipe://?&mark=market"
-      },
-      go_interview(){ //首页跳访谈
-        window.location.href = "epipe://?&mark=interview"
-      },
-      go_expert(){ //首页跳专家库
-        window.location.href = "epipe://?&mark=expert"
-      },
-      go_specialistAgencies(){ //首页跳专业机构
-        window.location.href = "epipe://?&mark=specialistAgencies"
       },
       go_mall(){  //首页跳商城
         window.location.href = "epipe://?&mark=mallhome"
       },
       go_newsdetail(item){
+        
         if (item.h5Uri != "" && item.h5Uri) {
           let title = Util.Title_format(item.title)
-          console.log("epipe://?&mark=newsdetail&title=" + title + "&url=" + item.h5Uri)
+       
           window.location.href = "epipe://?&mark=newsdetail&title=" + title+'&data='+ data + "&url=" + item.h5Uri;
         } else if (item.url) {
           if (item.url != "#") {
@@ -229,30 +167,32 @@
             obj.title = title;
             obj.imageUrl = item.imgUrl;
             obj.text = '';
+            obj.collectState = item.collectState;
+            obj.collectId = item.collectId;
             let data = JSON.stringify(obj)
             window.location.href = "epipe://?&mark=newsdetail&title=" + obj.title + "&url=" + item.url;
           }
         } else {
-          console.log("epipe://?&mark=newsdetail&title=" + title + "&_id=" + item.id)
+        
           let title = Util.Title_format(item.title)
           window.location.href = "epipe://?&mark=newsdetail&title=" + title + "&_id=" + item.id;
         }
       },
       go_news(item){
-
         let title = Util.Title_format(item.resTitle);
         let obj = {};
         obj.title = title;
         obj.imageUrl = item.coverImgUrl;
         obj.text = Util.Title_format(item.summary);
         let data = JSON.stringify(obj)
-        window.location.href = `epipe://?&mark=newsdetail&title=${title}&_id=${item.resId}TTTTTT`+'&data='+data;
+    
+        window.location.href = `epipe://?&mark=newsdetail&title=${title}&_id=${item.resId}`+'&data='+data;
       },
       transitionend (current) {
         this.currentSlide = current;
       },
       go_search(){
-        window.location.href ="epipe://?mark=homeSearch"
+        window.location.href ="epipe://?&mark=homeSearch"
       }
     },
     created(){
@@ -261,7 +201,6 @@
       }
       if (window.localStorage.newsData) {
         this.newsData = JSON.parse(window.localStorage.newsData)
-        console.log(this.newsData)
       }
       /*根据屏幕分辨率设置轮播图大小*/
       const deviceWidth = document.body.clientWidth;
@@ -282,12 +221,15 @@
         }
       })
       //首页头条
-      this.axios.get(this.Service.host + this.Service.newHomeNews, {
+      // this.axios.get(this.Service.host + this.Service.newHomeNews, {
+       
+        this.axios.get('/content/getWaterfallPagedList', {
         params: {
           pageSize: 10,
           lastId: ""
         }
       }).then(function (data) {
+      
         if (data.data.b) {
           that.newsData = data.data.b
           window.localStorage.newsData = JSON.stringify(that.newsData)
@@ -436,7 +378,7 @@
   }
 
   .home_nav_top li {
-    width:25%;
+    width:33.33%;
     font-size: 0.14rem;
     align-items: center;
     display: flex;
@@ -475,6 +417,7 @@
     width 0.14rem
     border-radius 0.6rem
   }
+  
   .sub-desc{
     display: flex;
     justify-content space-between;
@@ -486,6 +429,7 @@
         height 0.44rem;
         box-sizing: border-box;
         line-height 0.3rem;
+        background-color #fff;
 
 
         .search-main{
@@ -505,25 +449,27 @@
                 position absolute;
                 width:0.15rem;
                 height 0.15rem;
-                background-image url(../../assets/search_icon.png)
-                background-size 0.15rem 0.15rem;
                 top:8px;
                 left:10px;
             }
 
+            svg{
+              margin-left 0.2rem;
+            }
+
             input{
                 position absolute;
-                width 2.1rem;
+                width 1.5rem;
                 height 100%;
                 color #fff;
                 font-size 0.14rem;
                 border none;
                 outline none;
-                left:0.3rem;
+                left:0.6rem;
                 background-color:rgba(0,0,0,0);
             }
             input::-webkit-input-placeholder{
-            color:#fff;
+            color:#666;
             }
             input::-moz-placeholder{  
                 color:#fff;

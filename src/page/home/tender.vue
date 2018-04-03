@@ -2,7 +2,7 @@
   <section>
     <ul v-for="item in newsData" @click="go_newsdetail(item)" class="tender_div1">
       <li class="over_width" v-html="item.title"></li>
-      <li class="simple-ellipsis" v-html="item.content"></li>
+      <li class="simple-ellipsis" v-html="item.summary"></li>
     </ul>
     <infinite-loading spinner="bubbles" :on-infinite="onInfinite" ref="infiniteLoading">
     <span slot="no-more">
@@ -30,17 +30,17 @@
     },
     methods: {
       go_newsdetail(item){
+
         let obj = {};
         obj.title = Util.Title_format(item.title);
         obj.imageUrl = item.coverImg;
         obj.text =  Util.Title_format(item.content.slice(0,40));
         let data = JSON.stringify(obj)
-        
         window.location.href = "epipe://?&mark=newsdetail&title=" + obj.title + "&_id=" + item.id+'&data='+data;
       }, onInfinite(){
         let that = this;
         //招投标
-        this.axios.get(this.Service.content_headline, {
+        this.axios.get(that.Service.resource + '招投标信息', {
           params: {
             type: 2,
             pageSize: 8,
@@ -53,10 +53,10 @@
             }
             if (data.data.b) {
               pageNo++
-              for (let i = 0; i < data.data.b.data.length; i++) {
-                data.data.b.data[i].content = Util.HTMLDecode(data.data.b.data[i].content).replace(/<[^>]+>/g, "").replace(/\s/g, "")
+              for (let i = 0; i < data.data.b.length; i++) {
+                data.data.b[i].content = Util.HTMLDecode(data.data.b[i].content).replace(/<[^>]+>/g, "").replace(/\s/g, "")
               }
-              that.newsData = that.newsData.concat(data.data.b.data)
+              that.newsData = that.newsData.concat(data.data.b)
               that.$refs.infiniteLoading.$emit('$InfiniteLoading:loaded');
             }
           }, 700);
@@ -73,7 +73,7 @@
     mounted() {
       var that = this;
       //首页头条
-      this.axios.get(this.Service.content_headline, {
+      this.axios.get(that.Service.resource + '招投标信息', {
         params: {
           type: 2,
           pageSize: 8,
@@ -81,12 +81,12 @@
         }
       }).then(function (data) {
         if (data.data.b) {
-          for (let i = 0; i < data.data.b.data.length; i++) {
-            data.data.b.data[i].content = Util.HTMLDecode(data.data.b.data[i].content).replace(/<[^>]+>/g, "").replace(/\s/g, "")
+          for (let i = 0; i < data.data.b.length; i++) {
+            data.data.b[i].content = Util.HTMLDecode(data.data.b[i].content).replace(/<[^>]+>/g, "").replace(/\s/g, "")
           }
-          console.log(data.data.b)
-          that.newsData = data.data.b.data
-          window.localStorage.tender = JSON.stringify(data.data.b.data)
+        
+          that.newsData = data.data.b
+          window.localStorage.tender = JSON.stringify(data.data.b)
         }
       }).catch(function (error) {
       });

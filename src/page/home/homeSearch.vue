@@ -13,7 +13,7 @@
                         
                     </div>
                     <form action="#" @submit.prevent="searchClick()">
-                        <input ref="input" @focus="isShowPrompt=true" type="search"  placeholder="请输入关键字">
+                        <input ref="input" v-model.trim="inputVal" @focus="isShowPrompt=true" type="search" autofocus placeholder="请输入关键字">
                     </form>
                 </div>
             </div>
@@ -26,15 +26,13 @@
             <div class="search_prompt search_hot">
                 <h3>热门搜索</h3>
                 <ul>
-                    <li>你说啊</li>
-                    <li>智慧城市</li>
-                    <li>不然那</li>
+                    <li v-for="item in words" @click="searchClick(item.keyWord)">{{item.keyWord}}</li>
                 </ul>
             </div>
-            <div class="search_prompt search_history">
+            <div class="search_prompt search_history" v-if="historyData.length">
                 <h3>历史搜索</h3>
                 <div class="items" v-for="(item,index) in historyData">
-                    <span>{{item}}</span>
+                    <span @click="searchClick(item)">{{item}}</span>
                     <div class="items_close" @click="delHistory(index)">
                         <svg style="heigth:0.1rem;"  class="icon" aria-hidden="false">
                             <use xlink:href="#icon-x"></use>
@@ -46,114 +44,77 @@
         </div>
 
         <div class="search_res" v-if="!isShowPrompt">
-                <div class="home_content_news-1">
-                    <ul  @click="go_news()" class="home_title_con4">
-                        <div><img src="https://qiniu.epipe.cn/5438816659248766976?imageslim&imageView2/1/w/268/h/160" width="100%"></div>
-                        <div>
-                            <div class="home_title_con5 over_width" >箭头睡懒觉了极是是是发生的发生的乐空间</div>
-                            <div class="home_title_con6 simple-ellipsis">了房间了圣诞节福利雷锋精神的来访接待室了废旧塑料2来得及分类山东矿机</div>
-                            <div class="home_title_con7 over_width sub-desc">
-                                <div>
-                                    <span>国际</span>
-                                    <span>&nbsp; 2018-02-23</span>
-                                </div>
-                                <div>
-                                    <span>&nbsp; 
-                                    <svg style="font-size: 0.15rem;" class="icon" aria-hidden="false">
-                                        <use xlink:href="#icon-yuedu"></use>
-                                    </svg> 200
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </ul>
+               <text-template v-for="item in searchData"  :item="item"></text-template>
+               <div class="no-more" v-if="!searchData.length">
+                    暂无结果
                 </div>
+               <infinite-loading type='0' v-if='searchData.length' spinner="bubbles" :on-infinite="onInfinite" ref="infiniteLoading">
+                    <span slot="no-more">
+                    暂无更多加载
+                    </span>
+                    <span slot="no-results">
+                    暂无结果
+                    </span>
 
-                <div   class="exhit_div">
-                    <img style="border-radius: 0.03rem;overflow: hidden;width: 100%;height: 1.83rem" src="https://qiniu.epipe.cn/5453725696759160832?imageslim&imageView2/1/w/690/h/360" />
-                    <img style="border-radius: 0.03rem;overflow: hidden;width: 100%;height: 1.83rem"  src="../../assets/pic3.png" />
-                    <div>
-                        <span class="over_width">中国碳博会友好城市行走进江苏南京、镇江</span>
-                    </div>
-                </div>
-
-                <ul  @click="go_newsdetail()" class="tender_div1">
-                    <li class="over_width" >几斤几两发你烦烦烦塑料颗粒</li>
-                     <li class="simple-ellipsis">冯老师大家疯了似的解放胜利大街十来份就算了路圣诞节烦死了都放假了圣诞节粉丝滤镜乐山大佛建设路口</li>
-                </ul>
-
-                <div class="item market"  @click="go_newsdetail(value)">
-                    <h2>发顺丰的放松放松</h2>
-                    <div class="item_infor">
-                        <span>2018-6-25</span>
-                        <span class="spanRight">
-                            <svg style="width: 0.2rem;height: 0.14rem" class="icon" aria-hidden="false">
-                                <use xlink:href="#icon-yuedu"></use>
-                            </svg>239
-                        </span>
-                    </div>
-                </div>
-
-                <div class="item interview"  @click="go_newsdetail(item)">
-                    <div class="img-show">
-                        <img src="https://qiniu.epipe.cn/5408433809756454912" />
-                    </div>
-                    <div class="item-content">
-                        <h2>代理商的酸辣粉机</h2>
-                        <div class="item-text">发上来的房间的十来份简历的设计费了圣诞节福利三等奖了房间乱收费教科书的蓝精灵法律手段房间里</div>
-                        <div class="item_infor">
-                            <span>2018-09-20</span>
-                            <span class="spanRight">
-                                <svg style="width: 0.2rem;height: 0.14rem" class="icon" aria-hidden="false">
-                                    <use xlink:href="#icon-yuedu"></use>
-                                </svg>396
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="cont agencies" >
-                    <div class="img-show">       
-                        <img src="https://qiniu.epipe.cn/5408309973509668864"/>
-                    </div>
-                    <div class="item-text">
-                        <h2>国家安全生产监督管理局</h2>
-                        <article>
-                            根据《国务院关于机构设置的通知》（国发〔2008〕）11号），设立国家安全生产监督管理总局（正部级），为国务院直属机构。
-                        </article>
-                    </div>
-                </div>
+                </infinite-loading>
         </div>
-
     </section>
 </template>
 
 
 <script>
+import TextTemplate from '../../components/textTemplate.vue';
+import InfiniteLoading from 'vue-infinite-loading';
 export default {
     data(){
         return {
-
-            isShowPrompt:true,
-            historyData :[],
-
+            inputVal :'',  //输入框值
+            isShowPrompt:true, //是否显示历史记录等提示
+            historyData :[], //历史记录数组值
+            words:[], //关键字
+            searchData : [],
         }
     },
 
     mounted(){
-        this.getHistory();
-
-        setTimeout(e=>{
-            this.$refs.input.focus()
-        },1000)
-                
+        this.getHistory()
+        let that = this;
+        this.axios.get('/content/select/keyWord').then(function(res){
+            if(res.data.h.code==200){
+                that.words = res.data.b.words;
+            }
+        })
     },
     methods:{
+        onInfinite(){
+          
+            let that = this;
+
+            //首页头条
+            setTimeout(() => {
+                that.axios.get('/content/search?keyWord='+this.inputVal, {
+                    params: {
+                    pageSize: 10,
+                    lastId: that.searchData[(that.searchData.length) - 1].resId
+                    }
+                }).then(function (data) {
+                    if (data.data.b.length == 0) {
+                   
+                    that.$refs.infiniteLoading.$emit('$InfiniteLoading:complete');
+                    } else if (data.data.b) {
+                        that.searchData = that.searchData.concat(data.data.b)
+                        that.$refs.infiniteLoading.$emit('$InfiniteLoading:loaded');
+                    }
+                })
+            }, 200);
+        },
         go_back(){
             window.location.href = "epipe://?&mark=history_back";
         },
         getHistory(){ //获取历史记录
-            this.historyData = localStorage.getItem('homeSearch').split('|')
+            let str = localStorage.getItem('homeSearch')
+            if(!str) return
+            this.historyData = str.split('|')
         },
         setHistory(str){ //存入历史记录
 
@@ -178,17 +139,29 @@ export default {
             this.historyData.splice(index,1)
             localStorage.setItem('homeSearch',this.historyData.join('|'))
         },
-        searchClick(){ //点击搜索
-            let searchValue = this.$refs.input.value;
-            this.$refs.input.blur();
-            if(searchValue==''){
-                this.$toast('你搜索的内容不能为空')
-                return
+        searchClick(val){ //点击搜索
+            if(val){
+                this.inputVal = val; 
+            }else{
+                if(this.inputVal==''){
+                    this.$toast('你搜索的内容不能为空')
+                     return
+                }
             }
-            this.setHistory(searchValue)
+            this.$refs.input.blur();
+            this.setHistory(this.inputVal)
+            let that = this;
+            this.axios.get('/content/search?keyWord='+this.inputVal).then(function(res){
+                that.searchData = res.data.b;
+            })
+
             this.isShowPrompt = false;
         },
-    }
+    },
+    components:{
+            TextTemplate,
+            InfiniteLoading,
+        }
 
   
 }
@@ -339,255 +312,13 @@ export default {
         }
     }
 
-// 头条
- 
-.home_title_con4 {
-    background-color: #fff;
-    padding: 4% 0 4% 0;
-    margin-top: 4%;
-    clear: both;
-    height: 0.85rem;
-  }
-
-  .home_title_con4 > div:first-child {
-    margin-left: 4%;
-    width: 37.5%;
-    border-radius: 0.025rem;
-    height: 0.85rem;
-    float: left;
-    overflow: hidden;
-    background-color: #fff;
-  }
-
-  .home_title_con4 > div:last-child {
-    margin-right: 4%;
-    width: 52.5%;
-    float: left;
-    margin-left: 2%;
-  }
-  .home_title_con4:active {
-    background-color $opacity_bgcolor
-  }
-  .home_title_con5 {
-    width: 100%;
-    font-size: 0.15rem;
-    font-weight: bold;
-    margin-top: -0.01rem;
-  }
-  .home_title_con6 {
-    color: #666;
-    font-size: 0.14rem;
-    margin-top: 0.063rem;
-    line-height 0.178rem
-    min-height 0.345rem
-  }
-  .home_title_con7 {
-    color: #999;
-    font-size: 0.12rem;
-    margin-top: 0.09rem;
-  }
-  .sub-desc{
-    display: flex;
-    -webkit-box-pack: justify;
-    -ms-flex-pack: justify;
-    justify-content: space-between;
-
-  }
-
-  //展会
- .exhit_div {
-    margin: 0.15rem 0.15rem 0 0.15rem;
-    height: 1.83rem;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .exhit_div div {
-    height: 0.45rem;
-    width: 100%;
-    background-color: rgba(0, 0, 0, 0.3);
-    position: absolute;
-    bottom: 0;
-    line-height:0.45rem;
-  }
-
-  .exhit_div div span {
-    color: #fff;
-    font-size: 0.16rem;
-    padding: 0 0.14rem 0 0.14rem;
-  }
-
-// 供需
-
-.tender_div1 {
-    margin: 0.15rem 0.15rem 0 0.15rem;
-    padding: 0.15rem;
-    background-color: #fff;
-    border-radius: 0.027rem;
-  }
-
-  .tender_div1 li {
-    color: #666;
-    font-size: 0.14rem;
-    margin-top: 0.058rem;
-    line-height 0.2rem
-  }
-
-  .tender_div1 li:first-child {
-    color: #333;
-    font-size: 0.15rem;
-    font-weight: bold;
-    margin: 0;
-  }
-  .tender_div1:active {
-    background-color $opacity_bgcolor
-  }
-
-  //行情
-
-  .market{
-        margin  0.15rem;
-        margin-bottom 0;
-        padding 0.15rem 0.1rem;
-        background-color: #fff;
-        border-radius 4px;
-        -webkit-box-shadow: 0 0 0.2rem rgba(255,136,0,.1);    
-        box-shadow 0 0 0.2rem rgba(255,136,0,.1);
+    .no-more{
+        text-align center;
+        color #666;
+        heigh 0.2rem;
+        line-height 0.2rem;
+        padding 0.1rem 0;
     }
-
-    .market .item_infor{
-        font-size 0.13rem;
-        color #999;
-    }
-
-    .market .item_tag{
-        color #ffa51e;
-        margin-right 0.2rem;
-    }
-    .market .spanRight{
-        float right ;
-    }
-
-   .market h2{
-        height 0.48rem;
-        font-size 0.15rem;
-        color #333;
-        line-height 0.24rem;
-    }
-
-    //访谈
-
-     .interview{
-        display flex;
-        margin 0.15rem;
-        margin-bottom 0;
-        padding 0.15rem 0.1rem;
-        background-color #fff;
-        border-radius 4px;
-        -webkit-box-shadow: 0 0 0.2rem rgba(255,136,0,.1);    
-        box-shadow 0 0 0.2rem rgba(255,136,0,.1);
-    }
-
-    .interview .img-show{
-        width 0.9rem;
-        height 0.9rem;
-        margin-right 0.1rem;
-
-        img{
-            width 100%;
-            height 100%;
-            border-radius 4px;
-        }
-    } 
-
-   .interview .item-content{
-        width:2.25rem;
-
-        h2{
-            font-size 0.15rem;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            overflow: hidden;
-        }
-
-        .item-text{
-             height 0.36rem;
-            font-size 0.14rem;
-            line-height 0.18rem;
-            color #666;
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            margin 0.09rem 0;
-            text-align justify;
-        }
-    }
-
-    .interview .item_infor{
-        font-size 0.13rem;
-        color #999;
-    }
-
-    .interview .item_tag{
-        color #ffa51e;
-        margin-right 0.2rem;
-    }
-    .interview .spanRight{
-        float right;
-    }
-
-    // 政府机构
-
-    .agencies{
-        display flex;
-        padding 0.15rem;
-        margin-bottom 0.15rem;
-        background-color #fff;
-        -webkit-box-shadow: 0 0 0.2rem rgba(252,83,91,0.1);    
-        box-shadow 0 0 0.2rem rgba(252,83,91,0.1);   
-        margin: 0.15rem 0.15rem 0px;
-        padding: 0.15rem 0.1rem;
-        border-radius: 4px;
-    }
-
-
-    .agencies .item-text{
-        width 2.25rem;
-
-         h2{
-            font-size 0.15rem;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            overflow: hidden;
-        }
-
-        article {
-            font-size 0.14rem;
-            line-height 0.18rem;
-            color #666;
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            margin 0.09rem 0;
-            text-align justify;
-        }
-    }
-
-    .agencies .img-show{
-        width 0.9rem;
-        height 0.9rem;
-        margin-right 0.1rem;
-
-        img{
-            width 100%;
-            height 100%;
-            border-radius 4px;
-        }
-    }
-
-
 
 </style>
 

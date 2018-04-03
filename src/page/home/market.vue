@@ -32,6 +32,7 @@ export default {
                 obj.title = Util.Title_format(item.title);
                 obj.imageUrl = item.coverImgUrl;
                 obj.text = Util.Title_format(item.summary);
+                obj.collectState = item.collectState;
                 let data = JSON.stringify(obj)
                 window.location.href = "epipe://?&mark=newsdetail&title=" + obj.title + "&_id=" + item.id+'TTTTTT&data='+data;
             }
@@ -55,7 +56,6 @@ export default {
                 mon =  mon.length<2? '0'+mon : mon 
                 days =  days.length<2? '0'+days : days             
                 return year+'-'+mon+'-'+days;
-
             }
         }
 }
