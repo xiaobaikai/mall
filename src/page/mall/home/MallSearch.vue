@@ -1,17 +1,13 @@
 <template>
-  <div>
-    <div class="search-container">
-      <div class="search-bar-vice">
-        <i class="iconfont icon-sousuoicon"></i>
-        <input type="text" class="search-input-vice" maxlength="20" v-model="searchKey">
-        <i class="iconfont icon-guanbiicon" @click="clearInput" v-show="!showSuggestion"></i>
-      </div>
-      <div class="search-btn" @click="handleSearch">搜索</div>
-    </div>
+  <div class="search-wrapper">
     <div class="search-wrapper">
-      <div class="search-type">
-        <div :class="{'active-type':nowType===true}" @click="changeType">宝贝</div>
-        <div :class="{'active-type':nowType===false}" @click="changeType">店铺</div>
+      <div class="search-container">
+        <div class="search-bar-vice">
+          <i class="iconfont icon-sousuoicon"></i>
+          <input type="text" class="search-input-vice" maxlength="20" v-model="searchKey">
+          <i class="iconfont icon-guanbiicon" @click="clearInput" v-show="!showSuggestion"></i>
+        </div>
+        <div class="search-btn" @click="handleSearch">搜索</div>
       </div>
       <div class="no-search" v-if="!hasSearch">
         <div class="suggestion-content" v-if="showSuggestion">
@@ -56,32 +52,14 @@
             </div>
           </router-link>
           <infinite-loading spinner="bubbles" @distance="1" @infinite="loadMore" ref="infiniteLoading">
-          <span slot="no-more">
-            暂无更多数据
-          </span>
+        <span slot="no-more">
+          暂无更多数据
+        </span>
             <span slot="no-results">
-            暂无结果
-          </span>
+          暂无结果
+        </span>
           </infinite-loading>
           <!--<div class="no-result" v-if="resultList.length<1">暂无搜索结果</div>-->
-        </div>
-        <div class="store-search-result">
-          <div class="store-name">
-            <div class="store-name-l">
-              <div><img src="https://qiniu.epipe.cn/5468136217256128512" alt="店铺头像"></div>
-              <div>深圳前海优管旗舰店</div>
-            </div>
-            <div class="store-name-r">进店逛逛</div>
-          </div>
-          <div class="store-flag">
-            <div>5年老店</div>
-            <div>收藏人数2150</div>
-          </div>
-          <div class="store-goods">
-            <div><img src="https://qiniu.epipe.cn/5468136217256128512" alt=""></div>
-            <div><img src="https://qiniu.epipe.cn/5468136217256128512" alt=""></div>
-            <div><img src="https://qiniu.epipe.cn/5468136217256128512" alt=""></div>
-          </div>
         </div>
       </div>
     </div>
@@ -110,7 +88,6 @@
         pageNo: 1,
         order: "",
         sortField: "",
-	      nowType:true
       }
     },
     watch:{
@@ -145,9 +122,6 @@
       },
       clearInput(){
         this.searchKey = "";
-      },
-	    changeType(){
-      	this.nowType=!this.nowType;
       },
       /*搜索*/
       handleSearch(){
@@ -341,33 +315,10 @@
     text-align center;
   }
   .suggestion-content{
+    margin-top 46px;
     padding 0.2rem 0.15rem;
     background: white;
     border-bottom 1px solid #e5e5e5;
-    margin-top 85px;
-  }
-  .search-type{
-    /*margin-top 45px;*/
-    height 40px;
-    background #f5f5f5;
-    display flex;
-    justify-content center;
-    justify-items center;
-    position fixed;
-    top 45px;
-    width 100%;
-    div{
-      flex 1;
-      font-size .15rem;
-      color #999;
-      text-align center;
-      line-height .4rem;
-      margin 0 .4rem;
-    }
-    .active-type{
-      color #333;
-      border-bottom 2px solid #ff8800;
-    }
   }
   .sub-title{
     font-size: 0.11rem;
@@ -419,7 +370,7 @@
     color: #b3b3b3;
   }
   .has-search{
-    /*margin-top 46px;*/
+    margin-top 46px;
     background: white;
   }
   .selections{
@@ -428,7 +379,7 @@
     align-items center;
     position fixed;
     left 0;
-    top 85px;
+    top 45px;
     z-index 9;
     width: 100%;
     height: 40px;
@@ -472,20 +423,6 @@
     font-size: 14px;
     line-height: 18px;
     color: #333;
-    display: -webkit-box;
-    /* autoprefixer: off */
-    -webkit-box-orient: vertical;
-    /* autoprefixer: on */
-    -webkit-line-clamp: 2;
-    word-break: break-all;
-    overflow: hidden;
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-  
->>>>>>> 63194bc4ba4866a8474f45c7c1750e2cb0ecd995
-=======
->>>>>>> 33bd1a4a590a7c74bb9b554cf74effbeed804f03
   }
   .goods-opr{
     display flex;
@@ -517,86 +454,12 @@
   }
   .search-result{
     -webkit-overflow-scrolling: touch;
-    padding-top 125px;
+    padding-top 40px;
   }
   .no-result{
     text-align: center;
     height: 1rem;
     line-height: 1rem;
     color: #999;
-  }
-  .store-search-result{
-    padding .08rem .15rem .15rem .15rem;
-    overflow hidden;
-    .store-name{
-      overflow hidden;
-      position relative;
-      .store-name-l{
-        float left;
-        div:first-child{
-          width .3rem;
-          height .3rem;
-          border-radius 1px;
-          float left;
-          img{
-            width 100%;
-            height 100%;
-          }
-        }
-        div:last-child{
-          float left;
-          font-size .14rem;
-          color #333;
-          line-height .3rem;
-          margin-left .1rem;
-          font-weight bold;
-        }
-      }
-      .store-name-r{
-        float right;
-        width .6rem;
-        height .23rem;
-        line-height .23rem;
-        border 1px solid #d74a45;
-        border-radius .2rem;
-        font-size .12rem;
-        color #d74a45;
-        text-align  center;
-        position absolute;
-        right 0;
-        top 50%;
-        transform translateY(-50%);
-      }
-    }
-    .store-flag{
-      margin-top .08rem;
-      overflow hidden;
-      div{
-        float left;
-        margin-right .1rem;
-        padding .08rem .1rem;
-        font-size .12rem;
-        color #999;
-        background #f5f5f5;
-        text-align center;
-        border-radius .2rem;
-      }
-    }
-    .store-goods{
-      margin-top .1rem;
-      display flex;
-      overflow hidden;
-      div{
-        flex 1;
-        margin-right .06rem;
-        img{
-          height 100%;
-          width 100%;
-        }
-      }
-      div:last-child{
-        margin-right 0;
-      }
-    }
   }
 </style>
