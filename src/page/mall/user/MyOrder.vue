@@ -64,7 +64,7 @@
       infiniteHandler($state){
         setTimeout(() =>{
           this.axios.post(this.baseURL.mall + '/m/my/orderList' + this.Service.queryString({
-            token: this.mallToken.getToken(),
+            token: this.mallToken.getToken() || this.$route.query.token,
             pageSize: this.pageSize || "",
             pageNo: this.pageNo || "",
             orderState: this.orderState,
