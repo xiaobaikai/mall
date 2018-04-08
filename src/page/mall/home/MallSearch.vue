@@ -416,7 +416,9 @@
   }
   .goods-desc{
     display: -webkit-box;
+    /* autoprefixer: off */
     -webkit-box-orient: vertical;
+    /* autoprefixer: on */
     -webkit-line-clamp: 2;
     overflow: hidden;
     margin-top 0.15rem;

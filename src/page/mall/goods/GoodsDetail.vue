@@ -482,7 +482,13 @@
         font-size .16rem;
         color #333;
         line-height .24rem;
-        text-align justify;
+        display: -webkit-box;
+        /* autoprefixer: off */
+        -webkit-box-orient: vertical;
+        /* autoprefixer: on */
+        -webkit-line-clamp: 2;
+        word-break: break-all;
+        overflow: hidden;
       }
       div{
         margin-top .36rem;
