@@ -107,6 +107,18 @@
    
 			}
 		},
+		methods: {
+			handleSearch(){
+				this.axios.post(this.baseURL.mall+"/m/store/goodsList"+this.Service.queryString({
+					storeId: 2098321823548416,
+					goodsName: '管道',
+					pageNo: 1,
+					pageSize: 10
+				})).then(res =>{
+					  console.log('店铺搜索',res);
+        })
+      }
+    },
     created(){
       document.title = '店铺首页';
     },
