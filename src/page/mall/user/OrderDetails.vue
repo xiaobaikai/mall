@@ -237,6 +237,15 @@
                   break;
               }
             }
+          }else  if(res.data.h.code === 50 || res.data.h.code === 30){
+	          if(this.isApp.state){
+		          this.$toast('登录过期');
+		          window.location.href = "epipe://?&mark=login";
+	          }else{
+		          this.$router.replace("/accountlogin");
+	          }
+          }else{
+	          this.$toast(res.data.h.msg);
           }
         }).catch(err =>{
           console.log(err);
