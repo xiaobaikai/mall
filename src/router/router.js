@@ -10,6 +10,7 @@ const Record = r => require.ensure([], () => r(require('@/page/work/record.vue')
 const Total = r => require.ensure([], () => r(require('@/page/work/total.vue')), 'group-foo')
 const Exhibition = r => require.ensure([], () => r(require('@/page/home/exhibition.vue')), 'group-foo')
 const Tender = r => require.ensure([], () => r(require('@/page/home/tender.vue')), 'group-foo')
+const Dissertation = r => require.ensure([], () => r(require('@/page/home/dissertation.vue')), 'group-foo')
 const Supply = r => require.ensure([], () => r(require('@/page/home/supply.vue')), 'group-foo')
 const Newsdetail = r => require.ensure([], () => r(require('@/page/home/newsdetail.vue')), 'group-foo')
 const Nologin = r => require.ensure([], () => r(require('@/page/work/nologin.vue')), 'group-foo')
@@ -103,7 +104,6 @@ const GroupAgreement = r => require.ensure([], () => r(require('@/page/user/grou
 const ExpertList = r => require.ensure([], () => r(require('@/page/home/expertList.vue')), 'group-foo')
 const AgenciesList = r => require.ensure([], () => r(require('@/page/home/agenciesList.vue')), 'group-foo')
 const HomeSearch = r => require.ensure([], () => r(require('@/page/home/homeSearch.vue')), 'group-foo')
-const SearchRes = r => require.ensure([], () => r(require('@/page/home/searchRes.vue')), 'group-foo')
 const MyCollection = r => require.ensure([], () => r(require('@/page/user/myCollection.vue')), 'group-foo')
 
 export default new Router({
@@ -138,8 +138,12 @@ export default new Router({
       component: Supply  //供需
     },
     {
+      path: '/dissertation',
+      component: Dissertation  //优管专题
+    },
+    {
       path: '/tender',
-      component: Tender  //招投标
+      component: Tender  //优投标
     },
     {
       path: '/newsdetail',
@@ -495,9 +499,6 @@ export default new Router({
       component : HomeSearch
     },
     {
-      path:'/searchRes',  //首页搜索结果
-      component : SearchRes
-    },{
       path:'/myCollection', //我的收藏
       component : MyCollection
     }

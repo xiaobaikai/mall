@@ -12,7 +12,7 @@
                     <svg style="width: 0.15rem;height: 0.15rem;color:#666" class="icon" aria-hidden="false">
                           <use xlink:href="#icon-sousuo"></use>
                         </svg>
-                    <input ref="input"  disabled  type="text"  placeholder="请输入关键字">
+                    <input ref="input"  type="text"  placeholder="请输入关键字">
                 </div>
             </div>
 
@@ -34,7 +34,7 @@
           <div>优管优选</div>
         </li>
 
-         <li @click="go_tender">
+         <li @click="go_dissertation">
           <div  style="background: -webkit-linear-gradient(top, #51cdfc 0%,#27b1eb 100%);">
             <svg style="width: 0.22rem;height: 0.22rem" class="icon" aria-hidden="false">
               <use xlink:href="#icon-zhuanjiaku"></use>
@@ -150,6 +150,9 @@
       },
       go_tender(){  //首页跳招投标
         window.location.href = "epipe://?&mark=tender"
+      },
+      go_dissertation(){  //首页跳优管专题
+        window.location.href = "epipe://?&mark=dissertation"
       },
       go_mall(){  //首页跳商城
         window.location.href = "epipe://?&mark=mallhome"

@@ -12,17 +12,6 @@ const product = "http://app.epipe.cn:18080/member/v1"; //正式
 //axios.defaults.baseURL = window.location.href.indexOf("app.epipe.cn")>0 ? product : dev;
  axios.defaults.baseURL = product;
 
-function getCookie(name) {
-  var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
-  if (arr = document.cookie.match(reg))
-    return unescape(arr[2]);
-  else
-    return null;
-};
-
-if (getCookie("auth_token")) {
-  window.localStorage.setItem("auth_token",getCookie("auth_token"));
-}
 
 axios.interceptors.request.use(
   config => {

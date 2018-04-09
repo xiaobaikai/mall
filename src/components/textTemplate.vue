@@ -23,11 +23,18 @@
             </ul>
         </div>
 
-        <div v-if="item.resType==1" @click="go_newsdetail(item)"   class="exhit_div">
-            <img style="border-radius: 0.03rem;overflow: hidden;width: 100%;height: 1.83rem" :src="item.converImgUrl" />
-            <img style="border-radius: 0.03rem;overflow: hidden;width: 100%;height: 1.83rem"  src="../assets/pic3.png" />
-            <div>
-                <span class="over_width" v-html="item.summary"></span>
+     
+        <div class="cont" v-if="item.resType==1" @click="go_newsdetail(item)">
+            <h2 v-html="item.resTitle"></h2>
+            <article v-html="item.summary" style="-webkit-box-orient: vertical"></article>
+            <div class="cont_foot">
+            <div class="cont_address" v-if="item.exhibitionLocation">
+                <svg style="font-size: 0.15rem;" class="icon" aria-hidden="false">
+                        <use xlink:href="#icon-location1"></use>
+                    </svg>
+                    {{item.exhibitionLocation}}
+            </div>
+            <span class="cont_time" v-if="item.resDate">{{item.resDate.slice(0,10)}}</span>
             </div>
         </div>
 
@@ -48,7 +55,7 @@
             </div>
         </div>
 
-        <div v-if="item.resType==5" class="item interview"  @click="go_newsdetail(item)">
+        <div v-if="item.resType==5||item.resType==11" class="item interview"  @click="go_newsdetail(item)">
             <div class="img-show">
                 <img :src="item.converImgUrl" />
             </div>
@@ -75,6 +82,7 @@
                 <article v-html="item.summary"></article>
             </div>
         </div> 
+    </div>
 </div>
   
 </template>
@@ -161,28 +169,51 @@ export default {
 
   }
 
-  //展会
- .exhit_div {
-    margin: 0.15rem 0.15rem 0 0.15rem;
-    height: 1.83rem;
-    position: relative;
-    overflow: hidden;
-  }
+//展会
+.cont{
+    height 1rem;
+    margin 0.15rem 0.15rem;
+    background-color #fff;
+    margin-bottom 0;
+    padding 0.15rem;
 
-  .exhit_div div {
-    height: 0.45rem;
-    width: 100%;
-    background-color: rgba(0, 0, 0, 0.3);
-    position: absolute;
-    bottom: 0;
-    line-height:0.45rem;
-  }
 
-  .exhit_div div span {
-    color: #fff;
-    font-size: 0.16rem;
-    padding: 0 0.14rem 0 0.14rem;
+    h2{
+      font-size 0.15rem;
+      color #333;
+      overflow: hidden;
+      text-overflow:ellipsis;
+      white-space: nowrap;
+      font-weight 600
+    }
+
+    article{
+      display block;
+      color #666;
+      font-size 0.13rem;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+      margin 0.18rem 0;
+    }
+
+    .cont_foot{
+      color #999;
+    }
+
+    .cont_address{
+      float left
+    }
+
+    .cont_time{
+      float right 
+    }
   }
+  .find_color_div{
+    background-color #2bb1e9
+  }
+ 
 
 // 供需
 

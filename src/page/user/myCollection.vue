@@ -6,12 +6,12 @@
           <div @click="btnShow=3" :class="btnShow==3?'active':''">图片</div>
       </header>
       <div v-show="btnShow==1">
-          <text-template :type="1"  v-for="item in datas" :item="item"></text-template>
+          <text-template :key="item.resId" v-for="item in datas" :item="item"></text-template>
 
            <div class="no-more">暂无内容</div>
       </div>
       <div v-show="btnShow==2">
-          <text-template   v-for="item in datas" :item="item"></text-template>
+          <text-template :key="item.resId"  v-for="item in datas" :item="item"></text-template>
           <div class="no-more">暂无内容</div>
       </div>
       <div v-show="btnShow==3">

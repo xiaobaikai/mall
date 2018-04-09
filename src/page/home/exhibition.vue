@@ -1,12 +1,27 @@
 <template>
   <section>
-    <div @click="go_newsdetail(item)" v-for="item in newsData" class="exhit_div">
+    <!-- <div @click="go_newsdetail(item)" v-for="item in newsData" class="exhit_div">
       <img v-if="item.coverImg!=''" style="border-radius: 0.03rem;overflow: hidden;width: 100%;height: 1.83rem" :src=item.coverImg|img_format />
       <img v-else="item.coverImg!=''"  style="border-radius: 0.03rem;overflow: hidden;width: 100%;height: 1.83rem"  src="../../assets/pic3.png" />
       <div>
         <span class="over_width" v-html="item.title"></span>
       </div>
+    </div> -->
+
+    <div class="cont" v-for="(item,index) in newsData" @click="go_newsdetail(item)">
+        <h2 v-html="item.title"></h2>
+        <article v-html="item.summary" style="-webkit-box-orient: vertical"></article>
+        <div class="cont_foot">
+          <div class="cont_address" v-if="item.exhibitionLocation">
+             <svg style="font-size: 0.15rem;" class="icon" aria-hidden="false">
+                    <use xlink:href="#icon-location1"></use>
+                </svg>
+                {{item.exhibitionLocation}}
+          </div>
+          <span class="cont_time">{{item.createDate.slice(0,10)}}</span>
+        </div>
     </div>
+
     <infinite-loading spinner="bubbles" :on-infinite="onInfinite" ref="infiniteLoading">
     <span slot="no-more">
       暂无更多加载
@@ -43,24 +58,20 @@
       onInfinite(){ //上拉加载更多
         let that = this;
         //首页头条
-        console.log(pageNo)
-        this.axios.get(that.Service.resource + '国际展会', {
+      
+        this.axios.get('content/getResExhibition', {
           params: {
-            type: 3,
-            pageSize: 5,
-            pageNo: pageNo
+              lastId:that.newsData[(that.newsData.length) - 1].id
           }
         }).then(function (data) {
           setTimeout(() => {
-            if (data.data.b.pageTotal == pageNo || data.data.b.pageSize > data.data.b.dataTotal) {
-              that.$refs.infiniteLoading.$emit('$InfiniteLoading:complete');
+            if (data.data.b.length == 0) { 
+                that.$refs.infiniteLoading.$emit('$InfiniteLoading:complete');
+            } else if (data.data.b) {
+                that.newsData = that.newsData.concat(data.data.b)
+                that.$refs.infiniteLoading.$emit('$InfiniteLoading:loaded');
             }
-            if (data.data.b) {
-              pageNo++
-              that.newsData = that.newsData.concat(data.data.b)
-              that.$refs.infiniteLoading.$emit('$InfiniteLoading:loaded');
-            }
-          }, 700);
+          }, 200);
         }).catch(function (error) {
           console.log(error);
         });
@@ -74,11 +85,9 @@
     mounted(){
       let that = this;
       //展会
-      this.axios.get(that.Service.resource + '国际展会', {
+      this.axios.get('content/getResExhibition', {
         params: {
-          type: 3,
-          pageSize: 5,
-          pageNo: 1
+          lastId:''
         }
       }).then(function (data) {
         console.log(data)
@@ -92,26 +101,49 @@
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-  .exhit_div {
-    margin: 0.15rem 0.15rem 0 0.15rem;
-    height: 1.83rem;
-    position: relative;
-    overflow: hidden;
-  }
+<style lang="stylus" scoped>
 
-  .exhit_div div {
-    height: 0.45rem;
-    width: 100%;
-    background-color: rgba(0, 0, 0, 0.3);
-    position: absolute;
-    bottom: 0;
-    line-height:0.45rem;
-  }
 
-  .exhit_div div span {
-    color: #fff;
-    font-size: 0.16rem;
-    padding: 0 0.14rem 0 0.14rem;
+  .cont{
+    height 1rem;
+    margin 0 0.15rem;
+    background-color #fff;
+    margin-bottom 0.1rem;
+    padding 0.15rem;
+
+    h2{
+      font-size 0.15rem;
+      color #333;
+      overflow: hidden;
+      text-overflow:ellipsis;
+      white-space: nowrap;
+      font-weight 600
+    }
+
+    article{
+      display block;
+      color #666;
+      font-size 0.13rem;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+      margin 0.18rem 0;
+    }
+
+    .cont_foot{
+      color #999;
+    }
+
+    .cont_address{
+      float left
+    }
+
+    .cont_time{
+      float right 
+    }
+  }
+  .find_color_div{
+    background-color #2bb1e9
   }
 </style>

@@ -21,7 +21,12 @@
         <h2 v-html="item.title"></h2>
         <article v-html="item.summary" style="-webkit-box-orient: vertical"></article>
         <div class="cont_foot">
-          <div class="cont_address"></div>
+          <div class="cont_address" v-if="item.exhibitionLocation">
+            <svg style="font-size: 0.15rem;" class="icon" aria-hidden="false">
+                    <use xlink:href="#icon-location1"></use>
+                </svg>
+                {{item.exhibitionLocation}}
+          </div>
           <span class="cont_time">{{item.createDate.slice(0,10)}}</span>
         </div>
     </div>

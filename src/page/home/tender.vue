@@ -1,9 +1,20 @@
 <template>
   <section>
-    <ul v-for="item in newsData" @click="go_newsdetail(item)" class="tender_div1">
-      <li class="over_width" v-html="item.title"></li>
-      <li class="simple-ellipsis" v-html="item.summary"></li>
-    </ul>
+    <div class="tender" v-for="item in newsData" :key="item.id" @click="go_newsdetail(item)">
+          <h2 v-html="item.title"></h2>
+          <div style="-webkit-box-orient: vertical;" class="tender-content" v-html="item.summary">
+            
+          </div>
+          <div class="tender-foot">
+            <div v-if="item.area">
+              <svg style="font-size: 0.15rem;" class="icon" aria-hidden="false">
+                    <use xlink:href="#icon-location1"></use>
+                </svg>
+                {{item.area}}
+            </div>
+            <span>{{item.createDate.slice(0,10)}}</span>
+          </div>
+    </div>
     <infinite-loading spinner="bubbles" :on-infinite="onInfinite" ref="infiniteLoading">
     <span slot="no-more">
       暂无更多加载
@@ -40,11 +51,9 @@
       }, onInfinite(){
         let that = this;
         //招投标
-        this.axios.get(that.Service.resource + '招投标信息', {
+        this.axios.get('content/getResIdWaterfallPagedList', {
           params: {
-            type: 2,
-            pageSize: 8,
-            pageNo: pageNo
+            lastId:that.newsData[(that.newsData.length) - 1].id
           }
         }).then(function (data) {
           setTimeout(() => {
@@ -59,7 +68,7 @@
               that.newsData = that.newsData.concat(data.data.b)
               that.$refs.infiniteLoading.$emit('$InfiniteLoading:loaded');
             }
-          }, 700);
+          }, 200);
         }).catch(function (error) {
           console.log(error);
         });
@@ -73,11 +82,9 @@
     mounted() {
       var that = this;
       //首页头条
-      this.axios.get(that.Service.resource + '招投标信息', {
+      this.axios.get('content/getResIdWaterfallPagedList', {
         params: {
-          type: 2,
-          pageSize: 8,
-          pageNo: 1
+          lastId:''
         }
       }).then(function (data) {
         if (data.data.b) {
@@ -96,29 +103,45 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="stylus">
-  @import "../../style/variable.styl";
-  .tender_div1 {
-    margin: 0.15rem 0.15rem 0 0.15rem;
-    padding: 0.15rem;
-    background-color: #fff;
-    border-radius: 0.027rem;
+
+  .tender{
+     height 1.2rem;
+     margin-top 0.1rem;
+     background-color #fff;
+     box-sizing border-box
+     padding 0.15rem;
+
+     h2{
+       font-size 0.15rem;
+       color #333;
+       font-weight 600
+       margin-bottom 0.12rem;
+       text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+     }
   }
 
-  .tender_div1 li {
-    color: #666;
-    font-size: 0.14rem;
-    margin-top: 0.058rem;
-    line-height 0.2rem
+  .tender-content{
+      font-size 0.13rem
+      color #666
+    
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      margin-bottom 0.1rem;
   }
 
-  .tender_div1 li:first-child {
-    color: #333;
-    font-size: 0.15rem;
-    font-weight: bold;
-    margin: 0;
+  .tender-foot{
+    color #999
+
+    >div{
+      float left 
+    }
+
+    span{
+      float right
+    }
   }
 
-  .tender_div1:active {
-    background-color $opacity_bgcolor
-  }
 </style>

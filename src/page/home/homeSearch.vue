@@ -26,7 +26,7 @@
             <div class="search_prompt search_hot">
                 <h3>热门搜索</h3>
                 <ul>
-                    <li v-for="item in words" @click="searchClick(item.keyWord)">{{item.keyWord}}</li>
+                    <li v-if="index<3" v-for="(item,index) in words" @click="searchClick(item.keyWord)">{{item.keyWord}}</li>
                 </ul>
             </div>
             <div class="search_prompt search_history" v-if="historyData.length">
@@ -44,7 +44,7 @@
         </div>
 
         <div class="search_res" v-if="!isShowPrompt">
-               <text-template v-for="item in searchData"  :item="item"></text-template>
+               <text-template v-for="item in searchData" :key="item.resId"  :item="item"></text-template>
                <div class="no-more" v-if="!searchData.length">
                     暂无结果
                 </div>
@@ -77,7 +77,7 @@ export default {
     },
 
     mounted(){
-        this.getHistory()
+        // this.getHistory()
         let that = this;
         this.axios.get('/content/select/keyWord').then(function(res){
             if(res.data.h.code==200){
@@ -98,15 +98,14 @@ export default {
                     lastId: that.searchData[(that.searchData.length) - 1].resId
                     }
                 }).then(function (data) {
-                    if (data.data.b.length == 0) {
-                   
-                    that.$refs.infiniteLoading.$emit('$InfiniteLoading:complete');
+                    if (data.data.b.length == 0) { 
+                        that.$refs.infiniteLoading.$emit('$InfiniteLoading:complete');
                     } else if (data.data.b) {
                         that.searchData = that.searchData.concat(data.data.b)
                         that.$refs.infiniteLoading.$emit('$InfiniteLoading:loaded');
                     }
                 })
-            }, 200);
+            }, 300);
         },
         go_back(){
             window.location.href = "epipe://?&mark=history_back";
@@ -129,8 +128,9 @@ export default {
             }
 
             this.historyData.unshift(str)
-            if(this.historyData.length>13){
-                this.historyData = this.historyData.splice(0,13)
+
+            if(this.historyData.length>12){
+                this.historyData = this.historyData.splice(0,12)
             }
             localStorage.setItem('homeSearch',this.historyData.join('|'))
 
@@ -260,7 +260,7 @@ export default {
         }
 
         li{
-            flex 1
+            width 33.333%
             text-align center;
             background-color #fff;
             border-right 1px solid #eee;

@@ -6,7 +6,7 @@
         v-on:history_back="history_back"
         native='native'
          ></TopHead>
-        <div class="item topMargin">
+        <div class="item topMargin" v-if="fameArr.length">
             <div class="item-title">
                 <h2>著名专家</h2>
                 <router-link class="more" :to="{path:'/expertList',query:{type: '著名专家'}}" tag="div">
@@ -23,7 +23,7 @@
                 </div>
             </div>
         </div>
-        <div class="item">
+        <div class="item" v-if="consultArr.length">
             <div class="item-title">
                 <h2>咨询专家</h2>
                 <router-link class="more" tag="div" :to="{path:'/expertList',query:{type: '咨询专家'}}">
