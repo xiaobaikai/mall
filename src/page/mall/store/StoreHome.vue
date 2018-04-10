@@ -21,90 +21,133 @@
         <div>收藏店铺</div>
       </div>
     </div>
-    <div class="banner-img"></div>
-    <div class="floor-4-view">
-      <div class="floor-title">
-        <img src="" alt="">
+    <div class="home-part" v-if="homeState">
+      <div class="banner-img"></div>
+      <div class="floor-4-view">
+        <div class="floor-title">
+          <img src="" alt="">
+        </div>
+        <router-link :to="{path:'/goodsdetail',query:{goodsId: ''}}" class="item">
+          <div class="item-content">
+            <div class="item-img">
+              <img src="" alt="">
+            </div>
+            <div class="item-title">换个地方还管饭得花个大姐夫</div>
+            <div class="item-sub">
+              <div class="item-price">￥58</div>
+              <div class="buy">
+                <svg class="icon icon-car" aria-hidden="false">
+                  <use xlink:href="#icon-gouwuche-xuanzhongicon"></use>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </router-link>
+        <router-link :to="{path:'/goodsdetail',query:{goodsId: ''}}" class="item">
+          <div class="item-content">
+            <div class="item-img">
+              <img src="" alt="">
+            </div>
+            <div class="item-title">换个地方还管饭得花个大姐夫</div>
+            <div class="item-sub">
+              <div class="item-price">￥58</div>
+              <div class="buy">
+                <svg class="icon icon-car" aria-hidden="false">
+                  <use xlink:href="#icon-gouwuche-xuanzhongicon"></use>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </router-link>
+        <router-link :to="{path:'/goodsdetail',query:{goodsId: ''}}" class="item">
+          <div class="item-content">
+            <div class="item-img">
+              <img src="" alt="">
+            </div>
+            <div class="item-title">换个地方还管饭得花个大姐夫</div>
+            <div class="item-sub">
+              <div class="item-price">￥58</div>
+              <div class="buy">
+                <svg class="icon icon-car" aria-hidden="false">
+                  <use xlink:href="#icon-gouwuche-xuanzhongicon"></use>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </router-link>
+        <router-link :to="{path:'/goodsdetail',query:{goodsId: ''}}" class="item">
+          <div class="item-content">
+            <div class="item-img">
+              <img src="" alt="">
+            </div>
+            <div class="item-title">换个地方还管饭得花个大姐夫</div>
+            <div class="item-sub">
+              <div class="item-price">￥58</div>
+              <div class="buy">
+                <svg class="icon icon-car" aria-hidden="false">
+                  <use xlink:href="#icon-gouwuche-xuanzhongicon"></use>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </router-link>
       </div>
-      <router-link :to="{path:'/goodsdetail',query:{goodsId: ''}}" class="item">
-        <div class="item-content">
-          <div class="item-img">
-            <img src="" alt="">
-          </div>
-          <div class="item-title">换个地方还管饭得花个大姐夫</div>
-          <div class="item-sub">
-            <div class="item-price">￥58</div>
-            <div class="buy">
-              <svg class="icon icon-car" aria-hidden="false">
-                <use xlink:href="#icon-gouwuche-xuanzhongicon"></use>
-              </svg>
-            </div>
-          </div>
-        </div>
-      </router-link>
-      <router-link :to="{path:'/goodsdetail',query:{goodsId: ''}}" class="item">
-        <div class="item-content">
-          <div class="item-img">
-            <img src="" alt="">
-          </div>
-          <div class="item-title">换个地方还管饭得花个大姐夫</div>
-          <div class="item-sub">
-            <div class="item-price">￥58</div>
-            <div class="buy">
-              <svg class="icon icon-car" aria-hidden="false">
-                <use xlink:href="#icon-gouwuche-xuanzhongicon"></use>
-              </svg>
-            </div>
-          </div>
-        </div>
-      </router-link>
-      <router-link :to="{path:'/goodsdetail',query:{goodsId: ''}}" class="item">
-        <div class="item-content">
-          <div class="item-img">
-            <img src="" alt="">
-          </div>
-          <div class="item-title">换个地方还管饭得花个大姐夫</div>
-          <div class="item-sub">
-            <div class="item-price">￥58</div>
-            <div class="buy">
-              <svg class="icon icon-car" aria-hidden="false">
-                <use xlink:href="#icon-gouwuche-xuanzhongicon"></use>
-              </svg>
-            </div>
-          </div>
-        </div>
-      </router-link>
-      <router-link :to="{path:'/goodsdetail',query:{goodsId: ''}}" class="item">
-        <div class="item-content">
-          <div class="item-img">
-            <img src="" alt="">
-          </div>
-          <div class="item-title">换个地方还管饭得花个大姐夫</div>
-          <div class="item-sub">
-            <div class="item-price">￥58</div>
-            <div class="buy">
-              <svg class="icon icon-car" aria-hidden="false">
-                <use xlink:href="#icon-gouwuche-xuanzhongicon"></use>
-              </svg>
-            </div>
-          </div>
-        </div>
-      </router-link>
     </div>
-    <footer-tab :category="0"></footer-tab>
+    <div class="search-part">
+      <div class="selections">
+        <div class="selection-item" @click="handleSorting('')">综合排序</div>
+        <div class="selection-item" @click="handleSorting('salenum')">销量优先</div>
+        <div class="selection-item" @click="handleSorting('goodsStorePrice')">价格优先</div>
+      </div>
+      <div class="search-result" ref="result">
+        <router-link :to="{path:'/goodsdetail',query:{goodsId: ''}}" class="result-item">
+          <div class="goods-picture">
+            <img src="" alt="商品">
+          </div>
+          <div class="goods-details">
+            <div class="goods-desc">和梵蒂冈和法规和</div>
+            <div class="goods-opr">
+              <div class="price">￥656</div>
+              <div class="buy">
+                <i class="iconfont icon-xiaogouwucheicon" @click.prevent="addToCart(index)"></i>
+                <span class="btn-buy"  @click.prevent="buyNow(index)">立即购买</span>
+              </div>
+            </div>
+          </div>
+        </router-link>
+        <router-link :to="{path:'/goodsdetail',query:{goodsId: ''}}" class="result-item">
+          <div class="goods-picture">
+            <img src="" alt="商品">
+          </div>
+          <div class="goods-details">
+            <div class="goods-desc">和梵蒂冈和法规和</div>
+            <div class="goods-opr">
+              <div class="price">￥656</div>
+              <div class="buy">
+                <i class="iconfont icon-xiaogouwucheicon" @click.prevent="addToCart(index)"></i>
+                <span class="btn-buy"  @click.prevent="buyNow(index)">立即购买</span>
+              </div>
+            </div>
+          </div>
+        </router-link>
+        <!--<infinite-loading spinner="bubbles" @distance="1" @infinite="loadMore" ref="infiniteLoading">-->
+        <!--<span slot="no-more">-->
+          <!--暂无更多数据-->
+        <!--</span>-->
+          <!--<span slot="no-results">-->
+          <!--暂无结果-->
+        <!--</span>-->
+        <!--</infinite-loading>-->
+      </div>
+    </div>
   </div>
 </template>
 <script>
-	const FooterTab = () => import("../../../components/mall/FooterTab.vue");
-	
 	export default {
 		name: "StoreHome",
-		components:{
-			FooterTab
-		},
 		data(){
 			return{
-   
+				homeState: false
 			}
 		},
 		methods: {
@@ -190,12 +233,15 @@
   .icon-guanbiicon{
     color: #b3b3b3;
   }
+  .home-part{
+    margin-top 45px;
+  }
   .store-info{
     height .45rem;
     padding .08rem .15rem;
     overflow hidden;
-    margin-top 45px;
     box-sizing border-box;
+    margin-top 45px;
     .info{
       height 100%;
       float left;
@@ -318,5 +364,103 @@
       background: white;
       border-radius 0.02rem;
     }
+  }
+  .selections{
+    display flex;
+    justify-content space-between;
+    align-items center;
+    position fixed;
+    left 0;
+    top 90px;
+    z-index 9;
+    width: 100%;
+    height: 40px;
+    line-height 40px;
+    text-align center;
+    border-bottom 1px solid #e5e5e5;
+    background: white;
+  }
+  .selection-item{
+    flex: 1;
+  }
+  .result-item{
+    display flex;
+    justify-content space-between;
+    height: 1.2rem;
+  }
+  .goods-picture{
+    width: 1.35rem;
+    img{
+      display block;
+      width: 1.1rem;
+      height: 1.1rem;
+      margin: 0.05rem auto;
+      background: #dedede;
+    }
+  }
+  .goods-details{
+    display flex;
+    flex-direction column;
+    justify-content space-between;
+    width: 2.25rem;
+    padding-right 0.15rem;
+    border-bottom 1px solid #e5e5e5;
+  }
+  .goods-desc{
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    margin-top 0.15rem;
+    font-size: 14px;
+    line-height: 18px;
+    color: #333;
+    display: -webkit-box;
+    /* autoprefixer: off */
+    -webkit-box-orient: vertical;
+    /* autoprefixer: on */
+    -webkit-line-clamp: 2;
+    word-break: break-all;
+    overflow: hidden;
+  
+  }
+  .goods-opr{
+    display flex;
+    justify-content space-between;
+  }
+  .price{
+    margin-bottom 0.18rem;
+    font-size: 0.18rem;
+    line-height: 1;
+    color: #d74845;
+  }
+  .buy{
+    font-size: 0;
+  }
+  .icon-xiaogouwucheicon{
+    margin-right: 0.2rem;
+  }
+  .btn-buy{
+    display inline-block;
+    width: 0.75rem;
+    height: 0.3rem;
+    margin-bottom 0.1rem;
+    line-height 0.3rem;
+    font-size: 0.14rem;
+    text-align center;
+    background: #d74a45;
+    border-radius: 4px;
+    color: white;
+  }
+  .search-result{
+    -webkit-overflow-scrolling: touch;
+    padding-top 40px;
+    background #fff;
+  }
+  .no-result{
+    text-align: center;
+    height: 1rem;
+    line-height: 1rem;
+    color: #999;
   }
 </style>
