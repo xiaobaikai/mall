@@ -38,7 +38,7 @@
             </div>
         </div>
 
-        <ul v-if="item.resType==2||item.resType==3"  @click="go_newsdetail(item)" class="tender_div1">
+        <ul v-if="item.resType==2||item.resType==3||item.resType==9||item.resType==10"  @click="go_newsdetail(item)" class="tender_div1">
             <li class="over_width" v-html="item.resTitle"></li>
                 <li class="simple-ellipsis" v-html="item.summary"></li>
         </ul>

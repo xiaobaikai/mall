@@ -36,7 +36,7 @@ export default {
             let that = this;
             this.axios.get('/user/collect/info?collecType=0').then(function(res){
                 if(res.data.h.code==200){
-                    that.$toast(res.data.b.length)
+                
                     that.datas = res.data.b;
                 }
             })    

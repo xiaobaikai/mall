@@ -58,8 +58,8 @@
         <div></div>
         <div>头条</div>
       </div>
-      <div class="home_content_news-1" v-for="newsData_item in newsData">
-        <ul v-if="newsData_item.coverImgUrl==''" @click="go_news(newsData_item)" class="home_title_con2">
+      <!-- <div class="home_content_news-1" v-for="newsData_item in newsData"> -->
+        <!-- <ul v-if="newsData_item.coverImgUrl==''" @click="go_news(newsData_item)" class="home_title_con2">
           <li class="over_width" v-html="newsData_item.resTitle"></li>
           <li class="home_title_con3 simple-ellipsis" v-html="newsData_item.summary">
           </li>
@@ -90,8 +90,27 @@
               </div>
             </div>
           </div>
-        </ul>
-      </div>
+        </ul> -->
+        <div class="item" v-for="item in newsData" @click="go_newsdetail(item)">
+            <div class="img-show">
+                <img :src="item.coverImgUrl" />
+            </div>
+            <div class="item-content">
+                <h2 v-html="item.resTitle"></h2>
+                <div class="item-text" style="-webkit-box-orient: vertical;" v-html="item.summary"></div>
+                <div class="item_infor">
+                    <span style="margin-right:0.05rem;">{{item.resTopNewsCategoryName}}</span>
+                    <span>{{item.resCreateDate.slice(0,10)}}</span>
+                    <span class="spanRight">
+                        <svg style="width: 0.2rem;height: 0.14rem" class="icon" aria-hidden="false">
+                            <use xlink:href="#icon-yuedu"></use>
+                        </svg>{{item.clicks}}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+      <!-- </div> -->
       <infinite-loading spinner="bubbles" :on-infinite="onInfinite" ref="infiniteLoading">
         <span slot="no-more">
           暂无更多加载
@@ -489,6 +508,69 @@
             font-size 0.16rem;
             color:#fff;
         }
+    }
+
+
+    .item{
+        display flex;
+        margin 0.15rem;
+        margin-bottom 0;
+        padding 0.15rem 0.1rem;
+        background-color #fff;
+        border-radius 4px;
+        -webkit-box-shadow: 0 0 0.2rem rgba(255,136,0,.1);    
+        box-shadow 0 0 0.2rem rgba(255,136,0,.1);
+    }
+
+    .img-show{
+        width 1.4rem;
+        height 0.9rem;
+        margin-right 0.1rem;
+
+        img{
+            width 100%;
+            height 100%;
+            border-radius 4px;
+        }
+    } 
+
+    .item-content{
+        width:1.8rem;
+
+        h2{
+            font-size 0.15rem;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            color:#333;
+            font-weight bold
+        }
+
+        .item-text{
+             height 0.36rem;
+            font-size 0.14rem;
+            line-height 0.18rem;
+            color #666;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            margin 0.09rem 0;
+            text-align justify;
+        }
+    }
+
+    .item_infor{
+        font-size 0.13rem;
+        color #999;
+    }
+
+    .item_tag{
+        color #ffa51e;
+        margin-right 0.2rem;
+    }
+    .spanRight{
+        float right;
     }
 
 </style>
