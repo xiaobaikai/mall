@@ -90,6 +90,8 @@ const RefundList = r => require.ensure([], () => r(require('@/page/mall/user/Ref
 
 const StoreSearch = r => require.ensure([], () => r(require('@/page/mall/store/StoreSearch.vue')), 'mall-store')
 const StoreHome = r => require.ensure([], () => r(require('@/page/mall/store/StoreHome.vue')), 'mall-store')
+const StoreClass = r => require.ensure([], () => r(require('@/page/mall/store/StoreClass.vue')), 'mall-store')
+const StoreInfo = r => require.ensure([], () => r(require('@/page/mall/store/StoreInfo.vue')), 'mall-store')
 
 const Affairs = r => require.ensure([], () => r(require('@/page/work/affairs.vue')), 'group-work')
 const Leave = r => require.ensure([], () => r(require('@/page/work/leave.vue')), 'group-work')
@@ -439,12 +441,20 @@ export default new Router({
       component: RefundList,
     },
 	  {
-	  	path: '/storesearch', //商城店铺搜索
+	  	path: '/storesearch', //商城分类搜索
 		  component: StoreSearch
 	  },
 	  {
 		  path: '/storehome', //商城店铺首页
 		  component: StoreHome
+	  },
+	  {
+		  path: '/storeclass', //商城店铺分类
+		  component: StoreClass
+	  },
+	  {
+		  path: '/storeinfo', //商城店铺介绍
+		  component: StoreInfo
 	  },
     {
       path: '/affairs',  //OA事宜

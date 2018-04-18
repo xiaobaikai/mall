@@ -4,85 +4,47 @@
       <div class="search-bar-vice">
         <i class="iconfont icon-sousuoicon"></i>
         <input type="text" class="search-input-vice" maxlength="20" v-model="searchKey">
-        <i class="iconfont icon-guanbiicon" @click="clearInput" v-show="!showSuggestion"></i>
+        <i class="iconfont icon-guanbiicon" @click="clearInput"  v-show="!showSuggestion"></i>
       </div>
-      <div class="search-btn" @click="handleSearch">搜索</div>
+      <div class="search-btn" @click="searchFun">搜索</div>
     </div>
-    <div class="store-info">
+    <div class="store-info" ref="storeInfo">
       <div class="info">
-        <div><img src="../../../assets/defaultStore.png" alt="店铺头像"></div>
-        <div>深圳前海优管旗舰店</div>
+        <div><img :src="imgPrefix + store.storeLogo" alt="店铺头像"></div>
+        <div>{{store.storeName}}</div>
       </div>
       <div class="collecte">
         <div>
-          <p>2150</p>
+          <p>{{store.storeCollect}}</p>
           <p>粉丝数</p>
         </div>
         <div>收藏店铺</div>
       </div>
     </div>
-    <div class="home-part" v-if="homeState">
-      <div class="banner-img"></div>
-      <div class="floor-4-view">
+    <div class="home-part" v-show="homeState">
+      <div class="banner-img">
+        <swiper :options="swiperOption">
+          <swiper-slide v-for="(slide,index) in banner" :key="index">
+            <a :href="slide.advUrl" v-if="slide.advUrl">
+              <img :src="imgPrefix + slide.advImg" v-if="slide">
+            </a>
+            <img :src="imgPrefix + slide.advImg" v-else>
+          </swiper-slide>
+          <div class="swiper-pagination" slot="pagination"></div>
+        </swiper>
+      </div>
+      <div class="floor-4-view" v-for="(item ,k) in floorList" :key="k">
         <div class="floor-title">
-          <img src="" alt="">
+          <img :src="imgPrefix + item.floorTitleImg" alt="楼层标题">
         </div>
-        <router-link :to="{path:'/goodsdetail',query:{goodsId: ''}}" class="item">
+        <router-link :to="{path:'/goodsdetail',query:{goodsId: obj.goodsId}}" class="item" v-for="(obj,j) in item.floorGoods" :key="j">
           <div class="item-content">
             <div class="item-img">
-              <img src="" alt="">
+              <img :src="imgPrefix + obj.goodsImage" alt="商品图片">
             </div>
-            <div class="item-title">换个地方还管饭得花个大姐夫</div>
+            <div class="item-title">{{obj.goodsName}}</div>
             <div class="item-sub">
-              <div class="item-price">￥58</div>
-              <div class="buy">
-                <svg class="icon icon-car" aria-hidden="false">
-                  <use xlink:href="#icon-gouwuche-xuanzhongicon"></use>
-                </svg>
-              </div>
-            </div>
-          </div>
-        </router-link>
-        <router-link :to="{path:'/goodsdetail',query:{goodsId: ''}}" class="item">
-          <div class="item-content">
-            <div class="item-img">
-              <img src="" alt="">
-            </div>
-            <div class="item-title">换个地方还管饭得花个大姐夫</div>
-            <div class="item-sub">
-              <div class="item-price">￥58</div>
-              <div class="buy">
-                <svg class="icon icon-car" aria-hidden="false">
-                  <use xlink:href="#icon-gouwuche-xuanzhongicon"></use>
-                </svg>
-              </div>
-            </div>
-          </div>
-        </router-link>
-        <router-link :to="{path:'/goodsdetail',query:{goodsId: ''}}" class="item">
-          <div class="item-content">
-            <div class="item-img">
-              <img src="" alt="">
-            </div>
-            <div class="item-title">换个地方还管饭得花个大姐夫</div>
-            <div class="item-sub">
-              <div class="item-price">￥58</div>
-              <div class="buy">
-                <svg class="icon icon-car" aria-hidden="false">
-                  <use xlink:href="#icon-gouwuche-xuanzhongicon"></use>
-                </svg>
-              </div>
-            </div>
-          </div>
-        </router-link>
-        <router-link :to="{path:'/goodsdetail',query:{goodsId: ''}}" class="item">
-          <div class="item-content">
-            <div class="item-img">
-              <img src="" alt="">
-            </div>
-            <div class="item-title">换个地方还管饭得花个大姐夫</div>
-            <div class="item-sub">
-              <div class="item-price">￥58</div>
+              <div class="item-price">￥{{obj.goodsStorePrice}}</div>
               <div class="buy">
                 <svg class="icon icon-car" aria-hidden="false">
                   <use xlink:href="#icon-gouwuche-xuanzhongicon"></use>
@@ -93,36 +55,21 @@
         </router-link>
       </div>
     </div>
-    <div class="search-part">
+    <div class="search-part" ref="searchPart" v-show="!homeState">
       <div class="selections">
         <div class="selection-item" @click="handleSorting('')">综合排序</div>
         <div class="selection-item" @click="handleSorting('salenum')">销量优先</div>
         <div class="selection-item" @click="handleSorting('goodsStorePrice')">价格优先</div>
       </div>
-      <div class="search-result" ref="result">
-        <router-link :to="{path:'/goodsdetail',query:{goodsId: ''}}" class="result-item">
+      <div class="search-result">
+        <router-link  :to="{path:'/goodsdetail',query:{goodsId: item.goodsId}}" v-for="(item,index) in resultList" :key="index" class="result-item">
           <div class="goods-picture">
-            <img src="" alt="商品">
+            <img :src="imgPrefix + item.goodsImage" alt="商品">
           </div>
           <div class="goods-details">
-            <div class="goods-desc">和梵蒂冈和法规和</div>
+            <div class="goods-desc">{{item.goodsName}}</div>
             <div class="goods-opr">
-              <div class="price">￥656</div>
-              <div class="buy">
-                <i class="iconfont icon-xiaogouwucheicon" @click.prevent="addToCart(index)"></i>
-                <span class="btn-buy"  @click.prevent="buyNow(index)">立即购买</span>
-              </div>
-            </div>
-          </div>
-        </router-link>
-        <router-link :to="{path:'/goodsdetail',query:{goodsId: ''}}" class="result-item">
-          <div class="goods-picture">
-            <img src="" alt="商品">
-          </div>
-          <div class="goods-details">
-            <div class="goods-desc">和梵蒂冈和法规和</div>
-            <div class="goods-opr">
-              <div class="price">￥656</div>
+              <div class="price">￥{{item.goodsStorePrice}}</div>
               <div class="buy">
                 <i class="iconfont icon-xiaogouwucheicon" @click.prevent="addToCart(index)"></i>
                 <span class="btn-buy"  @click.prevent="buyNow(index)">立即购买</span>
@@ -140,30 +87,110 @@
         <!--</infinite-loading>-->
       </div>
     </div>
+    <store-tab :category="0"></store-tab>
   </div>
 </template>
 <script>
+	import 'swiper/dist/css/swiper.css'
+	import { swiper, swiperSlide } from 'vue-awesome-swiper'
+	const StoreTab = () => import("../../../components/mall/StoreTab.vue");
 	export default {
-		name: "StoreHome",
 		data(){
 			return{
-				homeState: false
+				homeState: true,
+        resultList:[],
+				imgPrefix: '',
+				searchKey:'',
+				showSuggestion:true,
+				searchKey:'',
+        floorList:[],
+				store:[],
+				banner:[],
+				swiperOption: {
+					autoplay:true,
+					pagination: {
+						el: '.swiper-pagination',
+					}
+				},
 			}
 		},
+		components:{
+			StoreTab,
+			swiper,
+			swiperSlide,
+		},
 		methods: {
-			handleSearch(){
-				this.axios.post(this.baseURL.mall+"/m/store/goodsList"+this.Service.queryString({
-					storeId: 2098321823548416,
-					goodsName: '管道',
-					pageNo: 1,
-					pageSize: 10
+      getBannerInfo(){
+	      this.axios.post(this.baseURL.mall+"/m/store/storeBanners"+this.Service.queryString({
+		      storeId: this.$route.query.storeId
+	      })).then(res =>{
+		      console.log('店铺banner信息',res);
+		      if(res.data.h.code === 200) {
+			      this.store = res.data.b.store;
+			      this.imgPrefix = res.data.b.imgPrefix;
+			      this.banner = res.data.b.banners;
+		      }
+	      })
+      },
+			getFloorData(){
+				this.axios.post(this.baseURL.mall+"/m/store/storeFloors"+this.Service.queryString({
+					storeId: this.$route.query.storeId
 				})).then(res =>{
-					  console.log('店铺搜索',res);
-        })
+					console.log('店铺楼层',res);
+					if(res.data.h.code === 200){
+						this.floorList=res.data.b.floors;
+						this.imgPrefix=res.data.b.imgPrefix;
+          }
+				})
+      },
+			searchFun(){
+				if(this.searchKey){
+					this.axios.post(this.baseURL.mall+"/m/store/goodsList"+this.Service.queryString({
+						storeId: this.$route.query.storeId,
+						keyword: this.searchKey,
+						pageNo: 1,
+						pageSize: 10
+					})).then(res =>{
+						console.log('店铺搜索',res);
+						if(res.data.h.code === 200) {
+							this.resultList = res.data.b.goods;
+							this.imgPrefix = res.data.b.imgPrefix;
+						}
+					})
+					this.homeState=false;
+        }
+      },
+      handleSearchKey(){
+				if(this.searchKey){
+					this.showSuggestion=false;
+        }else{
+					this.showSuggestion=true;
+					this.homeState=true;
+        }
+      },
+			clearInput(){
+      	this.searchKey='';
+				this.homeState=true;
       }
+    },
+    watch:{
+			searchKey(){
+				this.handleSearchKey();
+      }
+    },
+    mounted(){
+	    let fixH=window.getComputedStyle(this.$refs.storeInfo).height.replace("px","")*1 + 95;
+      console.log(fixH);
+      let winH = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+      console.log(winH);
+      let partH=winH-fixH;
+      this.$refs.searchPart.style.height = partH +'px';
     },
     created(){
       document.title = '店铺首页';
+      this.getFloorData();
+      this.getBannerInfo();
+      localStorage.setItem("nowStoreId",this.$route.query.storeId);
     },
 	}
 </script>
@@ -234,7 +261,11 @@
     color: #b3b3b3;
   }
   .home-part{
-    margin-top 45px;
+    padding-bottom 50px;
+  }
+  .search-part{
+    overflow scroll;
+    -webkit-overflow-scrolling touch;
   }
   .store-info{
     height .45rem;
@@ -257,6 +288,14 @@
           height 100%;
         }
       }
+      div:last-child{
+        width 1.7rem;
+        overflow hidden;
+        text-overflow ellipsis;
+        -ms-text-overflow ellipsis;
+        -o-text-overflow ellipsis;
+        -webkit-text-overflow ellipsis;
+      }
     }
     .collecte{
       float right;
@@ -265,7 +304,7 @@
         float left;
         text-align center;
         p{
-          font-size .12px;
+          font-size .12rem;
           color #ff8800;
           line-height 1.27;
         }
@@ -288,8 +327,9 @@
   .banner-img{
     height 1.6rem;
     background #ccc;
+    margin-bottom .1rem;
     img{
-      height 100%;
+      height 1.6rem;
     }
   }
   .floor-4-view{
@@ -300,9 +340,9 @@
     .floor-title{
       width 100%;
       height: 0.6rem;
+      text-align center;
       img{
-        width 100%;
-        max-height 100%;
+        height 100%;
       }
     }
     .item{
@@ -337,6 +377,7 @@
       /* autoprefixer: on */
       -webkit-line-clamp: 2;
       overflow: hidden;
+      height .36rem;
     }
     .item-sub{
       display flex;

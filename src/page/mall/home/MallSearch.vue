@@ -66,7 +66,7 @@
           <!--<div class="no-result" v-if="resultList.length<1">暂无搜索结果</div>-->
         </div>
         <div class="store-search" v-else>
-          <router-link :to="{path:'/goodsdetail',query:{goodsId: item.goodsId}}"  v-for="(item,index) in resultListStore" :key="index" v-if="resultListStore.length>0"  class="store-search-result">
+          <div  v-for="(item,index) in resultListStore" :key="index" v-if="resultListStore.length>0"  class="store-search-result">
             <div class="store-name">
               <div class="store-name-l">
                 <div>
@@ -75,16 +75,16 @@
                 </div>
                 <div>{{item.storeName}}</div>
               </div>
-              <div class="store-name-r">进店逛逛</div>
+              <div class="store-name-r"> <router-link :to="{path:'/storehome',query:{storeId: item.storeId}}">进店逛逛</router-link></div>
             </div>
             <div class="store-flag">
               <div>{{item.storeOpenTime}}年老店</div>
               <div>收藏人数{{item.favNum}}</div>
             </div>
             <div class="store-goods">
-              <div v-for="(obj,index2) in item.goodsList" :key="index2"><img :src="imgPrefix + obj.goodsImage" alt=""></div>
+              <router-link :to="{path:'/goodsdetail',query:{goodsId: item.goodsId}}"  v-for="(obj,index2) in item.goodsList" :key="index2"><img :src="imgPrefix + obj.goodsImage" alt=""></router-link>
             </div>
-          </router-link>
+          </div>
           <infinite-loading spinner="bubbles" @distance="1" @infinite="loadMoreStore" ref="infiniteLoading">
           <span slot="no-more">
             暂无更多数据
@@ -602,16 +602,18 @@
         float right;
         width .6rem;
         height .23rem;
-        line-height .23rem;
         border 1px solid #d74a45;
         border-radius .2rem;
-        font-size .12rem;
-        color #d74a45;
         text-align  center;
         position absolute;
         right 0;
         top 50%;
         transform translateY(-50%);
+        a{
+          font-size .12rem;
+          color #d74a45;
+          line-height .23rem;
+        }
       }
     }
     .store-flag{
@@ -632,7 +634,7 @@
       margin-top .1rem;
       display flex;
       overflow hidden;
-      div{
+      a{
         flex 1;
         margin-right .06rem;
         img{

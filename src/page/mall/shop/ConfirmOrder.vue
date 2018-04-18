@@ -53,7 +53,7 @@
       <div><span></span><span><i>总价：</i>￥{{goodsTotalPrice}}</span></div>
     </div>
     <div class="wx-pay" @click="submitPay"  v-if="!isNotApp"><div>微信支付</div></div>
-    <form  :action="formUrl" method="post">
+    <form  :action="formUrl" method="post"  v-if="isNotApp">
       <input type="hidden" v-model="token" name="token">
       <input type="hidden" v-model="cartIds" name="cartIds">
       <input type="hidden" v-model="addressId" name="addressId">
