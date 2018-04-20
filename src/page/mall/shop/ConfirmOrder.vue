@@ -52,15 +52,16 @@
       <div><span>运费</span><span>￥0.00</span></div>
       <div><span></span><span><i>总价：</i>￥{{goodsTotalPrice}}</span></div>
     </div>
-    <div class="wx-pay" @click="submitPay"  v-if="!isNotApp"><div>微信支付</div></div>
-    <form  :action="formUrl" method="post" v-if="isNotApp">
-      <input type="hidden" v-model="token" name="token">
-      <input type="hidden" v-model="cartIds" name="cartIds">
-      <input type="hidden" v-model="addressId" name="addressId">
-      <input type="hidden" v-model="openInv" name="openInv">
-      <input type="hidden" v-model="invoiceId" name="invoiceId">
-      <div class="wx-pay"><input type="submit" value="支付宝支付"></div>
-    </form>
+    <div class="wx-pay" @click="submitPayWx"  v-if="!isNotApp"><div>微信支付</div></div>
+    <div class="wx-pay" @click="submitPayZfb" ><div>支付宝支付</div></div>
+    <!--<form  :action="formUrl" method="post" v-if="isNotApp">-->
+      <!--<input type="hidden" v-model="token" name="token">-->
+      <!--<input type="hidden" v-model="cartIds" name="cartIds">-->
+      <!--<input type="hidden" v-model="addressId" name="addressId">-->
+      <!--<input type="hidden" v-model="openInv" name="openInv">-->
+      <!--<input type="hidden" v-model="invoiceId" name="invoiceId">-->
+      <!--<div class="wx-pay"><input type="submit" value="支付宝支付"></div>-->
+    <!--</form>-->
   </div>
 </template>
 <script>
@@ -107,10 +108,26 @@
           }
         })
       },
-      submitZfb(){
-        console.log(this.addressId);
+      submitPayZfb(){
+	      this.axios.post(this.baseURL.mall + "/m/my/appAlipay"+this.Service.queryString({
+		      token:this.mallToken.getToken(),
+		      cartIds:this.cartIds.join(','),
+		      addressId:this.addressList[0].addressId,
+		      openInv:this.openInv,
+		      invoiceId:this.invoiceId
+	      })).then(res=>{
+	      	  console.log('支付宝',res);
+	      	  if(res.data.h.code === 200){
+	      	  	let data={};
+	      	  	data.text=res.data.b.orderStr;
+	      	  	console.log(data);
+	      	  	data=JSON.stringify(data);
+			        console.log(data);
+			        window.location.href = "epipe://?&mark=aliPay&data="+data;
+            }
+          })
       },
-      submitPay(){
+      submitPayWx(){
         //alert(this.openInv);
         this.axios.post(this.baseURL.mall + "/m/my/getCode"+this.Service.queryString({
           token:this.mallToken.getToken(),
