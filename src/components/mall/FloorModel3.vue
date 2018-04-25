@@ -86,7 +86,7 @@
       padding-bottom 0.1rem;
       margin-bottom 0.12rem;
       background: white;
-      line-height 1;
+      line-height 1.27;
       text-align center;
     }
     .item-title{

@@ -95,7 +95,7 @@
       width 1.2rem;
       padding 0.15rem 0;
       text-align center;
-      line-height 1;
+      line-height 1.27;
     }
     .item-img-container{
       width: 100%;
