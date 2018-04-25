@@ -109,23 +109,24 @@
         })
       },
       submitPayZfb(){
-	      this.axios.post(this.baseURL.mall + "/m/my/appAlipay"+this.Service.queryString({
-		      token:this.mallToken.getToken(),
-		      cartIds:this.cartIds.join(','),
-		      addressId:this.addressList[0].addressId,
-		      openInv:this.openInv,
-		      invoiceId:this.invoiceId
-	      })).then(res=>{
-	      	  console.log('支付宝',res);
-	      	  if(res.data.h.code === 200){
-	      	  	let data={};
-	      	  	data.text=res.data.b.orderStr;
-	      	  	console.log(data);
-	      	  	data=JSON.stringify(data);
-			        console.log(data);
-			        window.location.href = "epipe://?&mark=aliPay&data="+data;
-            }
-          })
+        this.axios.post(this.baseURL.mall + "/m/my/appAlipay"+this.Service.queryString({
+          token:this.mallToken.getToken(),
+          cartIds:this.cartIds.join(','),
+          addressId:this.addressList[0].addressId,
+          openInv:this.openInv,
+          invoiceId:this.invoiceId
+        })).then(res=>{
+          console.log('支付宝',res);
+          if(res.data.h.code === 200){
+            let data={};
+            data.orderSn=res.data.b.orderSn;
+            data.imgPrefix=this.imgPrefix;
+            console.log(data);
+            data=JSON.stringify(data);
+            console.log(data);
+            window.location.href = "epipe://?&mark=aliPay&data="+data+"&url="+res.data.b.orderStr;
+          }
+        })
       },
       submitPayWx(){
         //alert(this.openInv);

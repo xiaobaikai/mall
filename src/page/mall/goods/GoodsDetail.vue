@@ -89,6 +89,12 @@
     <div class="add-buy" ref="footer">
       <ul>
         <li>
+          <div>
+            <router-link :to="{path:'/StoreHome',query:{storeId:storeId}}">
+              <p><i class="iconfont icon-dianpu colorff8800"></i></p>
+              <p>店铺</p>
+            </router-link>
+          </div>
           <div @click="collection">
             <p><i class="iconfont icon-shoucang-weixuan" :class="collectNum==0 ? 'color999' : 'colorff8800'"></i></p>
             <p>收藏</p>
@@ -124,6 +130,7 @@
         specList:[],  //规格
         bannerPrefix:'',  //图片地址
         banner:[],        //商品图片
+	      storeId:'',
         swiperOption: {
           autoplay:true,
           pagination: {
@@ -303,6 +310,7 @@
             this.setStore(goodsData.goods[0]);
             this.goodsStorePrice=goodsData.goods[0].goodsStorePrice;
             this.goodsList=goodsData.goods;
+            this.storeId=goodsData.goods[0].storeId;
             if(goodsData.goodsSpecObj){
               this.goodsSpecObj=goodsData.goodsSpecObj;
             }
@@ -421,7 +429,7 @@
         border-top 1px solid #e5e5e5;
         background #fff;
         div{
-          width 50%;
+          width 33.333%;
           height 100%;
           float left;
 /*          display flex;
@@ -482,6 +490,7 @@
         font-size .16rem;
         color #333;
         line-height .24rem;
+        text-align justify;
         display: -webkit-box;
         /* autoprefixer: off */
         -webkit-box-orient: vertical;
@@ -491,13 +500,10 @@
         overflow: hidden;
       }
       div{
-        margin-top .36rem;
+        margin-top .15rem;
         span{
           color #d74a45;
-          font-size .16rem;
-        }
-        span:first-child{
-          font-size .12rem;
+          font-size .18rem;
         }
       }
     }
