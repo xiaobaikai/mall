@@ -96,7 +96,7 @@
             </router-link>
           </div>
           <div @click="collection">
-            <p><i class="iconfont icon-shoucang-weixuan" :class="collectNum==0 ? 'color999' : 'colorff8800'"></i></p>
+            <p><i class="iconfont" :class="collectNum==0 ? 'icon-shoucang-weixuan color999' : 'icon-shoucang-xuanzhong colorff8800'"></i></p>
             <p>收藏</p>
           </div>
           <div>
