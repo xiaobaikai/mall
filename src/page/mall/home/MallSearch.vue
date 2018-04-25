@@ -82,7 +82,7 @@
               <div>收藏人数{{item.favNum}}</div>
             </div>
             <div class="store-goods">
-              <router-link :to="{path:'/goodsdetail',query:{goodsId: item.goodsId}}"  v-for="(obj,index2) in item.goodsList" :key="index2"><img :src="imgPrefix + obj.goodsImage" alt=""></router-link>
+              <router-link :to="{path:'/goodsdetail',query:{goodsId: obj.goodsId}}"  v-for="(obj,index2) in item.goodsList" :key="index2"><img :src="imgPrefix + obj.goodsImage" alt=""></router-link>
             </div>
           </div>
           <infinite-loading spinner="bubbles" @distance="1" @infinite="loadMoreStore" ref="infiniteLoading">

@@ -6,11 +6,14 @@
         <input type="text" class="search-input-vice" maxlength="20" v-model="searchKey">
         <i class="iconfont icon-guanbiicon" @click="clearInput"  v-show="!showSuggestion"></i>
       </div>
-      <div class="search-btn" @click="searchFun">搜索</div>
+      <div class="search-btn" @click="storeHomeSearch">搜索</div>
     </div>
     <div class="store-info" ref="storeInfo">
       <div class="info">
-        <div><img :src="imgPrefix + store.storeLogo" alt="店铺头像"></div>
+        <div>
+          <img :src="imgPrefix + store.storeLogo" alt="" v-if="store.storeLogo">
+          <img src="../../../assets/default-store.png" alt="" v-else>
+        </div>
         <div>{{store.storeName}}</div>
       </div>
       <div class="collecte">
@@ -21,9 +24,9 @@
         <div>收藏店铺</div>
       </div>
     </div>
-    <div class="home-part" v-show="homeState">
+    <div class="home-part" v-if="homeState">
       <div class="banner-img">
-        <swiper :options="swiperOption">
+        <swiper :options="swiperOption" v-if="banner.length>0">
           <swiper-slide v-for="(slide,index) in banner" :key="index">
             <a :href="slide.advUrl" v-if="slide.advUrl">
               <img :src="imgPrefix + slide.advImg" v-if="slide">
@@ -32,6 +35,7 @@
           </swiper-slide>
           <div class="swiper-pagination" slot="pagination"></div>
         </swiper>
+        <img src="../../../assets/default-banner.png" alt="" v-else>
       </div>
       <div class="floor-4-view" v-for="(item ,k) in floorList" :key="k">
         <div class="floor-title">
@@ -55,7 +59,7 @@
         </router-link>
       </div>
     </div>
-    <div class="search-part" ref="searchPart" v-show="!homeState">
+    <div class="search-part" ref="searchPart" v-if="!homeState">
       <div class="selections">
         <div class="selection-item" @click="handleSorting('')">综合排序</div>
         <div class="selection-item" @click="handleSorting('salenum')">销量优先</div>
@@ -77,14 +81,14 @@
             </div>
           </div>
         </router-link>
-        <!--<infinite-loading spinner="bubbles" @distance="1" @infinite="loadMore" ref="infiniteLoading">-->
-        <!--<span slot="no-more">-->
-          <!--暂无更多数据-->
-        <!--</span>-->
-          <!--<span slot="no-results">-->
-          <!--暂无结果-->
-        <!--</span>-->
-        <!--</infinite-loading>-->
+        <infinite-loading spinner="bubbles" @distance="1" @infinite="loadMore" ref="infiniteLoading">
+          <span slot="no-more">
+            暂无更多数据
+          </span>
+          <span slot="no-results">
+            暂无结果
+          </span>
+        </infinite-loading>
       </div>
     </div>
     <store-tab :category="0"></store-tab>
@@ -94,6 +98,7 @@
 	import 'swiper/dist/css/swiper.css'
 	import { swiper, swiperSlide } from 'vue-awesome-swiper'
 	const StoreTab = () => import("../../../components/mall/StoreTab.vue");
+	const InfiniteLoading = () => import("vue-infinite-loading");
 	export default {
 		data(){
 			return{
@@ -106,6 +111,7 @@
         floorList:[],
 				store:[],
 				banner:[],
+				pageNo:1,
 				swiperOption: {
 					autoplay:true,
 					pagination: {
@@ -118,6 +124,7 @@
 			StoreTab,
 			swiper,
 			swiperSlide,
+			InfiniteLoading
 		},
 		methods: {
       getBannerInfo(){
@@ -132,6 +139,53 @@
 		      }
 	      })
       },
+			addToCart(index){
+				console.log(index);
+				this.axios.post(this.baseURL.mall + "/m/cart/addCartItems"+this.Service.queryString({
+					token:this.mallToken.getToken(),
+					goodsId:this.resultList[index].goodsId,
+					count:1,
+					specId:this.resultList[index].specId
+				})).then(res=>{
+					console.log(res);
+					if(res.data.h.code==200){
+						this.$toast(res.data.b.msg);
+					}else  if(res.data.h.code === 50 || res.data.h.code === 30){
+						if(this.isApp.state){
+							window.location.href = "epipe://?&mark=login";
+						}else{
+							this.$router.replace("/accountlogin");
+						}
+					}else{
+						this.$toast(res.data.h.msg);
+					}
+				})
+			},
+			buyNow(index){
+				console.log(index);
+				this.axios.post(this.baseURL.mall + "/m/cart/buy_now"+this.Service.queryString({
+					token:this.mallToken.getToken(),
+					goodsId:this.resultList[index].goodsId,
+					count:1,
+					specId:this.resultList[index].specId
+				})).then(res=>{
+					console.log(res);
+					if(res.data.h.code==200){
+						localStorage.setItem("settleOrder",JSON.stringify(res.data.b));
+						if(localStorage.getItem("settleOrder")){
+							this.$router.push({path:'/ConfirmOrder'});
+						}
+					}else  if(res.data.h.code === 50 || res.data.h.code === 30){
+						if(this.isApp.state){
+							window.location.href = "epipe://?&mark=login";
+						}else{
+							this.$router.replace("/accountlogin");
+						}
+					}else{
+						this.$toast(res.data.h.msg);
+					}
+				})
+			},
 			getFloorData(){
 				this.axios.post(this.baseURL.mall+"/m/store/storeFloors"+this.Service.queryString({
 					storeId: this.$route.query.storeId
@@ -143,22 +197,34 @@
           }
 				})
       },
-			searchFun(){
+			storeHomeSearch(){
 				if(this.searchKey){
-					this.axios.post(this.baseURL.mall+"/m/store/goodsList"+this.Service.queryString({
-						storeId: this.$route.query.storeId,
-						keyword: this.searchKey,
-						pageNo: 1,
-						pageSize: 10
-					})).then(res =>{
-						console.log('店铺搜索',res);
-						if(res.data.h.code === 200) {
-							this.resultList = res.data.b.goods;
-							this.imgPrefix = res.data.b.imgPrefix;
-						}
-					})
 					this.homeState=false;
+					this.pageNo=1;
+					this.resultList=[];
         }
+      },
+			loadMore($state){
+        this.axios.post(this.baseURL.mall+"/m/store/goodsList"+this.Service.queryString({
+          storeId: this.$route.query.storeId,
+          keyword: this.searchKey,
+          pageNo: this.pageNo,
+          pageSize: 10
+        })).then(res =>{
+          console.log('店铺搜索',res);
+          if(res.data.h.code === 200) {
+            if (res.data.b.goods.length < 1) {
+              $state.complete();
+            }else{
+              this.pageNo++;
+              this.resultList = this.resultList.concat(res.data.b.goods);
+              this.imgPrefix = res.data.b.imgPrefix;
+              $state.loaded();
+            }
+          }else{
+            $state.complete();
+          }
+        })
       },
       handleSearchKey(){
 				if(this.searchKey){
@@ -179,12 +245,12 @@
       }
     },
     mounted(){
-	    let fixH=window.getComputedStyle(this.$refs.storeInfo).height.replace("px","")*1 + 95;
-      console.log(fixH);
-      let winH = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-      console.log(winH);
-      let partH=winH-fixH;
-      this.$refs.searchPart.style.height = partH +'px';
+//	    let fixH=window.getComputedStyle(this.$refs.storeInfo).height.replace("px","")*1 + 95;
+//      console.log(fixH);
+//      let winH = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+//      console.log(winH);
+//      let partH=winH-fixH;
+//      this.$refs.searchPart.style.height = partH +'px';
     },
     created(){
       document.title = '店铺首页';
@@ -262,39 +328,49 @@
   }
   .home-part{
     padding-bottom 50px;
+    padding-top 90px;
   }
   .search-part{
+    padding-top 90px;
+    padding-bottom 50px;
     overflow scroll;
     -webkit-overflow-scrolling touch;
   }
   .store-info{
-    height .45rem;
-    padding .08rem .15rem;
+    height 45px;
+    padding 8px 15px;
     overflow hidden;
     box-sizing border-box;
-    margin-top 45px;
+    position fixed;
+    top 45px;
+    z-index 10;
+    background #f5f5f5;
+    width 100%;
     .info{
       height 100%;
       float left;
       div{
         float left;
         height 100%;
-        line-height .29rem;
+        line-height 29px;
         font-size .14rem;
         color #333;
         margin-right .15rem;
+        width 30px;
         img{
           display block;
           height 100%;
+          width  100%;
         }
       }
       div:last-child{
-        width 1.7rem;
+        width 1.5rem;
         overflow hidden;
         text-overflow ellipsis;
         -ms-text-overflow ellipsis;
         -o-text-overflow ellipsis;
         -webkit-text-overflow ellipsis;
+        white-space nowrap;
       }
     }
     .collecte{
@@ -343,6 +419,7 @@
       text-align center;
       img{
         height 100%;
+        width 100%;
       }
     }
     .item{
