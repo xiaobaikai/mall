@@ -35,11 +35,12 @@
           <div class="btn">订单详情</div>
           <div class="btn" @click.stop.prevent="cancleOrder">取消订单</div>
           <div class="btn btn-pay" @click.stop.prevent="wepay" v-if="!isNotApp">微信支付</div>
-          <form  :action="formUrl" method="post"  v-if="isNotApp">
-              <input type="hidden" v-model="token" name="token">
-              <input type="hidden" v-model="obj.orderSn" name="orderSn">
-              <input type="submit"  value="支付宝支付" class="btn btn-pay" style="height: 32px;line-height: 32px; font-size: 14px;" >
-          </form>
+          <div class="btn btn-pay" @click.stop.prevent="submitzfb"  v-if="isNotApp">支付宝支付</div>
+          <!--<form  :action="formUrl" method="post">-->
+              <!--<input type="hidden" v-model="token" name="token">-->
+              <!--<input type="hidden" v-model="obj.orderSn" name="orderSn">-->
+              <!--<input type="submit"  value="支付宝支付" class="btn btn-pay" style="height: 32px;line-height: 32px; font-size: 14px;" >-->
+          <!--</form>-->
       </div>
       <div class="btn-wrapper" v-show="showBtn" v-else-if="obj.orderState === 20">
         <div class="btn" @click.stop.prevent="refund" v-if="!obj.returnRefundState && !obj.returnGoodsState">申请退款</div>
@@ -158,8 +159,22 @@
           }
         })
       },
+      //支付宝支付
       submitzfb(){
-        console.log(11);
+	      this.axios.post(this.baseURL.mall + "/m/my/appAlipayByOrder" + this.Service.queryString({
+		      token: this.mallToken.getToken(),
+		      orderSn: this.obj.orderSn
+	      })).then(res =>{
+		      if(res.data.h.code === 200){
+			      let data={};
+			      data.orderSn=res.data.b.orderSn;
+			      data.imgPrefix=this.imgPrefix;
+			      console.log(data);
+			      data=JSON.stringify(data);
+			      console.log(data);
+			      window.location.href = "epipe://?&mark=aliPay&data="+data+"&url="+res.data.b.orderStr;
+		      }
+	      })
       },
       /*申请退款*/
       refund(){
