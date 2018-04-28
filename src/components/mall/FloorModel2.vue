@@ -135,7 +135,7 @@
     padding-top 0.15rem;
     padding-bottom 0.1rem;
     text-align center;
-    line-height 1;
+    line-height 1.27;
     .item-img{
       width: 1.05rem;
       height: 1.05rem;
