@@ -13,6 +13,7 @@
   }
   .tab_work_2con {
     display: flex;
+    display:-webkit-flex;
     flex-direction: row;
     height: 0.53rem;
     align-items: center;
@@ -30,6 +31,7 @@
   }
   .tab_work_3con {
     display: flex;
+    display:-webkit-flex;
     flex-direction: row;
     flex-wrap: wrap;
     width: 100%;
@@ -42,6 +44,7 @@
     position relative;
     width: 25%;
     display: flex;
+    display:-webkit-flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -103,6 +106,7 @@
   }
   .broadcast{
     display: flex;
+    display:-webkit-flex;
     align-items center;
     padding: 0.15rem;
     margin-top: -0.3rem;
@@ -436,39 +440,50 @@
     },
     methods: {
       go_record(){
+        TDAPP.onEvent('record','考勤')                
         window.location.href = "epipe://?&mark=record"
         window["epipe_login_callback"] = auth_token => {
           window.localStorage.setItem("auth_token", auth_token);
         }
       },
       go_outwork(){
+        TDAPP.onEvent('outwork','外勤')        
         window.location.href = "epipe://?&mark=outwork"
         window["epipe_login_callback"] = auth_token => {
           window.localStorage.setItem("auth_token", auth_token);
         }
       },
       go_Maillist(){
+        TDAPP.onEvent('Maillist','通讯录')        
         window.location.href = "epipe://?&mark=Maillist"
       },
+      //日报
       go_daynews(){
+        TDAPP.onEvent('daynews','日报')
         window["epipe_login_callback"] = auth_token => {
           window.localStorage.setItem("auth_token", auth_token);
         }
         window.location.href = "epipe://?&mark=daynews"
       },
+      //周报
       go_weeknews(){
+        TDAPP.onEvent('weeknews','周报') 
         window["epipe_login_callback"] = auth_token => {
           window.localStorage.setItem("auth_token", auth_token);
         }
         window.location.href = "epipe://?&mark=weeknews"
       },
+      //月报
       go_monthnews(){
+        TDAPP.onEvent('monthnews','月报')                        
         window["epipe_login_callback"] = auth_token => {
           window.localStorage.setItem("auth_token", auth_token);
         }
         window.location.href = "epipe://?&mark=monthnews"
       },
+      //工作汇报
       go_journal(){
+        TDAPP.onEvent('journal','工作汇报')                
         window["epipe_login_callback"] = auth_token => {
           window.localStorage.setItem("auth_token", auth_token);
         }
@@ -480,55 +495,71 @@
           window.location.href = "epipe://?&mark=newsdetail&title=" + title + "&url=" + item.url;
         }
       },
+      //企业日报
       go_daily(){
+        TDAPP.onEvent('dailyreport','企业日报')        
         window.location.href = "epipe://?&mark=dailyreport";
       },
       //已办事宜
       go_finishAffairs(){
-        window.location.href = "epipe://?&mark=finishAffair"
+        TDAPP.onEvent('finishAffair','已办事宜')
+        window.location.href = "epipe://?&mark=finishAffair";
       },
       //待办事宜
       go_unfinishAffairs(){
+        TDAPP.onEvent('unfinishAffair','待办事宜')        
         window.location.href = "epipe://?&mark=unfinishAffair"
       },
       //我的申请
       go_myApply(){
+        TDAPP.onEvent('myApply','我的申请')                
         window.location.href = "epipe://?&mark=myApply"
       },
       //请假
       go_leave(){
+        TDAPP.onEvent('leave','请假')                        
         window.location.href = "epipe://?&mark=leave"
       },
       //跳转群组
       go_Grouplist(){
+        TDAPP.onEvent('group','群组')                                
         window.location.href = "epipe://?&mark=Grouplist"
       },
       //物料管理
       go_materierl(){
+        TDAPP.onEvent('equipmentControl','物料管理')        
         window.location.href = "epipe://?&mark=materieldaily";
       },
       //设备管理
       go_machine(){
+        TDAPP.onEvent('equipmentControl ','设备管理')                        
+        
         window.location.href = "epipe://?&mark=warning";
       },
       //生产管理
       go_output(){
+        TDAPP.onEvent('productionControl ','生产管理')                        
+        
         window.location.href = "epipe://?&mark=outputdaily";
       },
       //质量管理
       go_quality(){
+        TDAPP.onEvent('energyControl ','质量管理')                                
         window.location.href = "epipe://?&mark=qualitydaily";
       },
       //能源管理
       go_energy(){
+        TDAPP.onEvent('energyControl','能源管理')                        
         window.location.href = "epipe://?&mark=water";
       },
       //能源监控
       go_energyMonitor(){
+        TDAPP.onEvent('energymonitoring','能源监控')                
         window.location.href = "epipe://?&mark=energymonitoring";
       },
       //趋势监控
       go_trendMonitor(){
+        TDAPP.onEvent('trendmonitoring','趋势监控')    
         window.location.href = "epipe://?&mark=trendmonitoring";
       },
       //判断用户是否有组织
@@ -543,7 +574,8 @@
               this.$router.push({path:'/Nologin'});
             }
             this.mask = false;  //有组织，展示工作台
-          }else{
+       
+       }else{
             this.mask = false;
             this.$router.push({path:'/Nologin'});
           }
@@ -660,7 +692,7 @@
         this.axios.get(this.Service.affairsList).then(function(res){
           let arrs = res.data.b.data;
             vm.mesNum = arrs[0].count;
-            })
+            });
 
         window["epipe_affairs_callback"] = () => {
             vm.getAffairs();

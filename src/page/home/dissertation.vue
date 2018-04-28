@@ -74,8 +74,8 @@
       }
     },
     created(){
-      if (window.localStorage.tender) {
-        this.newsData = JSON.parse(window.localStorage.tender)
+      if (window.localStorage.dissertation) {
+        this.newsData = JSON.parse(window.localStorage.dissertation)
       }
     },
     mounted() {
@@ -92,7 +92,7 @@
           }
         
           that.newsData = data.data.b
-          window.localStorage.tender = JSON.stringify(data.data.b)
+          window.localStorage.dissertation = JSON.stringify(data.data.b)
         }
       }).catch(function (error) {
       });

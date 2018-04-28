@@ -69,7 +69,6 @@
             obj.collectId = that.detail.collectId;
             obj.collectState = that.detail.collectState;
             let dataStr = JSON.stringify(obj)
-            console.log(dataStr)
             window.location.href = "epipe://?&mark=isCollect"+'&data='+dataStr;
           }
         })

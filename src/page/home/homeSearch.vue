@@ -10,8 +10,9 @@
             <div class="search-main">
                 <div class="search">
                     <div class="search_icon">
-                        
+                       
                     </div>
+                    
                     <form action="#" @submit.prevent="searchClick()">
                         <input ref="input" v-model.trim="inputVal" @focus="isShowPrompt=true" type="search" autofocus placeholder="请输入关键字">
                     </form>
@@ -198,8 +199,8 @@ export default {
                 height 0.15rem;
                 background-image url(../../assets/search_icon.png)
                 background-size 0.15rem 0.15rem;
-                top:8px;
-                left:10px;
+                top:0.08rem;
+                left:0.1rem;
             }
 
             input{
@@ -256,7 +257,7 @@ export default {
         ul{
             display flex;
             height 0.4rem;
-            line-height 40px;
+            line-height 0.4rem;
         }
 
         li{

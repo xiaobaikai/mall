@@ -76,7 +76,7 @@ export default {
 
 
     .item-text{
-        width 2.25rem;
+        width calc(100% - 1rem);
 
          h2{
             font-size 0.15rem;
@@ -92,7 +92,9 @@ export default {
             overflow: hidden;
             display: -webkit-box;
             -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
+             /* autoprefixer: off*/
+                -webkit-box-orient: vertical;
+            /* autoprefixer: on*/
             margin 0.09rem 0;
             text-align justify;
         }

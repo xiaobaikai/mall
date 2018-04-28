@@ -1,7 +1,7 @@
 <template>
   <section>
     <div class="tender" v-for="item in newsData" :key="item.id" @click="go_newsdetail(item)">
-          <h2 v-html="item.title"></h2>
+          <h2 style="-webkit-box-orient: vertical;" v-html="item.title"></h2>
           <div style="-webkit-box-orient: vertical;" class="tender-content" v-html="item.summary">
             
           </div>
@@ -105,7 +105,7 @@
 <style scoped lang="stylus">
 
   .tender{
-     height 1.2rem;
+    //  height 1.4rem;
      margin-top 0.1rem;
      background-color #fff;
      box-sizing border-box
@@ -116,9 +116,11 @@
        color #333;
        font-weight 600
        margin-bottom 0.12rem;
-       text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      margin-bottom 0.1rem;
+      -webkit-box-orient: vertical;
      }
   }
 
@@ -133,6 +135,7 @@
   }
 
   .tender-foot{
+    overflow hidden;
     color #999
 
     >div{

@@ -6,12 +6,10 @@
       <div class="header">
             <div class="search-main">
                 <div class="search"  @click="go_search()">
-                    <!-- <div class="search_icon">
+                    <div class="search_icon">
                         
-                    </div> -->
-                    <svg style="width: 0.15rem;height: 0.15rem;color:#666" class="icon" aria-hidden="false">
-                          <use xlink:href="#icon-sousuo"></use>
-                        </svg>
+                    </div>
+                    
                     <input ref="input"  type="text"  placeholder="请输入关键字">
                 </div>
             </div>
@@ -49,7 +47,7 @@
               <use xlink:href="#icon-zhaotoubiao"></use>
             </svg>
           </div>
-          <div>优投标</div>
+          <div>优招标</div>
         </li>
       
         </ul>
@@ -58,8 +56,8 @@
         <div></div>
         <div>头条</div>
       </div>
-      <!-- <div class="home_content_news-1" v-for="newsData_item in newsData"> -->
-        <!-- <ul v-if="newsData_item.coverImgUrl==''" @click="go_news(newsData_item)" class="home_title_con2">
+      <!-- <div class="home_content_news-1" v-for="newsData_item in newsData"> 
+          <ul v-if="newsData_item.coverImgUrl==''" @click="go_news(newsData_item)" class="home_title_con2">
           <li class="over_width" v-html="newsData_item.resTitle"></li>
           <li class="home_title_con3 simple-ellipsis" v-html="newsData_item.summary">
           </li>
@@ -91,13 +89,13 @@
             </div>
           </div>
         </ul> -->
-        <div class="item" v-for="item in newsData" @click="go_newsdetail(item)">
+        <div class="item" v-for="item in newsData" @click="go_news(item)" :key="item.id" >
             <div class="img-show">
                 <img :src="item.coverImgUrl" />
             </div>
             <div class="item-content">
                 <h2 v-html="item.resTitle"></h2>
-                <div class="item-text" style="-webkit-box-orient: vertical;" v-html="item.summary"></div>
+                <div class="item-text" style="-webkit-box-orient: vertical" v-html="item.summary"></div>
                 <div class="item_infor">
                     <span style="margin-right:0.05rem;">{{item.resTopNewsCategoryName}}</span>
                     <span>{{item.resCreateDate.slice(0,10)}}</span>
@@ -110,7 +108,7 @@
             </div>
         </div>
 
-      <!-- </div> -->
+        <!-- </div> -->
       <infinite-loading spinner="bubbles" :on-infinite="onInfinite" ref="infiniteLoading">
         <span slot="no-more">
           暂无更多加载
@@ -168,37 +166,40 @@
         }, 200);
       },
       go_tender(){  //首页跳招投标
+      TDAPP.onEvent('tender','招投标')    
         window.location.href = "epipe://?&mark=tender"
       },
       go_dissertation(){  //首页跳优管专题
+      TDAPP.onEvent('dissertation','优管专题')    
         window.location.href = "epipe://?&mark=dissertation"
       },
       go_mall(){  //首页跳商城
+      TDAPP.onEvent('mall','商城')    
         window.location.href = "epipe://?&mark=mallhome"
       },
       go_newsdetail(item){
         
         if (item.h5Uri != "" && item.h5Uri) {
           let title = Util.Title_format(item.title)
-       
+          
           window.location.href = "epipe://?&mark=newsdetail&title=" + title+'&data='+ data + "&url=" + item.h5Uri;
         } else if (item.url) {
-          if (item.url != "#") {
+            if (item.coverImgUrl != "#") {
+              let title = Util.Title_format(item.title)
+              let obj = {};
+              obj.title = title;
+              obj.imageUrl = item.imgUrl;
+              obj.text = '';
+              obj.collectState = item.collectState;
+              obj.collectId = item.collectId;
+              let data = JSON.stringify(obj)
+              window.location.href = "epipe://?&mark=newsdetail&title=" + obj.title + "&url=" + item.url;
+            }
+          } else {
+                   
             let title = Util.Title_format(item.title)
-            let obj = {};
-            obj.title = title;
-            obj.imageUrl = item.imgUrl;
-            obj.text = '';
-            obj.collectState = item.collectState;
-            obj.collectId = item.collectId;
-            let data = JSON.stringify(obj)
-            window.location.href = "epipe://?&mark=newsdetail&title=" + obj.title + "&url=" + item.url;
+            window.location.href = "epipe://?&mark=newsdetail&title=" + title + "&_id=" + item.id;
           }
-        } else {
-        
-          let title = Util.Title_format(item.title)
-          window.location.href = "epipe://?&mark=newsdetail&title=" + title + "&_id=" + item.id;
-        }
       },
       go_news(item){
         let title = Util.Title_format(item.resTitle);
@@ -231,6 +232,7 @@
     },
     mounted() {
       let that = this;
+
       //轮播图
       this.axios.get(this.Service.content_show, {params: {type: 1, locationId: 10}}).then(function (data) {
       
@@ -337,6 +339,7 @@
 
   .home_title_con2 {
     display: flex;
+    display:-webkit-flex;
     flex-direction: column;
     background-color: #fff;
     padding: 0.15rem;
@@ -372,6 +375,7 @@
 
   .home_title_con1 {
     display: flex;
+    display:-webkit-flex;
     flex-direction: row;
     align-items: center;
     height: 0.475rem;
@@ -392,6 +396,7 @@
 
   .home_nav_top {
     display: flex;
+    display:-webkit-flex;
     flex-direction: row;
     height: 0.96rem;
     align-items: center;
@@ -403,7 +408,9 @@
     width:33.33%;
     font-size: 0.14rem;
     align-items: center;
+   
     display: flex;
+    display:-webkit-flex;
     justify-content: center;
     flex-direction: column;
     /*padding-bottom 0.05rem*/
@@ -419,13 +426,17 @@
     width: 0.398rem;
     height: 0.398rem;
     border-radius: 10rem;
+    
     display: flex;
+    display:-webkit-flex;
     align-items: center;
     justify-content: center;
   }
 
   .home_nav_top li div {
+
     display: flex;
+    display:-webkit-flex;
     font-size: 0.13rem;
     margin-top: 0.05rem;
   }
@@ -441,12 +452,15 @@
   }
   
   .sub-desc{
+   
     display: flex;
+    display:-webkit-flex;
     justify-content space-between;
   }
 
   .header{
         display flex;
+        display:-webkit-flex;
         padding 0.07rem 0.15rem;
         height 0.44rem;
         box-sizing: border-box;
@@ -465,14 +479,16 @@
             border-radius 0.3rem;
             overflow hidden;
             margin 0 auto;
-            background-color:rgba(0,0,0,0.2);
+            background-color:#efeff0;
 
             .search_icon{
                 position absolute;
                 width:0.15rem;
                 height 0.15rem;
-                top:8px;
-                left:10px;
+                background-image url(../../assets/fdj.png)
+                background-size 0.15rem 0.15rem;
+                top:0.08rem;
+                left:0.2rem;
             }
 
             svg{
@@ -488,7 +504,7 @@
                 border none;
                 outline none;
                 left:0.6rem;
-                background-color:rgba(0,0,0,0);
+                background-color:#efeff0;
             }
             input::-webkit-input-placeholder{
             color:#666;
@@ -512,42 +528,47 @@
 
 
     .item{
+        
         display flex;
-        margin 0.15rem;
-        margin-bottom 0;
-        padding 0.15rem 0.1rem;
+        display:-webkit-flex;
+        margin-top 0.15rem;
+        width:100%;
+        padding 0.15rem 0.15rem;
         background-color #fff;
         border-radius 4px;
         -webkit-box-shadow: 0 0 0.2rem rgba(255,136,0,.1);    
         box-shadow 0 0 0.2rem rgba(255,136,0,.1);
+        box-sizing border-box
     }
 
     .img-show{
         width 1.4rem;
-        height 0.9rem;
         margin-right 0.1rem;
 
         img{
-            width 100%;
-            height 100%;
+            width 1.4rem;
+            height 0.9rem;
             border-radius 4px;
         }
     } 
 
     .item-content{
-        width:1.8rem;
+     
+        width : calc(100% - 1.5rem)
 
         h2{
+            width 100%;
             font-size 0.15rem;
             text-overflow: ellipsis;
             white-space: nowrap;
             overflow: hidden;
             color:#333;
-            font-weight bold
+            font-weight bold;
+
         }
 
         .item-text{
-             height 0.36rem;
+        
             font-size 0.14rem;
             line-height 0.18rem;
             color #666;
@@ -555,8 +576,7 @@
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
-            margin 0.09rem 0;
-            text-align justify;
+            margin 0.09rem 0;           
         }
     }
 
@@ -571,6 +591,16 @@
     }
     .spanRight{
         float right;
+    }
+
+    .simple-ellipsis{
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+             /* autoprefixer: off*/
+                -webkit-box-orient: vertical;
+            /* autoprefixer: on*/
+            margin 0.09rem 0; 
     }
 
 </style>

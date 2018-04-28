@@ -62,11 +62,9 @@
             that.banner = res.data.b[0]
       })
 
-      that.axios.get(that.Service.resource + '国际展会', {
+      that.axios.get('content/getResExhibition', {
         params: {
-          type: 3,
-          pageSize: 3,
-          pageNo: 1
+         lastId:'',
         }
       }).then(function (data) {
         if (data.data.b) {
@@ -135,6 +133,7 @@
   .find_con_div {
     margin-top: 0.08rem;
     height: 0.44rem;
+    display :-webkit-flex;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -149,6 +148,7 @@
 
 
   .find_con_div > ul {
+    display :-webkit-flex;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -174,6 +174,7 @@
 
 
   .rests{
+      display :-webkit-flex;
       display flex
       background-color #fff;
       margin 0 0.15rem;
