@@ -1,13 +1,14 @@
 <template>
   <div class="confirm-order">
     <router-link to="ReceivingAdress" tag="div" class="receiving-info">
-      <div v-for="(obj,i) in addressList" :key="i" v-if="i==0">
+      <div v-for="(obj,i) in addressList" :key="i" v-if="addressList.length>0 && i==0">
         <p class="p1">
           <span>{{obj.trueName}}</span>
           <span>{{obj.mobPhone}}</span>
         </p>
         <p class="p2">{{obj.areaInfo}}{{obj.address}}</p>
       </div>
+      <div v-if="addressList.length==0">请选择收货地址</div>
       <div>
         <i class="iconfont icon-jinru"></i>
       </div>
@@ -100,7 +101,7 @@
           console.log(res);
           if(res.data.h.code==200){
             this.addressList=res.data.b;
-            this.addressId=this.addressList[0].addressId;
+            //this.addressId=this.addressList[0].addressId;
           }else  if(res.data.h.code === 50 || res.data.h.code === 30){
             this.$router.replace("/accountlogin");
           }else{
@@ -109,40 +110,49 @@
         })
       },
       submitPayZfb(){
-        this.axios.post(this.baseURL.mall + "/m/my/appAlipay"+this.Service.queryString({
-          token:this.mallToken.getToken(),
-          cartIds:this.cartIds.join(','),
-          addressId:this.addressList[0].addressId,
-          openInv:this.openInv,
-          invoiceId:this.invoiceId
-        })).then(res=>{
-          console.log('支付宝',res);
-          if(res.data.h.code === 200){
-            let data={};
-            data.orderSn=res.data.b.orderSn;
-            data.imgPrefix=this.imgPrefix;
-            console.log(data);
-            data=JSON.stringify(data);
-            console.log(data);
-            window.location.href = "epipe://?&mark=aliPay&data="+data+"&url="+res.data.b.orderStr;
-          }
-        })
+	      if(this.addressList.length>0){
+		      this.axios.post(this.baseURL.mall + "/m/my/appAlipay"+this.Service.queryString({
+			      token:this.mallToken.getToken(),
+			      cartIds:this.cartIds.join(','),
+			      addressId:this.addressList[0].addressId,
+			      openInv:this.openInv,
+			      invoiceId:this.invoiceId
+		      })).then(res=>{
+			      console.log('支付宝',res);
+			      if(res.data.h.code === 200){
+				      let data={};
+				      data.orderSn=res.data.b.orderSn;
+				      data.imgPrefix=this.imgPrefix;
+				      console.log(data);
+				      data=JSON.stringify(data);
+				      console.log(data);
+				      window.location.href = "epipe://?&mark=aliPay&data="+data+"&url="+res.data.b.orderStr;
+			      }
+		      })
+        }else{
+		      this.$toast('请选择收货地址');
+        }
       },
       submitPayWx(){
         //alert(this.openInv);
-        this.axios.post(this.baseURL.mall + "/m/my/getCode"+this.Service.queryString({
-          token:this.mallToken.getToken(),
-          cartIds:this.cartIds.join(','),
-          addressId:this.addressList[0].addressId,
-          openInv:this.openInv,
-          invoiceId:this.invoiceId
-        })).then(res=>{
-          console.log(res);
-          if(res.data.h.code==200) {
+        //console.log(this.addressList);
+        if(this.addressList.length>0){
+	        this.axios.post(this.baseURL.mall + "/m/my/getCode"+this.Service.queryString({
+		        token:this.mallToken.getToken(),
+		        cartIds:this.cartIds.join(','),
+		        addressId:this.addressList[0].addressId,
+		        openInv:this.openInv,
+		        invoiceId:this.invoiceId
+	        })).then(res=>{
+		        console.log(res);
+		        if(res.data.h.code==200) {
 //            localStorage.removeItem('invoiceListArr');
-            window.location.href = res.data.b;
-          }
-        })
+			        window.location.href = res.data.b;
+		        }
+	        })
+        }else{
+	        this.$toast('请选择收货地址');
+        }
       },
       queryInvoice(){
         this.axios.post(this.baseURL.mall + "/m/my/queryInvoice"+this.Service.queryString({
