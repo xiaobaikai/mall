@@ -406,6 +406,7 @@
     margin-bottom .1rem;
     img{
       height 1.6rem;
+      width 100%;
     }
   }
   .floor-4-view{

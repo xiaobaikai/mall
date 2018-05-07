@@ -417,7 +417,7 @@
     bottom 0;
     ul{
       li{
-        width 33.333%;
+        width 30%;
         text-align center;
         float left;
         font-size 15px;
@@ -428,6 +428,7 @@
         line-height 48px;
         border-top 1px solid #e5e5e5;
         background #fff;
+        width 40%;
         div{
           width 33.333%;
           height 100%;
