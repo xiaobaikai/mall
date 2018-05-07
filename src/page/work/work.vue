@@ -527,7 +527,7 @@
       },
       //物料管理
       go_materierl(){
-        TDAPP.onEvent('equipmentControl','物料管理')        
+        TDAPP.onEvent('materialControl','物料管理')        
         window.location.href = "epipe://?&mark=materieldaily";
       },
       //设备管理
@@ -544,7 +544,7 @@
       },
       //质量管理
       go_quality(){
-        TDAPP.onEvent('energyControl ','质量管理')                                
+        TDAPP.onEvent('qualityControl','质量管理')                                
         window.location.href = "epipe://?&mark=qualitydaily";
       },
       //能源管理
