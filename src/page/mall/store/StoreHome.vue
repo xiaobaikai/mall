@@ -37,7 +37,7 @@
         </swiper>
         <img src="../../../assets/default-banner.png" alt="" v-else>
       </div>
-      <div class="floor-4-view" v-for="(item ,k) in floorList" :key="k">
+      <div class="floor-4-view" v-for="(item ,k) in floorList" :key="k" v-if="floorList[k].floorGoods>0">
         <div class="floor-title">
           <img :src="imgPrefix + item.floorTitleImg" alt="楼层标题">
         </div>

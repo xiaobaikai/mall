@@ -270,18 +270,20 @@
       },
       /*确认收货*/
       confirmReceipt(){
-        this.axios.post(this.baseURL.mall + "/m/my/orderConfirm" + this.Service.queryString({
-          token: this.mallToken.getToken(),
-          orderId: this.obj.orderId
-        })).then(res =>{
-          console.log("确认收货",res);
-          if(res.data.h.code === 200){
-            this.$toast("已确认收货");
-            this.$emit("childCall",4);
-          }else{
-            this.$toast(res.data.h.msg);
-          }
-        });
+	      this.$confirm("确定要确认收货?").then(() =>{
+		      this.axios.post(this.baseURL.mall + "/m/my/orderConfirm" + this.Service.queryString({
+			      token: this.mallToken.getToken(),
+			      orderId: this.obj.orderId
+		      })).then(res =>{
+			      console.log("确认收货",res);
+			      if(res.data.h.code === 200){
+				      this.$toast("已确认收货");
+				      this.$emit("childCall",4);
+			      }else{
+				      this.$toast(res.data.h.msg);
+			      }
+		      });
+        })
       },
       /*跳转评价*/
       linkToComment(id){
