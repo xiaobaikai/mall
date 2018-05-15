@@ -13,8 +13,8 @@
         </ul>
       </div>
       <div class="class-area-r"  ref="conClass">
-        <div class="con-class"  v-for="(items,index) in goodClassList" :key="index" v-if="showIndex===index && items.gcshow === 1">
-          <div  v-for="(item,index) in items.classList" :key="index">
+        <div class="con-class"  v-for="(items,index) in goodClassList" :key="index" v-if="showIndex===index">
+          <div  v-for="(item,index) in items.classList" :key="index" v-if="item.gcshow === 1">
             <div class="class-tit">{{item.gcName}}</div>
             <ul>
               <li  v-for="(obj,index) in item.classList" :key="index" @click="classSearch(obj.gcId)" v-if="obj.gcshow === 1">{{obj.gcName}}</li>
