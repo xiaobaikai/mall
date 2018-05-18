@@ -120,7 +120,7 @@
           console.log(res);
           let data=res.data;
           if(data.h.code==200){
-          
+	          this.$router.replace("/accountlogin");
           }else{
             this.tips=data.h.msg;
           }
