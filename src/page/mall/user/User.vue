@@ -31,6 +31,25 @@
         <div class="title">最近浏览</div>
       </router-link>
     </div>
+    <div class="assets">
+      <div class="assets-tit">我的资产</div>
+      <div class="assets-item">
+        <div>
+          <router-link  :to="{path:'mycoupon'}">
+            <p><span>23</span><span>张</span></p>
+            <p><i class="iconfont icon-quan"></i><span>优惠券</span></p>
+          </router-link>
+        </div>
+        <div>
+          <p><span>6</span><span>个</span></p>
+          <p><i class="iconfont icon-hongbao"></i><span>红包</span></p>
+        </div>
+        <div>
+          <p><span>300</span><span>分</span></p>
+          <p><i class="iconfont icon-jifen"></i><span>积分</span></p>
+        </div>
+      </div>
+    </div>
     <div class="orders">
       <router-link to="myorder" class="link-item">
         <div class="link-title">我的订单</div>
@@ -215,6 +234,63 @@
       font-size: 0.12rem;
       color: #666;
       line-height 1;
+    }
+  }
+  .assets{
+    margin-top .1rem;
+    background #fff;
+    .assets-tit{
+      height .45rem;
+      line-height .45rem;
+      font-size .14rem;
+      color #333;
+      padding 0 .1rem;
+      position relative;
+      &::after{
+        content: "";
+        position absolute;
+        left 0;
+        bottom: 0;
+        width 100%;
+        height: 1px;
+        background #E9E9E9;
+        -webkit-transform-origin: 0 0;
+        transform-origin: 0 0;
+        -webkit-transform: scaleY(0.5);
+        transform: scaleY(0.5);
+      }
+    }
+    .assets-item{
+      height .7rem;
+      display flex;
+      justify-content center;
+      align-items center;
+      div{
+        flex 1;
+        text-align center;
+        p{
+          &:first-child{
+            color #d74a45;
+            span:first-child{
+              font-size .16rem;
+              font-weight bold;
+            }
+            span:last-child{
+              font-size .12rem;
+              font-weight bold;
+            }
+          }
+          &:last-child{
+            color #666;
+            margin-top .05rem;
+            i{
+              color #d4a163;
+              font-size .22rem;
+              vertical-align middle;
+            }
+          }
+        }
+      }
     }
   }
   .orders{

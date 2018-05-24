@@ -17,7 +17,24 @@
         </div>
         <div class="goods-des">
           <p>{{item.goodsName}}</p>
-          <div><span>￥</span><span>{{goodsStorePrice}}</span></div>
+          <div class="goods-price"><span>￥</span><span>{{goodsStorePrice}}</span><span class="origina-priece" v-if="item.promotionType === 'TG'">市场价￥{{item.goodsOriginalPrice}}</span></div>
+          <div class="promotion-detail" v-if="item.promotionType === 'YH'">
+            <div class="promotion-tit">领券</div>
+            <div class="promotion-con"><span v-for="(coupon,index) in item.promotionList" :key="index">{{coupon.couponDesc}}</span></div>
+            <div class="promotion-more" @click="showPromotionInfo">...</div>
+          </div>
+          <div class="promotion-detail" v-if="item.promotionType === 'ZK'">
+            <div class="promotion-tit discount-tit">折扣</div>
+            <div class="promotion-con">
+              <span class="discount-span" v-for="(coupon,index) in item.promotionList" :key="index" v-if="index < item.promotionList.length - 1">{{coupon.couponDesc + '，'}}</span>
+              <span class="discount-span" v-for="(coupon,index) in item.promotionList" :key="index" v-if="index == item.promotionList.length - 1">{{coupon.couponDesc}}</span>
+            </div>
+            <div class="promotion-more" @click="showPromotionInfo">...</div>
+          </div>
+          <div class="promotion-detail" v-if="item.promotionType === 'TG'">
+            <div class="promotion-tit discount-tit">团购</div>
+            <div class="promotion-con">本商品参与团购活动，活动与{{item.promotionList[0].endTimeStr}}结束。</div>
+          </div>
         </div>
         <div class="goods-spec">
           <ul>
@@ -110,6 +127,36 @@
         <li @click="buyNow">立即购买</li>
       </ul>
     </div>
+    <div class="promotion-popup" v-if="promotionShowState && promotionType === 'YH'" @touchmove.prevent>
+      <div class="popup-con">
+        <div class="popup-tit">优惠券<span  @click="showPromotionInfo">ｘ</span></div>
+        <div class="popup-list">
+          <div class="coupon-tit">可领取的优惠券</div>
+          <div class="coupon-info" v-for="(obj,index) in goodsList[0].promotionList" :key="index">
+            <div class="coupon">
+              <div><span>￥</span><span>{{obj.couponPrice}}</span></div>
+            </div>
+            <div class="condition">
+              <p>满{{obj.couponLimit}}可用</p>
+              <p>{{obj.startTimeStr.substring(0,10)}}～{{obj.endTimeStr.substring(0,10)}}</p>
+            </div>
+            <div class="receive" @click="receiveCoupon(obj.couponId)">领取</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="promotion-popup" v-if="promotionShowState && promotionType === 'ZK'" @touchmove.prevent>
+      <div class="popup-con">
+        <div class="popup-tit">折扣<span  @click="showPromotionInfo">ｘ</span></div>
+        <div class="discount-detail">
+          <div class="discount-flag">折扣</div>
+          <div class="discount-labal">
+            <span v-for="(coupon,index) in  goodsList[0].promotionList" :key="index" v-if="index <  goodsList[0].promotionList.length - 1">{{coupon.couponDesc + '，'}}</span>
+            <span v-for="(coupon,index) in  goodsList[0].promotionList" :key="index" v-if="index ==  goodsList[0].promotionList.length - 1">{{coupon.couponDesc + '。'}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script>
@@ -143,7 +190,9 @@
         specId:'',    //规格组合id
         specIdArr:[],
         goodsSpecObj:'', //组合
-        collectNum:0
+        collectNum:0,
+        promotionShowState:false,
+	      promotionType:''
       }
     },
     components: {
@@ -164,6 +213,25 @@
 //      this.$refs.conpart.style.height = conH +'px';
     },
     methods: {
+    	//领取优惠券
+	    receiveCoupon(couponId){
+	    	console.log(couponId);
+		    this.axios.post(this.baseURL.mall + '/m/my/getCoupon' +this.Service.queryString({
+			    token:this.mallToken.getToken(),
+			    couponId:couponId
+		    })).then(res=>{
+			    console.log(res);
+			    if(res.data.h.code === 200){
+			    	this.$toast("领取成功");
+          }else{
+				    this.$toast(res.data.h.msg);
+          }
+		    })
+      },
+    	//促销信息详情
+	    showPromotionInfo(){
+	    	this.promotionShowState=!this.promotionShowState;
+      },
       //tab切换
       change(index) {
         this.selected = index;
@@ -309,6 +377,7 @@
             let goodsData=res.data.b;
             this.setStore(goodsData.goods[0]);
             this.goodsStorePrice=goodsData.goods[0].goodsStorePrice;
+            this.promotionType=goodsData.goods[0].promotionType;
             this.goodsList=goodsData.goods;
             this.storeId=goodsData.goods[0].storeId;
             if(goodsData.goodsSpecObj){
@@ -500,11 +569,69 @@
         word-break: break-all;
         overflow: hidden;
       }
-      div{
+      .goods-price{
         margin-top .15rem;
         span{
           color #d74a45;
           font-size .18rem;
+        }
+        .origina-priece{
+          margin-left .1rem;
+          font-size .14rem;
+          color #999;
+        }
+      }
+      .promotion-detail{
+        display -webkit-flex;
+        display flex;
+        margin-top .15rem;
+        div{
+          font-size .12rem;
+          color #999;
+          span{
+            display inline-block;
+            width .7rem;
+            height .2rem;
+            line-height .2rem;
+            text-align center;
+            border-radius 2px;
+            border 1px solid #d74a45;
+            color #d74a45;
+            font-size .12rem;
+            margin-left .1rem;
+            margin-bottom .1rem;
+          }
+          .discount-span{
+            width auto;
+            border none;
+            color #666;
+            margin-left 0;
+          }
+        }
+        .promotion-tit{
+          height .22rem;
+          line-height .22rem;
+        }
+        .discount-tit{
+          width .4rem;
+          height .2rem;
+          line-height .2rem;
+          border 1px solid #d74a45;
+          border-radius 2px;
+          color #d74a45;
+          text-align center;
+          margin-right .1rem;
+        }
+        .promotion-con{
+          flex 1;
+          height .22rem;
+          line-height .22rem;
+          font-size .12rem;
+          color #666;
+        }
+        .promotion-more{
+          font-size .26rem;
+          line-height .1rem;
         }
       }
     }
@@ -692,6 +819,127 @@
             margin-left .06rem;
           }
         }
+      }
+    }
+  }
+  .promotion-popup{
+    width 100%;
+    height 100%;
+    position fixed;
+    left 0;
+    top 0;
+    z-index 10;
+    background rgba(0,0,0,0.2);
+  }
+  .popup-con{
+    width 100%;
+    background #fff;
+    position absolute;
+    left 0;
+    bottom 0;
+    z-index 11;
+    .popup-tit{
+      width 100%;
+      height .45rem;
+      line-height .45rem;
+      text-align center;
+      font-size .16rem;
+      color #333;
+      border-bottom 1px solid #e5e5e5;
+      position relative;
+      span{
+        position absolute;
+        right .15rem;
+        top 50%;
+        transform translateY(-50%);
+        color #999;
+      }
+    }
+    .popup-list{
+      padding 0 .15rem .15rem .15rem;
+      overflow hidden;
+      .coupon-tit{
+        height .45rem;
+        line-height .45rem;
+        font-size .14rem;
+        color #333;
+      }
+      .coupon-info{
+        height .75rem;
+        display flex;
+        display -webkit-flex ;
+        margin-bottom .15rem;
+        .coupon{
+          width 1rem;
+          height 100%;
+          background #ffcc33;
+          position relative;
+          div{
+            position absolute;
+            left 50%;
+            top 50%;
+            transform translate(-50%,-50%);
+            -webkit-transform translate(-50%,-50%);
+            span{
+              color #fff;
+            }
+            span:first-child{
+              font-size .18rem;
+            }
+            span:last-child{
+              font-size .5rem;
+            }
+          }
+        }
+        .condition{
+          flex 1;
+          margin-left .1rem;
+          p{
+            line-height 1.27;
+            margin-top .18rem;
+            font-size .12rem;
+          }
+          p:first-child{
+            color #666;
+          }
+          p:last-child{
+            color #999;
+          }
+        }
+        .receive{
+          width .6rem;
+          height .25rem;
+          line-height .25rem;
+          text-align center;
+          font-size .12rem;
+          color #fff;
+          background #ffcc33;
+          border-radius .2rem;
+          position relative;
+          top 50%;
+          margin-top -.125rem;
+        }
+      }
+    }
+  }
+  .discount-detail{
+    padding .2rem .15rem 1.2rem .15rem;
+    display flex;
+    .discount-flag{
+      width .4rem;
+      height .2rem;
+      line-height .2rem;
+      border 1px solid #d74a45;
+      border-radius 2px;
+      color #d74a45;
+      text-align center;
+      margin-right .1rem;
+    }
+    .discount-labal{
+      flex 1;
+      span{
+        font-size .12rem;
+        color #666;
       }
     }
   }

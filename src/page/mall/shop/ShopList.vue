@@ -20,6 +20,7 @@
             <P class="p2" v-if="item.specInfo===''">无具体规格</P>
             <section class="price-num">
               <section class="price"><i>￥</i>{{item.goodsPrice}}</section>
+              <section class="original-price" v-if="item.goodsOriginalPrice">￥{{item.goodsOriginalPrice}}</section>
               <section class="num">
                 <span @click.stop.prevent="reduce(index1,index)"><i class="iconfont icon-jian"></i></span>
                 <span><input type="text" v-model="item.goodsNum" @click.stop.prevent="" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
@@ -539,6 +540,13 @@
                 font-style normal;
                 font-size .12rem;
               }
+            }
+            .original-price{
+              float left;
+              margin-left .1rem;
+              color #999;
+              text-decoration line-through;
+              font-size .14rem;
             }
             .num{
               font-size 0;
