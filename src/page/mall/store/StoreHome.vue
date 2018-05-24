@@ -48,7 +48,11 @@
             </div>
             <div class="item-title">{{obj.goodsName}}</div>
             <div class="item-sub">
-              <div class="item-price">￥{{obj.goodsStorePrice}}</div>
+              <div class="item-price">￥{{obj.goodsStorePrice}}
+                <div class="promotion-flag" v-if="obj.promotionType === 'YH'">券</div>
+                <div class="promotion-flag" v-if="obj.promotionType === 'ZK'">折</div>
+                <div class="promotion-flag" v-if="obj.promotionType === 'TG'">团</div>
+              </div>
               <div class="buy">
                 <svg class="icon icon-car" aria-hidden="false">
                   <use xlink:href="#icon-gouwuche-xuanzhongicon"></use>
@@ -73,7 +77,11 @@
           <div class="goods-details">
             <div class="goods-desc">{{item.goodsName}}</div>
             <div class="goods-opr">
-              <div class="price">￥{{item.goodsStorePrice}}</div>
+              <div class="price">￥{{item.goodsStorePrice}}
+                <div class="promotion-flag" v-if="item.promotionType === 'YH'">券</div>
+                <div class="promotion-flag" v-if="item.promotionType === 'ZK'">折</div>
+                <div class="promotion-flag" v-if="item.promotionType === 'TG'">团</div>
+              </div>
               <div class="buy">
                 <i class="iconfont icon-xiaogouwucheicon" @click.prevent="addToCart(index)"></i>
                 <span class="btn-buy"  @click.prevent="buyNow(index)">立即购买</span>
@@ -409,6 +417,19 @@
       width 100%;
     }
   }
+  .promotion-flag{
+    width 0.2rem;
+    height 0.18rem;
+    line-height 0.18rem;
+    border-radius 2px;
+    text-align  center;
+    font-size .11rem;
+    background #e54545;
+    color #fff;
+    position absolute;
+    top 2px;
+    right -0.28rem;
+  }
   .floor-4-view{
     display: flex;
     justify-content space-between;
@@ -464,6 +485,7 @@
     .item-price{
       font-size 0.16rem;
       color: #333;
+      position relative;
     }
     .item-menu{
       display flex;
@@ -552,6 +574,7 @@
     font-size: 0.18rem;
     line-height: 1;
     color: #d74845;
+    position relative;
   }
   .buy{
     font-size: 0;

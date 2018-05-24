@@ -131,6 +131,10 @@
         <span class="price-title">运费</span>
         <span class="price-amount">+￥0</span>
       </div>
+      <div class="price-line">
+        <span class="price-title">优惠</span>
+        <span class="price-amount">-￥{{objData.discount}}</span>
+      </div>
       <div class="price-sub"><span class="sub-title">实付金额:</span><span class="price-amount">￥{{objData.orderAmount}}</span></div>
     </section>
     <footer-tab :category="3"></footer-tab>

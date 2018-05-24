@@ -36,7 +36,7 @@
       <div class="assets-item">
         <div>
           <router-link  :to="{path:'mycoupon'}">
-            <p><span>23</span><span>张</span></p>
+            <p><span>{{userInfo.myCouponsNum}}</span><span>张</span></p>
             <p><i class="iconfont icon-quan"></i><span>优惠券</span></p>
           </router-link>
         </div>

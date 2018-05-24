@@ -21,7 +21,7 @@
           <div class="promotion-detail" v-if="item.promotionType === 'YH'">
             <div class="promotion-tit">领券</div>
             <div class="promotion-con"><span v-for="(coupon,index) in item.promotionList" :key="index">{{coupon.couponDesc}}</span></div>
-            <div class="promotion-more" @click="showPromotionInfo">...</div>
+            <div class="promotion-more" @click="showPromotionInfo('YH')">...</div>
           </div>
           <div class="promotion-detail" v-if="item.promotionType === 'ZK'">
             <div class="promotion-tit discount-tit">折扣</div>
@@ -131,16 +131,34 @@
       <div class="popup-con">
         <div class="popup-tit">优惠券<span  @click="showPromotionInfo">ｘ</span></div>
         <div class="popup-list">
-          <div class="coupon-tit">可领取的优惠券</div>
-          <div class="coupon-info" v-for="(obj,index) in goodsList[0].promotionList" :key="index">
-            <div class="coupon">
-              <div><span>￥</span><span>{{obj.couponPrice}}</span></div>
+          <div class="coupon-type-list">
+            <div class="coupon-tit">可领取的优惠券</div>
+            <div v-if="promotionList.canPromotionList.length == 0" class="coupon-info-nodata">
+              <p><i class="iconfont icon-quan"></i></p>
+              <p>暂无可领取优惠券</p>
             </div>
-            <div class="condition">
-              <p>满{{obj.couponLimit}}可用</p>
-              <p>{{obj.startTimeStr.substring(0,10)}}～{{obj.endTimeStr.substring(0,10)}}</p>
+            <div class="coupon-info" v-for="(obj,index) in promotionList.canPromotionList" :key="index" v-if="promotionList.canPromotionList.length>0">
+              <div class="coupon">
+                <div><span>￥</span><span>{{obj.couponPrice}}</span></div>
+              </div>
+              <div class="condition">
+                <p>满{{obj.couponLimit}}可用</p>
+                <p>{{obj.startTimeStr.substring(0,10)}}～{{obj.endTimeStr.substring(0,10)}}</p>
+              </div>
+              <div class="receive" @click="receiveCoupon(obj.couponId)">领取</div>
             </div>
-            <div class="receive" @click="receiveCoupon(obj.couponId)">领取</div>
+          </div>
+          <div class="coupon-type-list"  v-if="promotionList.gotPromotionList.length>0">
+            <div class="coupon-tit">已领取的优惠券</div>
+            <div class="coupon-info" v-for="(obj,index) in promotionList.gotPromotionList" :key="index">
+              <div class="coupon">
+                <div><span>￥</span><span>{{obj.couponPrice}}</span></div>
+              </div>
+              <div class="condition">
+                <p>满{{obj.couponLimit}}可用</p>
+                <p>{{obj.startTimeStr.substring(0,10)}}～{{obj.endTimeStr.substring(0,10)}}</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -192,7 +210,8 @@
         goodsSpecObj:'', //组合
         collectNum:0,
         promotionShowState:false,
-	      promotionType:''
+	      promotionType:'',
+        promotionList:[]
       }
     },
     components: {
@@ -223,14 +242,42 @@
 			    console.log(res);
 			    if(res.data.h.code === 200){
 			    	this.$toast("领取成功");
+          }else if(res.data.h.code === 30){
+				    if(this.isApp.state){
+					    window.location.href = "epipe://?&mark=login";
+				    }else{
+					    this.$router.replace("/accountlogin");
+				    }
           }else{
 				    this.$toast(res.data.h.msg);
           }
 		    })
       },
-    	//促销信息详情
-	    showPromotionInfo(){
+      //优惠券详情列表
+      getCouponList(){
+	      this.axios.post(this.baseURL.mall + "/m/my/myGoodsCoupons"+this.Service.queryString({
+		      token:this.mallToken.getToken(),
+		      goodsId:this.goodsId
+	      })).then(res=>{
+		      console.log(res);
+		      if(res.data.h.code === 200){
+			      this.promotionList=res.data.b;
+		      }else if(res.data.h.code === 30){
+			      if(this.isApp.state){
+				      window.location.href = "epipe://?&mark=login";
+			      }else{
+				      this.$router.replace("/accountlogin");
+			      }
+		      }
+	      })
+      },
+    	//促销信息详情展开
+	    showPromotionInfo(promotionType){
+	    	console.log(promotionType);
 	    	this.promotionShowState=!this.promotionShowState;
+	    	if(promotionType === 'YH'){
+			    this.getCouponList();
+        }
       },
       //tab切换
       change(index) {
@@ -856,8 +903,38 @@
       }
     }
     .popup-list{
-      padding 0 .15rem .15rem .15rem;
+      padding-bottom .15rem;
       overflow hidden;
+      .coupon-info-nodata{
+        padding-bottom .2rem;
+        p{
+          text-align center;
+          color #999;
+          &:first-child{
+            i{
+              font-size .8rem;
+            }
+          }
+        }
+      }
+      .coupon-type-list{
+        padding 0 .15rem;
+        overflow hidden;
+        position relative;
+        &:first-child::after{
+          content: "";
+          position absolute;
+          left 0;
+          bottom: 0;
+          width 100%;
+          height: 1px;
+          background #e5e5e5;
+          -webkit-transform-origin: 0 0;
+          transform-origin: 0 0;
+          -webkit-transform: scaleY(0.5);
+          transform: scaleY(0.5);
+        }
+      }
       .coupon-tit{
         height .45rem;
         line-height .45rem;
