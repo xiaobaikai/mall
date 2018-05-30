@@ -12,7 +12,11 @@
             </div>
           </div>
           <div class="item-title">{{item.advTitle}}</div>
-          <div class="item-price">{{item.advDescribe}}</div>
+          <div class="item-price">{{item.advDescribe}}
+            <div class="promotion-flag" v-if="item.promotionType === 'YH'">券</div>
+            <div class="promotion-flag" v-if="item.promotionType === 'ZK'">折</div>
+            <div class="promotion-flag" v-if="item.promotionType === 'TG'">团</div>
+          </div>
         </a>
       </div>
     </div>
@@ -94,7 +98,6 @@
       float left;
       width 1.2rem;
       padding 0.15rem 0;
-      text-align center;
       line-height 1.27;
     }
     .item-img-container{
@@ -111,13 +114,39 @@
       }
     }
     .item-title{
-      margin-bottom 0.12rem;
-      font-title: 0.12rem;
+      font-size 0.12rem;
       color #666;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+      width .9rem;
+      margin 0 auto;
+      margin-bottom 0.12rem;
+      text-align left;
+      height .36rem;
+      line-height .18rem;
     }
     .item-price{
       font-size: 0.14rem;
       color: #d74a45;
+      text-align left;
+      display inline-block;
+      margin-left .15rem;
+      position relative;
+      .promotion-flag{
+        width 0.2rem;
+        height 0.18rem;
+        line-height 0.18rem;
+        border-radius 2px;
+        text-align  center;
+        font-size .11rem;
+        background #e54545;
+        color #fff;
+        position absolute;
+        top 0;
+        right -0.28rem;
+      }
     }
   }
   .floor-1-view .item:not(:last-child){

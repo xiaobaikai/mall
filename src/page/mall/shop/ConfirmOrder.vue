@@ -29,6 +29,9 @@
             <div class="price-num">
               <div class="price">
                 <span>￥</span><span>{{item.goodsPrice}}</span>
+                <div class="promotion-flag" v-if="item.promotionType === 'YH'">券</div>
+                <div class="promotion-flag" v-if="item.promotionType === 'ZK'">折</div>
+                <div class="promotion-flag" v-if="item.promotionType === 'TG'">团</div>
               </div>
               <div class="num">
                 <span>x</span><span>{{item.goodsNum}}</span>
@@ -48,10 +51,19 @@
         <div>{{invoiceType}}<i class="iconfont icon-jinru"></i></div>
       </a>
     </div>
+    <div class="invoice-info">
+      <div>折扣优惠</div>
+      <div>￥{{priceInfo.promoAmount}}<i class="iconfont icon-jinru" v-if="priceInfo.promoAmount !== 0"></i></div>
+    </div>
+    <div class="invoice-info coupon-price">
+      <div>优惠券</div>
+      <div>￥{{priceInfo.couponAmount}}<i class="iconfont icon-jinru" v-if="priceInfo.couponAmount !== 0"></i></div>
+    </div>
     <div class="total-price">
-      <div><span>商品金额</span><span>￥{{goodsTotalPrice}}</span></div>
-      <div><span>运费</span><span>￥0.00</span></div>
-      <div><span></span><span><i>总价：</i>￥{{goodsTotalPrice}}</span></div>
+      <div><span>商品金额</span><span>￥{{priceInfo.goodsAmount}}</span></div>
+      <div><span>运　　费</span><span>￥0.00</span></div>
+      <div><span>优　　惠</span><span>￥{{priceInfo.discount}}</span></div>
+      <div><span></span><span><i>付款金额：</i>￥{{priceInfo.goodsTotalPrice}}</span></div>
     </div>
     <div class="wx-pay" @click="submitPayWx"  v-if="!isNotApp"><div>微信支付</div></div>
     <div class="wx-pay" @click="submitPayZfb" v-if="isNotApp"><div>支付宝支付</div></div>
@@ -75,7 +87,7 @@
 	      imgPrefix:'',   //图片地址前缀
 	      cartList:'',    //结算订单列表
 	      addressList:'', //收件地址
-	      goodsTotalPrice:'', //结算总额
+        priceInfo:'',       //付款信息
 	      invoiceType:'不开发票',
 	      cartIds:[],
 	      openInv:0,
@@ -94,7 +106,7 @@
             this.cartIds.push(this.cartList[i].list[j].cartId);
           }
         }
-        this.goodsTotalPrice=settleOrder.map.goodsTotalPrice;
+        this.priceInfo=settleOrder.map;
         this.axios.post(this.baseURL.mall + "/m/my/queryUserAddress"+this.Service.queryString({
           token:this.mallToken.getToken(),
         })).then(res=>{
@@ -127,6 +139,12 @@
 				      data=JSON.stringify(data);
 				      console.log(data);
 				      window.location.href = "epipe://?&mark=aliPay&data="+data+"&url="+res.data.b.orderStr;
+			      }else if(res.data.h.code === 30){
+				      if(this.isApp.state){
+					      window.location.href = "epipe://?&mark=login";
+				      }else{
+					      this.$router.replace("/accountlogin");
+				      }
 			      }
 		      })
         }else{
@@ -148,6 +166,12 @@
 		        if(res.data.h.code==200) {
 //            localStorage.removeItem('invoiceListArr');
 			        window.location.href = res.data.b;
+		        }else if(res.data.h.code === 30){
+			        if(this.isApp.state){
+				        window.location.href = "epipe://?&mark=login";
+			        }else{
+				        this.$router.replace("/accountlogin");
+			        }
 		        }
 	        })
         }else{
@@ -305,6 +329,20 @@
             .price{
               float left;
               color #d74a45;
+              position relative;
+              .promotion-flag{
+                width 0.2rem;
+                height 0.18rem;
+                line-height 0.18rem;
+                border-radius 2px;
+                text-align  center;
+                font-size .11rem;
+                background #e54545;
+                color #fff;
+                position absolute;
+                top .02rem;
+                right -0.28rem;
+              }
               span:first-child{
                 font-size .12rem;
               }
@@ -364,6 +402,9 @@
     .invoice-info:last-child{
       margin-top 0;
       border none;
+    }
+    .coupon-price{
+      margin-top 0;
     }
     .total-price{
       margin-top .1rem;

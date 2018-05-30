@@ -37,6 +37,20 @@
         </swiper>
         <img src="../../../assets/default-banner.png" alt="" v-else>
       </div>
+      <div class="store-coupon">
+        <div class="coupon-div">
+          <div class="one-coupon" v-for="(item,index) in storeCoupons" :key="index">
+            <div>
+              <span>￥</span>
+              <span>{{item.couponPrice}}</span>
+            </div>
+            <div>
+              <p>满{{item.couponLimit}}元使用</p>
+              <p @click="receiveCoupon(item.couponId)">立即领取</p>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="floor-4-view" v-for="(item ,k) in floorList" :key="k" v-if="floorList[k].floorGoods.length>0">
         <div class="floor-title">
           <img :src="imgPrefix + item.floorTitleImg" alt="楼层标题">
@@ -117,6 +131,7 @@
 				showSuggestion:true,
 				searchKey:'',
         floorList:[],
+				storeCoupons:[],
 				store:[],
 				banner:[],
 				pageNo:1,
@@ -135,6 +150,36 @@
 			InfiniteLoading
 		},
 		methods: {
+			getCouponInfoList(){
+				this.axios.post(this.baseURL.mall+"/m/store/storeCoupons"+this.Service.queryString({
+					storeId: this.$route.query.storeId
+				})).then(res =>{
+					console.log(res);
+					if(res.data.h.code === 200){
+						this.storeCoupons=res.data.b.storeCoupons;
+          }
+				})
+      },
+			receiveCoupon(couponId){
+				console.log(couponId);
+				this.axios.post(this.baseURL.mall + '/m/my/getCoupon' +this.Service.queryString({
+					token:this.mallToken.getToken(),
+					couponId:couponId
+				})).then(res=>{
+					console.log(res);
+					if(res.data.h.code === 200){
+						this.$toast("领取成功");
+					}else if(res.data.h.code === 30){
+						if(this.isApp.state){
+							window.location.href = "epipe://?&mark=login";
+						}else{
+							this.$router.replace("/accountlogin");
+						}
+					}else{
+						this.$toast(res.data.h.msg);
+					}
+				})
+      },
       getBannerInfo(){
 	      this.axios.post(this.baseURL.mall+"/m/store/storeBanners"+this.Service.queryString({
 		      storeId: this.$route.query.storeId
@@ -264,6 +309,7 @@
       document.title = '店铺首页';
       this.getFloorData();
       this.getBannerInfo();
+      this.getCouponInfoList();
       localStorage.setItem("nowStoreId",this.$route.query.storeId);
     },
 	}
@@ -411,10 +457,75 @@
   .banner-img{
     height 1.6rem;
     background #ccc;
-    margin-bottom .1rem;
     img{
       height 1.6rem;
       width 100%;
+    }
+  }
+  .store-coupon{
+    height .6rem;
+    padding .15rem 0;
+    background #fff;
+    overflow-x scroll;
+    overflow-y hidden;
+    -webkit-overflow-scrolling touch;
+    &::-webkit-scrollbar {/*隐藏滚轮*/
+      display: none;
+      width: 0px;
+    }
+    .coupon-div{
+      width 15rem;
+      .one-coupon{
+        width 1.6rem;
+        height 100%;
+        background url("../../../assets/couponBg.png") no-repeat top center;
+        background-size 100% auto;
+        margin-left .12rem;
+        float left;
+        div{
+          float left;
+          height 100%;
+          &:first-child{
+            width .68rem;
+            color #fff;
+            text-align center;
+            line-height .6rem;
+            span:first-child{
+              font-size .145rem;
+            }
+            span:last-child{
+              font-size .32rem;
+            }
+          }
+          &:last-child{
+            width .92rem;
+            color #fff;
+            font-size .12rem;
+            border-left 1px dashed #fff;
+            box-sizing border-box;
+            height .6rem;
+            p{
+              width 100%;
+              text-align center;
+              line-height 1.27;
+              &:first-child{
+                margin-top .11rem;
+              }
+              &:last-child{
+                width .7rem;
+                height .2rem;
+                line-height .2rem;
+                text-align center;
+                background #ff3333;
+                font-size .1rem;
+                margin 0 auto;
+                border-radius 16px;
+                margin-top .05rem;
+              }
+            }
+          }
+        }
+      }
     }
   }
   .promotion-flag{
