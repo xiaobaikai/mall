@@ -7,78 +7,75 @@
                 <use xlink:href="#icon-zuoyoujiantou"></use>
             </svg>
             </div>
-            {{title}}
+            草稿箱
         </div>
-        <div class="affairs_content" v-show='this.btnShow'>
-            <div :class='boxShadow' v-for="(item,index) in leaveData">
+
+        <div class="affairs_content">
+             <div v-if="item.extend[0].value == 1"  v-for="(item,index) in draftsData" class="affairs_item myaffairs_shadow">
                  <div class="affirs_child">
                     <div class="affairs_title">
-                        <img :src="item.profileImg" @click="go_user(item.userId)"/>
+                        <img :src="item.extend[4].value" @click="go_user(item.userId)"/>
                         <h2 >我的请假审批</h2>
-                        <time >{{item.applyTime | timeFormat}}</time>
+                        <time >{{item.extend[10].value | timeFormat}}</time>
                     </div>
                     <div class="affairs_infor">
-                        <p>请假类型:<span style="color:#609ef6" v-text='item[0]?item[4].value:item.leaveType'></span></p>
-                        <p>开始时间:<span>{{item.beginTime | slice}}</span></p>
-                        <p>结束时间:<span>{{item.endTime |slice}}</span></p>
+                        <p>请假类型:<span style="color:#609ef6" v-text='item.extend[5].value'></span></p>
+                        <p>开始时间:<span>{{item.extend[8].value | slice}}</span></p>
+                        <p>结束时间:<span>{{item.extend[9].value |slice}}</span></p>
                     </div>
                 </div>
 
-                <router-link :to="{ path:'/leaveDetails', query: {leaveId:item.applyId,titleColor:titleColor}}" class="skip" tag="div">
+                <div @click="goLeaveDraft(item.extend[1].value)" class="skip" tag="div">
                     查看详情
-                </router-link>
+                </div>
             </div>
-        </div>
-        <div class="affairs_content" v-show='!this.btnShow'>
-             <div :class='boxShadow' v-for="(item,index) in draftsData">
-                <div class="affirs_child">
+
+            <div v-if="item.extend[0].value == 2"  v-for="(item,index) in draftsData" class="affairs_item myaffairs_shadow">
+                 <div class="affirs_child">
                     <div class="affairs_title">
-                        <img :src="item.profileImg" @click="go_user(item.userId)"/>
-                        <h2>我的请假审批</h2>
-                        <time>{{item.applyTime | timeFormat}}</time>
+                        <img :src="item.extend[4].value" @click="go_user(item.userId)"/>
+                        <h2 >我的请示函</h2>
+                        <time >{{item.extend[10].value | timeFormat}}</time>
                     </div>
-                    <div class="affairs_infor">
-                        <p>请假类型:<span style="color:#609ef6" v-text='item[0]?item[4].value:item.leaveType'></span></p>
-                        <p>开始时间:<span>{{item.beginTime |slice}}</span></p>
-                        <p>结束时间:<span>{{item.endTime |slice}}</span></p>
+                     <div class="affairs_infor">
+                       <div class="request_infor lineHeight">
+                           <span>主&emsp;&emsp;题 :</span>
+                           <p class="line1">{{item.extend[12].value}}</p>
+                       </div>
+                        <div class="request_infor margin10">
+                            <span>请示内容 :</span>
+                            <p class="line2" style="line-height:0.2rem;">{{item.extend[13].value}}</p>
+                        </div>
                     </div>
-                </div>
-                <div class="skip" @click="draftDetails(item.applyId)">
-                    查看详情 
                 </div>
 
+                <div @click="goLetterDraft(item.extend[1].value)" class="skip" tag="div">
+                    查看详情
+                </div>
             </div>
+
         </div>
-        <div :class="types=='myApply'?'footLine marginBot':'footLine'" v-if="leaveData.length>2&&btnShow">
-            <span>我是有底线的</span>
-        </div>
-        <div :class="types=='myApply'?'footLine marginBot':'footLine'" v-if="draftsData.length>2&&!btnShow">
+        <div class="footLine marginBot" v-if="draftsData.length>2">
             <span>我是有底线的</span>
         </div>
 
-
-        <div  class="footLine" v-if="btnShow&&!leaveData.length">
+        <div class="footLine" v-if="!draftsData.length">
             <span>暂无内容</span>
         </div>
-        <div class="footLine" v-if="!draftsData.length&&!btnShow">
-            <span>暂无内容</span>
-        </div> 
 
         <div class="footer">
-            <div :class='btnShow?"tab tab_user active":"tab tab_user"' @click="tabEven()">
+            <router-link class='tab tab_user' tag="div" :to="{path:'myApply'}">
 
                 <svg class="icon icon-user" aria-hidden="false">
-                    <use v-show="!btnShow" xlink:href="#icon-wodeshenqing-line"></use>
-                    <use v-show="btnShow" xlink:href="#icon-wodeshenqing-mian"></use>
+                    <use  xlink:href="#icon-wodeshenqing-line"></use>
                 </svg>
                 <span>我的申请</span>
-            </div>
-            <div :class='btnShow?"tab tab_drafts":"tab tab_drafts active"' @click="tabEven()">
+            </router-link>
+            <div class="tab tab_drafts active" >
                 <svg class="icon icon-drafts" aria-hidden="false">
-                    <use v-show="btnShow"  xlink:href="#icon-caogaoxiang-line"></use>
-                    <use v-show="!btnShow" xlink:href="#icon-caogaoxiang-mian"></use>
+                    <use  xlink:href="#icon-caogaoxiang-mian"></use>
                 </svg>
-                <span>草稿箱</span>                
+                <span>草稿箱</span>
             </div>
         </div>
     </div>
@@ -88,48 +85,26 @@
     export default{
         data(){
             return{
-                title : '我的申请', //标题
-                types :'', //展示类型 
-                boxShadow : '',
-                num:'2',
-                btnShow : true, 
-                leaveData : [], //待办，已办，我的申请数据
                 draftsData : [], //草稿箱数据
             }   
         },
         mounted(){
-                this.typeClass = 'header myaffairs_head';
-                this.boxShadow = 'affairs_item myaffairs_shadow';
+
                 let that = this;
-                this.axios.get('/work/my/apply/list').then(function(res){
-                        that.leaveData = res.data.b.data
-                        
-                 })
                  this.axios.get('/work/apply/draft/list').then(function(res){
-                        that.draftsData = res.data.b.data
+                        that.draftsData = res.data.b.data;
                         
                  })
-            
         },
-        methods : {
+        methods:{
             goback(){
                 window.location.href = "epipe://?&mark=history_back"
             },
-            tabEven(flag){
-                this.btnShow = !this.btnShow
-                if(!this.btnShow){
-                    this.title = '草稿箱';
-                    this.num = 3;
-                    return
-                }
-                this.num = 2;
-                this.title = '我的申请';
-            },
-            go_user(id){
-                window.location.href = "epipe://?&mark=userinfo&_id="+id;
-            },
-            draftDetails(id){
+            goLeaveDraft(id){
                 window.location.href = "epipe://?&mark=leave&_id="+id;
+            },
+            goLetterDraft(id){
+                window.location.href = "epipe://?&mark=letterOfRequest&_id="+id;
             }
         },
         filters : {
@@ -154,16 +129,6 @@
             slice : function(value){
                 return value.slice(0,-3)
             },
-
-            statusName : function(value){
-                if(value==0){
-                    return '待审批'
-                }else if(value == 1){
-                    return '已同意'
-                }else if(value == 2){
-                    return '已拒绝'
-                }
-            }
         }
     }
 
@@ -285,7 +250,7 @@
 
         p{
             margin 0.1rem 0;
-            line-height 1em;
+            line-height 1.2em;
         }
 
         span{
@@ -348,6 +313,19 @@
         background-color #e6e6e6;       
     }
 
+    .footer:after{
+        display block;
+        content '';
+        position absolute;
+        height 1px;
+        width 200%;
+        top 0;
+        left -50%;
+        transform scale(0.5);
+        background-color #ccc;
+        z-index 10
+    }
+
     .footer{
         position fixed;
         width 100%;
@@ -355,7 +333,6 @@
         bottom 0;
         left 0;
         font-size:0.11rem;
-        border-top:0.01rem solid #ccc;
         background-color #fff;
         z-index 3;
 
@@ -381,6 +358,49 @@
         .tab_user:hover{
             
         }
+    }
+
+    .line1{
+        overflow: hidden;
+        text-overflow:ellipsis;
+        white-space: nowrap;
+    }
+
+    .line2{
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+    }
+
+    .request_infor{
+        display flex;
+        font-size 0.15rem;
+        margin-bottom 0.03rem;
+
+        span{
+            margin-right 0.15rem;
+            margin-left 0;
+        }
+
+
+        p{
+            flex 1;
+            color #333;
+            width:2.4rem;
+            word-wrap:break-word;
+            word-break: break-all;
+            margin 0
+        }
+    }
+
+    .lineHeight{
+        line-height : 0.15rem;
+        margin-bottom 0.1rem;
+    }
+
+    .margin10{
+        margin-bottom 0.1rem;
     }
 
 </style>

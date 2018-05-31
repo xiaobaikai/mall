@@ -181,9 +181,13 @@
         
 
         if(item.title=='优商城'){
-          window.location.href = "epipe://?&mark=mallhome"
+            window.location.href = "epipe://?&mark=mallhome"
           return
+        }else if(item.title=="2018母亲节"){
+            window.location.href = "epipe://?&mark=mallhome&title=" + item.title + "&url=" + item.url;
+            return
         }
+
         if (item.h5Uri != "" && item.h5Uri) {
           let title = Util.Title_format(item.title) 
 

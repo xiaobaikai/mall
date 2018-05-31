@@ -85,10 +85,27 @@ const Util = {
     return t2;
   },
   getUrlValue:function(str){
+      // str = str+'&';
       let len = str.length;
       str = location.href.slice(location.href.indexOf(str)+len)
       return str = str.slice(0,( str.indexOf('&')))
 
-  }
+  },
+  
+  isImg:function(str){
+    //判断是否是图片 - strFilter必须是小写列举
+   var strFilter=".jpeg|.gif|.jpg|.png|.bmp|.pic|"
+   if(str.indexOf(".")>-1){
+       var p = str.lastIndexOf(".");
+       var strPostfix=str.substring(p,str.length) + '|';        
+       strPostfix = strPostfix.toLowerCase();
+       if(strFilter.indexOf(strPostfix)>-1)
+       {
+           return true;
+       }
+   }        
+    return false;   
+  },
+
 }
 module.exports = Util
