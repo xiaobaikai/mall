@@ -519,7 +519,11 @@
       }
 
       let that = this;
-      this.axios.get(this.Service.organAddress).then(function (data) {
+      this.axios.get(this.Service.organAddress,{
+        params:{
+          showGroup : false,
+        }
+      }).then(function (data) {
         if(data.data.h.code == 200) {
           that.datalist = data.data.b
           let arrs = [];
@@ -529,7 +533,7 @@
             arrs = that.approver_man_state;
           }
 
-
+          console.log(that.type_num)
           if(that.type_num){
             for (let i = 0; i < data.data.b.offices.length; i++) {
               data.data.b.offices[i].open = false

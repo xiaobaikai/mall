@@ -110,7 +110,7 @@
       }
     },
     props: [
-      'color', 'data_list', 'has_journal','special_class','types'
+      'color', 'data_list', 'has_journal','special_class','types','isGroup'
     //  颜色  选中的联系人数据  
     ],
     methods: {
@@ -124,7 +124,12 @@
       },
       go_imchoice: function () {
 //        window.location.href = "epipe://?&mark=imchoice"
-        this.$router.push({path: 'imchoice', query: {bgcolor:this.color}})
+        // this.$router.push({path: 'imchoice', query: {bgcolor:this.color}})
+          if(this.isGroup){
+               this.$router.push({path: 'imchoices', query: {bgcolor:this.color}})
+          }else{
+              this.$router.push({path: 'imchoice', query: {bgcolor:this.color}})
+          }
       },
       remove_man: function (item, index) {
         if (this.has_journal) {

@@ -80,6 +80,7 @@ const MallSetting = r => require.ensure([], () => r(require('@/page/mall/user/Se
 const MallAddress = r => require.ensure([], () => r(require('@/page/mall/user/Address.vue')), 'mall-user')
 const MallPassword = r => require.ensure([], () => r(require('@/page/mall/user/Password.vue')), 'mall-user')
 const MallUserInfo = r => require.ensure([], () => r(require('@/page/mall/user/Info.vue')), 'mall-user')
+const Permission= r => require.ensure([], () => r(require('@/page/user/permission.vue')), 'mall-user')
 const MallAddressList = r => require.ensure([], () => r(require('@/page/mall/user/AddressList.vue')), 'mall-user')
 const MallCollection = r => require.ensure([], () => r(require('@/page/mall/user/Collection.vue')), 'mall-user')
 const MyOrder = r => require.ensure([], () => r(require('@/page/mall/user/MyOrder.vue')), 'mall-user')
@@ -99,6 +100,8 @@ const StoreInfo = r => require.ensure([], () => r(require('@/page/mall/store/Sto
 const Affairs = r => require.ensure([], () => r(require('@/page/work/affairs.vue')), 'group-work')
 const Leave = r => require.ensure([], () => r(require('@/page/work/leave.vue')), 'group-work')
 const LeaveDetails = r => require.ensure([], () => r(require('@/page/work/leaveDetails.vue')), 'group-work')
+const LetterOfRequest = r => require.ensure([], () => r(require('@/page/work/letterOfRequest.vue')), 'group-work')
+const LeOfReDetails = r => require.ensure([], () => r(require('@/page/work/leOfReDetails.vue')), 'group-work')
 const Option= r => require.ensure([], () => r(require('@/page/work/option.vue')), 'group-work')
 const Opinion = r => require.ensure([], () => r(require('@/page/work/opinion.vue')), 'group-work')
 const Market = r => require.ensure([], () => r(require('@/page/home/market.vue')), 'group-foo')
@@ -110,6 +113,12 @@ const ExpertList = r => require.ensure([], () => r(require('@/page/home/expertLi
 const AgenciesList = r => require.ensure([], () => r(require('@/page/home/agenciesList.vue')), 'group-foo')
 const HomeSearch = r => require.ensure([], () => r(require('@/page/home/homeSearch.vue')), 'group-foo')
 const MyCollection = r => require.ensure([], () => r(require('@/page/user/myCollection.vue')), 'group-foo')
+const DeliverExplain = r => require.ensure([], () => r(require('@/page/work/oa/deliverExplain.vue')), 'group-work')
+const FinishAffairs = r => require.ensure([], () => r(require('@/page/work/oa/finishAffairs.vue')), 'group-work')
+const UnFinishAffairs = r => require.ensure([], () => r(require('@/page/work/oa/unfinishAffairs.vue')), 'group-work')
+const MyApply = r => require.ensure([], () => r(require('@/page/work/oa/myApply.vue')), 'group-work')
+const Drafts = r => require.ensure([], () => r(require('@/page/work/oa/drafts.vue')), 'group-work')
+const Imchoices = r => require.ensure([], () => r(require('@/page/work/oa/imchoices.vue')), 'group-work')
 
 export default new Router({
   routes: [
@@ -185,6 +194,10 @@ export default new Router({
     {
       path: '/imchoice',
       component: Imchoice  //选择联系人
+    },
+    {
+      path: '/imchoices',
+      component: Imchoices  //选择联系人2
     },
     {
       path: '/daynews',
@@ -345,6 +358,9 @@ export default new Router({
     {
       path: '/mallagreement',  //注册协议
       component: MallAgreement,
+    },{
+      path: '/permission',  
+      component: Permission,
     },
     {
       path: '/mallhome',  //商城首页
@@ -518,6 +534,36 @@ export default new Router({
     {
       path:'/myCollection', //我的收藏
       component : MyCollection
-    }
+    },
+    {
+      path:'/letterOfRequest', //请示函
+      component : LetterOfRequest,
+      meta: {keepAlive: true}
+    },
+    {
+      path:'/leOfReDetails', //请示函详情
+      component : LeOfReDetails,
+      meta: {keepAlive: true}
+    },
+    {
+      path:'/deliverExplain',//转交备注
+      component : DeliverExplain
+    },
+    {
+      path:'/finishAffair',//已办事宜
+      component : FinishAffairs
+    },
+    {
+      path:'/unfinishAffair',//待办事宜
+      component : UnFinishAffairs
+    },
+    {
+      path:'/myApply',//我的申请
+      component : MyApply
+    },
+    {
+      path:'/drafts',//草稿箱
+      component : Drafts
+    },
   ]
 })

@@ -280,6 +280,14 @@
             </div>
             <div style="font-size:0.14rem;margin-top: 0.05rem">群组</div>
           </li>
+          <li @click="go_LetterOfRequest">
+            <div>
+              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
+                <use xlink:href="#icon-qingshihan"></use>
+              </svg>
+            </div>
+            <div style="font-size:0.14rem;margin-top: 0.05rem">请示函</div>
+          </li>  
           <li @click="go_Maillist">
             <div>
               <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
@@ -520,6 +528,11 @@
         TDAPP.onEvent('leave','请假')                        
         window.location.href = "epipe://?&mark=leave"
       },
+       //请示函
+      go_LetterOfRequest(){
+        TDAPP.onEvent('letter_of_request','请示函')                        
+        window.location.href = "epipe://?&mark=letterOfRequest"
+      },
       //跳转群组
       go_Grouplist(){
         TDAPP.onEvent('group','群组')                                
@@ -690,8 +703,7 @@
         let vm = this;
         vm.mesNum = 0;
         this.axios.get(this.Service.affairsList).then(function(res){
-          let arrs = res.data.b.data;
-            vm.mesNum = arrs[0].count;
+              vm.mesNum = res.data.b[0].count;
             });
 
         window["epipe_affairs_callback"] = () => {

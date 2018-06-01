@@ -38,7 +38,7 @@
                     </p>
                 </div>
                 <div class="items leaveTime">
-                    时长 <span style="font-size:12px;color:#999">（以0.5为单位）</span>
+                    时长 <span style="font-size:0.12rem;color:#999">（以0.5为单位）</span>
                     <p>
                         <input type="number" v-model="leaveDay">
                         <span class="nullValue">
@@ -80,9 +80,9 @@
             ></ApproverMan>
 
             <CopeMan 
-                :has_journal="!has_journal"
-                color="#609ef7"
-                :data_list=chosed_list
+                :has_journal = "!has_journal"
+                color = "#609ef7"
+                :data_list = chosed_list
                 v-on:remove_item="remove_item"
                 :special_class='1'
                 :types = '2'
@@ -155,8 +155,8 @@ let save_leave = (index,text,that) =>{
         that.axios.post(that.Service.saveLeave + that.Service.queryString({
           Id :that.leaveId, // id
           leaveType: that.leaveIndex, //请假类型
-          beginTime: that.beginTime, //开始时间
-          endTime : that.endTime, //结束时间
+          beginTime: '2018-05-25 11:39', //开始时间
+          endTime : '2018-05-26 11:39:10', //结束时间
           leaveDuration : that.leaveDay, //请假天数
           auditUserIds: approver_id, //审批人
           receiverIds: chosed_id, //抄送人
@@ -176,8 +176,8 @@ let save_leave = (index,text,that) =>{
                         that.$toast('提交成功！')
                         window.location.href = "epipe://?&mark=workUpdate";
                         setTimeout(()=>{
-                            that.$router.push({path:'/leaveDetails',query:{leaveId:res.data.b.leaveId,leaveOk:true}})
-                        },1000)
+                             window.location.href = "epipe://?&mark=submitLeave&_id="+res.data.b.leaveId+'&title=我的请假审批';
+                        },500)
                 }
             }
       })
@@ -194,8 +194,6 @@ export default {
     data(){
         return {
             textNum : 0,  //请假输入字数
-            // beginTime :'2018-03-09 12:08',
-            // endTime :'2018-03-12 12:08',
              beginTime : '请选择开始时间', //开始时间
              endTime : '请选择结束时间',  //结束时间
             chosed_list: [], //抄送人
@@ -403,7 +401,7 @@ export default {
             outline:none;
             text-align:right;
             color:#999;
-            font-size:14px;
+            font-size:0.14rem;
             padding-right:0.1rem;
         }
     }

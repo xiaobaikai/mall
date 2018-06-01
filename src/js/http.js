@@ -7,10 +7,11 @@ axios.defaults.withCredentials = true;
 axios.defaults.timeout = 5000;
 
 const dev = 'http://192.168.3.166:8280/member/v1'; //测试
+// const dev = 'http://192.168.3.241:8882/member/v1'; //自动化测试
 // const dev = 'http://192.168.3.29:8280/member/v1';//彭文浩本地
 const product = "http://app.epipe.cn:18080/member/v1"; //正式
-// axios.defaults.baseURL = window.location.href.indexOf("app.epipe.cn")>0 ? product : dev;
- axios.defaults.baseURL = product;
+axios.defaults.baseURL = window.location.href.indexOf("app.epipe.cn")>0 ? product : dev;
+//  axios.defaults.baseURL = product;
 
 function getCookie(name) {
   var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
@@ -33,8 +34,8 @@ axios.interceptors.request.use(
       window.localStorage.setItem("auth_token",getCookie("auth_token"));
     }else{
       if(!config.headers.auth_token){
-        config.headers.auth_token = window.localStorage.auth_token;
-        //  config.headers.auth_token = "d2685f37-db9e-40bc-bb19-d70c04177fc7";
+        // config.headers.auth_token = window.localStorage.auth_token;
+         config.headers.auth_token = "e65c730b-6eeb-4ebf-ab47-6182f9049096";
       }
     }
     return config;

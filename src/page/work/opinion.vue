@@ -23,26 +23,40 @@ export default {
             return {
                 counts : 0,
                 textVal : '',
-                leaveId : '',       
+                id : '',       
             }
         },
         methods : {
             affirm : function(){
-                let that = this;
                 if(this.counts<=0){
                     this.$toast("请填写拒绝理由!")
-                }else{
-                    this.axios.post('/work/leave /update?leaveId='+that.leaveId+'&type=3&reason='+that.textVal).then(function(res){
+                    return false;
+                }
+                this.$route.query.isLetter?this.letter():this.leave();
+            },
+            letter:function(){
+                    let that = this;
+                    this.axios.post('/work/letter/result?letterId='+this.id+'&type=3&reason='+this.textVal).then(function(res){
+                            window.location.href = "epipe://?&mark=workUpdate";
+                            that.$toast('拒绝审批!')                            
+                            setTimeout(()=>{
+                                window.location.href = "epipe://?&mark=leOfReDetails&_id="+that.id+'&data=1';
+                                
+                            },500)      
+                    })
+                
+            },
+            leave:function(){
+                this.axios.post('/work/leave /update?leaveId='+this.id+'&type=3&reason='+this.textVal).then(function(res){
                             window.location.href = "epipe://?&mark=workUpdate";
                             setTimeout(()=>{
-                                history.back()
-                            },1000)      
+                               window.location.href = "epipe://?&mark=leaveDetails&_id="+that.id+'&data=1';
+                            },500)      
                     })
-                }
             }
         },
         mounted:function(){
-            this.leaveId = this.$route.query.id;
+            this.id = this.$route.query.id;
         },
         components:{
             TopHead

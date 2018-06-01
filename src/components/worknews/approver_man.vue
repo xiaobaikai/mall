@@ -144,7 +144,7 @@
       }
     },
     props: [
-      'color', 'data_list', 'has_journal','special_class'
+      'color', 'data_list', 'has_journal','special_class','isGroup'
     //  颜色  选中的联系人数据  
     ],
     methods: {
@@ -158,7 +158,12 @@
       },
       go_imchoice: function () {
 //        window.location.href = "epipe://?&mark=imchoice"
-        this.$router.push({path: 'imchoice', query: {bgcolor:this.color,num:1}})
+      if(this.isGroup){
+          this.$router.push({path: 'imchoices', query: {bgcolor:this.color,num:1}})
+      }else{
+          this.$router.push({path: 'imchoice', query: {bgcolor:this.color,num:1}})
+      }
+        
       },
       remove_man: function (item, index) {
         if (this.has_journal) {

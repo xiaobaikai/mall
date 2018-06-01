@@ -1,20 +1,19 @@
 <template>
     <section>
         <TopHead
-        :mark = mark
-        :bgcolor=titleColor
-        @history_back="history_back_click"
-        :title= title
-        :native = titleType
-        ></TopHead>
+        mark='mark'
+        bgcolor = '#fd545c'
+        :title=title
+        v-on:history_back="history_back_click"
+         ></TopHead>
         <div class="content">
             <div class="styles">
                 <div class="content_head">
                     <img class="imgHead" :src="dataObj.profileImgs" @click="go_user(dataObj.userId)">
                     <div>
                         <p class="nameTl">{{dataObj.userName}}</p>
-                        <p class="res" v-if="leaveType!=''">{{leaveType |details}}</p>
-                        <p class="res" v-if="leaveType==3">{{'等待'+dataObj.auditName+'的审批'}}</p>
+                        <p class="res" >{{leaveType |details}}</p>
+                        <p class="res" v-if="leaveType==4">{{'等待'+dataObj.auditName+'的审批'}}</p>
                     </div>
                 </div>
             </div>
@@ -80,7 +79,7 @@
                             </div>
                         </div>
                     </li>
-                    <li v-for="(item,index) in dataObj.auditers" v-if="refuseIndex==-1||(refuseIndex>-1&index<refuseIndex)">
+                    <li v-for="(item,index) in dataObj.auditers" :key="item.id" v-if="refuseIndex==-1||(refuseIndex>-1&index<refuseIndex)">
                         <div class="approve_list">
                             <img class="imgHead" :src="item.profileImg">
                             <div class="approve_inf">
@@ -133,7 +132,6 @@
 </template>
 
 <script>
-
     import TopHead  from '../../components/topheader.vue'  //header导航栏
 
     export default {
@@ -144,12 +142,12 @@
                 btnType : 0,
                 refuseIndex :-1, //拒绝截止下标
                 leaveType : '3', //请假状态
-                title : '',
                 newStatus :'',
                 titleColor:'#fd545c',
                 titleType :'no',
                 refuseSvgIndex:-1,
                 mark :'marks',
+                title:'',
             }
         },
 
@@ -163,7 +161,9 @@
                 let id = this.dataObj.leaveId;
                 this.axios.post("/work/leave/update?leaveId="+id+'&type=1').then(function(res) {
                     that.$toast('撤销成功！')
-                    location.reload()
+                    setTimeout(()=>{
+                          window.location.href = "epipe://?&mark=leaveDetails&_id="+that.dataObj.leaveId+'&data='+JSON.stringify({text:1});;
+                    },500)
                 });
             },
             submit(){
@@ -180,10 +180,9 @@
                     that.$toast('审批通过!')
 
                     window.location.href = "epipe://?&mark=workUpdate";
-
                     setTimeout(()=>{
-                        location.reload()
-                    },1000)
+                          window.location.href = "epipe://?&mark=leaveDetails&_id="+that.dataObj.leaveId+'&data='+JSON.stringify({text:1});;
+                    },500)
 
                 });
                 
@@ -197,25 +196,20 @@
                 window.location.href = "epipe://?&mark=imgdetail&url=" + JSON.stringify(obj);
              },
              history_back_click(){
-                window.location.href = "epipe://?&mark=history_back";
+                  if(location.href.indexOf('goWork=0')>0){
+                        window.location.href = "epipe://?&mark=history_back"
+                        return
+                    }
+                window.location.href = "epipe://?&mark=goWork";
              }
         },
         mounted:function(){
             let that = this;
-      
-            let leaveId = that.$route.query.leaveId
-
-            if(that.$route.query.leaveOk){
-                that.titleType = 'native';
-            }
-
+          
+            let leaveId = this.Util.getUrlValue('leaveId').slice(1)
             if(location.href.indexOf('leave=')>-1){ //判断是否由原生跳转
                 that.titleType = 'native';
                 leaveId = this.types = this.Util.getUrlValue('leave=')
-            }
-
-            if(that.$route.query.titleColor){
-                that.titleColor = that.$route.query.titleColor
             }
 
             this.axios.get('/work/leave/apply/info?leaveId='+leaveId).then(function(res){
@@ -230,19 +224,19 @@
                         }
                     }
                     
-                    if(that.dataObj.auditers[0].status!='0'){ //审批开始
-                        that.leaveType = '4'
+                    if(that.dataObj.auditStatus == '3'){ //已经撤销
+                        that.leaveType = '2'
+                        that.refuseIndex = -2
                         return;
                     }
-
+                    
                     if(that.dataObj.auditers[that.dataObj.auditers.length-1].status == 1){ // 已同意
                         that.leaveType = '1';
                         return;
                     }
 
-                    if(that.dataObj.auditStatus == '3'){ //已经撤销
-                        that.leaveType = '2'
-                        that.refuseIndex = -2
+                     if(that.dataObj.auditers[0].status!='0'){ //审批开始
+                        that.leaveType = '4'
                         return;
                     }
                 }
@@ -387,6 +381,18 @@
                 font-size 0.14rem; 
                 color #fd545c;               
             }
+
+            .consent{
+                 line-height 1em;
+                font-size 0.14rem; 
+                    color:#0fc37c;
+                }
+
+            .careOf{
+                line-height 1em;
+                font-size 0.14rem; 
+                color:#f80;
+            }
         }
 
         .infor{
@@ -458,6 +464,10 @@
 
                 .consent{
                     color:#0fc37c;
+                }
+
+                .success{
+                    
                 }
             }
 

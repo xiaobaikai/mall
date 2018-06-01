@@ -49,7 +49,8 @@
     props: ["title", "native", "mark", "bgcolor", "is_button",'show','bgColor'],
     methods: {
       history_back: function () {
-        if (this.mark == "mark") {
+        
+        if (this.mark == "mark"||this.native =='mark') {
           this.$emit("history_back")
         } else {
           if (this.native == "native") {
