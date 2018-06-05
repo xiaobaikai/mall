@@ -154,6 +154,12 @@
         })).then(res =>{
           if(res.data.h.code === 200){
             window.location.href = res.data.b;
+          }else  if(res.data.h.code === 50 || res.data.h.code === 30){
+	          if(this.isApp.state){
+		          window.location.href = "epipe://?&mark=login";
+	          }else{
+		          this.$router.replace("/accountlogin?loginUrl="+encodeURIComponent(window.location.href));
+	          }
           }else{
             this.$alert(res.data.h.msg);
           }
@@ -173,6 +179,12 @@
 			      data=JSON.stringify(data);
 			      console.log(data);
 			      window.location.href = "epipe://?&mark=aliPay&data="+data+"&url="+res.data.b.orderStr;
+		      }else if(res.data.h.code === 50 || res.data.h.code === 30){
+			      if(this.isApp.state){
+				      window.location.href = "epipe://?&mark=login";
+			      }else{
+				      this.$router.replace("/accountlogin?loginUrl="+encodeURIComponent(window.location.href));
+			      }
 		      }
 	      })
       },
@@ -185,9 +197,15 @@
             orderId: this.obj.orderId
           })).then(res =>{
             console.log("申请退款",res);
-            if(res.data.h.success){
+            if(res.data.h.code === 200){
               this.$toast("申请成功");
               this.$router.replace("refundlist");
+            }else  if(res.data.h.code === 50 || res.data.h.code === 30){
+	            if(this.isApp.state){
+		            window.location.href = "epipe://?&mark=login";
+	            }else{
+		            this.$router.replace("/accountlogin?loginUrl="+encodeURIComponent(window.location.href));
+	            }
             }else{
               this.$toast(res.data.h.msg);
             }
@@ -205,9 +223,15 @@
             orderId: this.obj.orderId
           })).then(res =>{
             console.log("申请退货",res);
-            if(res.data.h.success){
+            if(res.data.h.code === 200){
               this.$toast("申请成功");
               this.$router.replace("returnlist");
+            }else  if(res.data.h.code === 50 || res.data.h.code === 30){
+	            if(this.isApp.state){
+		            window.location.href = "epipe://?&mark=login";
+	            }else{
+		            this.$router.replace("/accountlogin?loginUrl="+encodeURIComponent(window.location.href));
+	            }
             }else{
               this.$toast(res.data.h.msg);
             }
