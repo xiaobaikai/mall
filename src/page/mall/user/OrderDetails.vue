@@ -125,7 +125,7 @@
     <section class="section-item section-price">
       <div class="price-line">
         <span class="price-title">商品金额</span>
-        <span class="price-amount">￥{{objData.orderAmount}}</span>
+        <span class="price-amount">￥{{objData.goodsAmount}}</span>
       </div>
       <div class="price-line">
         <span class="price-title">运费</span>
