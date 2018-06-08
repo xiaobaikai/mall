@@ -57,7 +57,7 @@
             if(this.isApp.state){
               window.location.href = "epipe://?&mark=login";
             }else{
-              this.$router.replace("/accountlogin");
+	            this.$router.replace("/verificationlogin?loginUrl="+encodeURIComponent(window.location.href));
             }
           }
         })
@@ -74,7 +74,7 @@
               window.location.href = "epipe://?&mark=logoutUser";
               // this.$router.replace('/mallhome')
             }else{
-              this.$router.replace("/accountlogin");
+	            this.$router.replace("/verificationlogin?loginUrl="+encodeURIComponent(window.location.href));
             }
           }
         })

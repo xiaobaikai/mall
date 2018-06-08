@@ -289,7 +289,7 @@
             if(this.isApp.state){
               window.location.href = "epipe://?&mark=login";
             }else{
-	            this.$router.replace("/accountlogin?loginUrl="+encodeURIComponent(window.location.href));
+	            this.$router.replace("/verificationlogin?loginUrl="+encodeURIComponent(window.location.href));
             }
           }else{
             this.$toast(res.data.h.msg);
@@ -314,7 +314,7 @@
             if(this.isApp.state){
               window.location.href = "epipe://?&mark=login";
             }else{
-	            this.$router.replace("/accountlogin?loginUrl="+encodeURIComponent(window.location.href));
+	            this.$router.replace("/verificationlogin?loginUrl="+encodeURIComponent(window.location.href));
             }
           }else{
             this.$toast(res.data.h.msg);

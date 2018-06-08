@@ -115,7 +115,11 @@
             this.addressList=res.data.b;
             //this.addressId=this.addressList[0].addressId;
           }else  if(res.data.h.code === 50 || res.data.h.code === 30){
-            this.$router.replace("/accountlogin");
+	          if(this.isApp.state){
+		          window.location.href = "epipe://?&mark=login";
+	          }else{
+		          this.$router.replace("/verificationlogin?loginUrl="+encodeURIComponent(window.location.href));
+	          }
           }else{
             this.$toast(res.data.h.msg);
           }
@@ -139,11 +143,11 @@
 				      data=JSON.stringify(data);
 				      console.log(data);
 				      window.location.href = "epipe://?&mark=aliPay&data="+data+"&url="+res.data.b.orderStr;
-			      }else if(res.data.h.code === 30){
+			      }else if(res.data.h.code === 30 || res.data.h.code === 50){
 				      if(this.isApp.state){
 					      window.location.href = "epipe://?&mark=login";
 				      }else{
-					      this.$router.replace("/accountlogin");
+					      this.$router.replace("/verificationlogin?loginUrl="+encodeURIComponent(window.location.href));
 				      }
 			      }
 		      })
@@ -166,11 +170,11 @@
 		        if(res.data.h.code==200) {
 //            localStorage.removeItem('invoiceListArr');
 			        window.location.href = res.data.b;
-		        }else if(res.data.h.code === 30){
+		        }else if(res.data.h.code === 30 || res.data.h.code === 50){
 			        if(this.isApp.state){
 				        window.location.href = "epipe://?&mark=login";
 			        }else{
-				        this.$router.replace("/accountlogin");
+				        this.$router.replace("/verificationlogin?loginUrl="+encodeURIComponent(window.location.href));
 			        }
 		        }
 	        })

@@ -6,40 +6,49 @@
       <div :class="{active : couponState === 3}" @click="couponTab(3)">已失效</div>
     </div>
     <div class="slider" v-if="couponState === 1 && myCoupons.length>0" v-for="(item,index) in myCoupons" :key="index">
-      <div class="coupon-info"  @touchstart='touchStart($event,index)' @touchmove='touchMove($event,index)' @touchend='touchEnd($event,index)' :style="{'transform' : deleteSliderState === index ? deleteSlider : ''}">
+      <div class="coupon-info" @touchstart='touchStart($event,index)' @touchmove='touchMove($event,index)' @touchend='touchEnd($event,index)' :style="{'transform' : deleteSliderState === index ? deleteSlider : ''}">
         <div class="coupon">
           <div><span>￥</span><span>{{item.couponPrice}}</span></div>
         </div>
         <div class="condition">
           <p>满{{item.couponLimit}}可用</p>
-          <p>{{item.storeName}}店指定商品</p>
+          <p v-if="item.isTotal === 1">{{item.storeName}}指定商品</p>
+          <p v-if="item.isTotal === 0">{{item.storeName}}店铺通用</p>
           <p>{{item.startTimeStr.substring(0,10)}}～{{item.endTimeStr.substring(0,10)}}</p>
         </div>
         <div class="receive">立即使用</div>
       </div>
-      <div class="remove" @click="deletCoupon(item.id)">删除</div>
+      <div class="remove" @click="deletCoupon(item.shopCouponMemberId)">删除</div>
     </div>
-    <div class="coupon-info" v-if="couponState === 2  && myCoupons.length>0" v-for="(item,index) in myCoupons" :key="index">
-      <div class="coupon color-ccc">
-        <div><span>￥</span><span>{{item.couponPrice}}</span></div>
+    <div class="slider" v-if="couponState === 2  && myCoupons.length>0" v-for="(item,index) in myCoupons" :key="index">
+      <div class="coupon-info" @touchstart='touchStart($event,index)' @touchmove='touchMove($event,index)' @touchend='touchEnd($event,index)' :style="{'transform' : deleteSliderState === index ? deleteSlider : ''}">
+        <div class="coupon color-ccc">
+          <div><span>￥</span><span>{{item.couponPrice}}</span></div>
+        </div>
+        <div class="condition">
+          <p>满{{item.couponLimit}}可用</p>
+          <p v-if="item.isTotal === 1">{{item.storeName}}指定商品</p>
+          <p v-if="item.isTotal === 0">{{item.storeName}}店铺通用</p>
+          <p>{{item.startTimeStr.substring(0,10)}}～{{item.endTimeStr.substring(0,10)}}</p>
+        </div>
+        <div class="receive color-ccc">已使用</div>
       </div>
-      <div class="condition">
-        <p>满{{item.couponLimit}}可用</p>
-        <p>{{item.storeName}}店指定商品</p>
-        <p>{{item.startTimeStr.substring(0,10)}}～{{item.endTimeStr.substring(0,10)}}</p>
-      </div>
-      <div class="receive color-ccc">已使用</div>
+      <div class="remove" @click="deletCoupon(item.shopCouponMemberId)">删除</div>
     </div>
-    <div class="coupon-info"v-if="couponState === 3  && myCoupons.length>0" v-for="(item,index) in myCoupons" :key="index">
-      <div class="coupon color-ccc">
-        <div><span>￥</span><span>{{item.couponPrice}}</span></div>
+    <div class="slider" v-if="couponState === 3  && myCoupons.length>0" v-for="(item,index) in myCoupons" :key="index">
+      <div class="coupon-info" @touchstart='touchStart($event,index)' @touchmove='touchMove($event,index)' @touchend='touchEnd($event,index)' :style="{'transform' : deleteSliderState === index ? deleteSlider : ''}">
+        <div class="coupon color-ccc">
+          <div><span>￥</span><span>{{item.couponPrice}}</span></div>
+        </div>
+        <div class="condition">
+          <p>满{{item.couponLimit}}可用</p>
+          <p v-if="item.isTotal === 1">{{item.storeName}}指定商品</p>
+          <p v-if="item.isTotal === 0">{{item.storeName}}店铺通用</p>
+          <p>{{item.startTimeStr.substring(0,10)}}～{{item.endTimeStr.substring(0,10)}}</p>
+        </div>
+        <div class="color-d9d9d9">已失效</div>
       </div>
-      <div class="condition">
-        <p>满{{item.couponLimit}}可用</p>
-        <p>{{item.storeName}}店指定商品</p>
-        <p>{{item.startTimeStr.substring(0,10)}}～{{item.endTimeStr.substring(0,10)}}</p>
-      </div>
-      <div class="color-d9d9d9">已失效</div>
+      <div class="remove" @click="deletCoupon(item.shopCouponMemberId)">删除</div>
     </div>
     <div class="nodata" v-if="myCoupons.length === 0" >暂无数据</div>
   </div>
@@ -126,7 +135,7 @@
 			      if(this.isApp.state){
 				      window.location.href = "epipe://?&mark=login";
 			      }else{
-				      this.$router.replace("/accountlogin");
+				      this.$router.replace("/verificationlogin?loginUrl="+encodeURIComponent(window.location.href));
 			      }
           }
 	      })

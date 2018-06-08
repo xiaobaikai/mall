@@ -247,7 +247,7 @@
 		          this.$toast('登录过期');
 		          window.location.href = "epipe://?&mark=login";
 	          }else{
-		          this.$router.replace("/accountlogin");
+		          this.$router.replace("/verificationlogin?loginUrl="+encodeURIComponent(window.location.href));
 	          }
           }else{
 	          this.$toast(res.data.h.msg);
