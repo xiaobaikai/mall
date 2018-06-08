@@ -494,7 +494,7 @@
               font-size .145rem;
             }
             span:last-child{
-              font-size .32rem;
+              font-size .26rem;
             }
           }
           &:last-child{

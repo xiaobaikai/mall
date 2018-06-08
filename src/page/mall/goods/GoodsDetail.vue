@@ -638,7 +638,7 @@
           color #999;
           span{
             display inline-block;
-            width .7rem;
+            padding 0 .05rem;
             height .2rem;
             line-height .2rem;
             text-align center;
@@ -878,6 +878,8 @@
     top 0;
     z-index 10;
     background rgba(0,0,0,0.2);
+    overflow scroll;
+    -webkit-overflow-scrolling: touch;
   }
   .popup-con{
     width 100%;
