@@ -28,6 +28,7 @@
           </div>
         </div>
       </div>
+      <div class="btn-wrapper goods-price" >实付金额：￥{{obj.orderAmount}}</div>
       <div class="btn-wrapper" v-show="showBtn" v-if="obj.orderState === 0">
         <div class="btn btn-pay">订单详情</div>
       </div>
