@@ -82,7 +82,7 @@
     <div class="tab-con" ref="conpart" v-if="showIndex === 2">
         <div class="comment" v-for="(item,index) in commentList" :key="index">
           <div class="user-info">
-            <div class="pic"><img src="../../../assets/tou.png" alt=""></div>
+            <div class="pic"><img :src="item.userImgUrl" alt=""></div>
             <div class="pho">{{item.gevalFrommembername}}</div>
             <div class="star">
               <i class="iconfont icon-star" v-for="(i,k) in item.gevalScore" :key="k" /><i class="iconfont icon-star" style="color:#cdcdcd;" v-for="(i,k) in (5-item.gevalScore)" :key="k" />
