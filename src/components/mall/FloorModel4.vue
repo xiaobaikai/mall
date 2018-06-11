@@ -11,7 +11,11 @@
           </div>
           <div class="item-title">{{item.goodsName}}</div>
           <div class="item-sub">
-            <div class="item-price">￥{{item.goodsStorePrice}}</div>
+            <div class="item-price">￥{{item.goodsStorePrice}}
+              <div class="promotion-flag" v-if="item.promotionType === 'YH'">券</div>
+              <div class="promotion-flag" v-if="item.promotionType === 'ZK'">折</div>
+              <div class="promotion-flag" v-if="item.promotionType === 'TG'">团</div>
+            </div>
             <div class="buy">
               <svg class="icon icon-car" aria-hidden="false">
                 <use xlink:href="#icon-gouwuche-xuanzhongicon"></use>
@@ -96,10 +100,25 @@
     .item-sub{
       display flex;
       justify-content space-between;
+      margin-top .1rem;
     }
     .item-price{
       font-size 0.16rem;
       color: #333;
+      position relative;
+      .promotion-flag{
+        width 0.2rem;
+        height 0.18rem;
+        line-height 0.18rem;
+        border-radius 2px;
+        text-align  center;
+        font-size .11rem;
+        background #e54545;
+        color #fff;
+        position absolute;
+        top .02rem;
+        right -0.28rem;
+      }
     }
     .item-menu{
       display flex;

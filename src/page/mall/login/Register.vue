@@ -89,7 +89,7 @@
         }
       },
       goToLogin(){
-        this.$router.push({path:'/accountlogin'});
+        this.$router.push({path:'/verificationlogin'});
       },
       regSubmit(){
         let mediumRegex = new RegExp("^(?=.{7,})(((?=.*[A-Z])(?=.*[a-z]))|((?=.*[A-Z])(?=.*[0-9]))|((?=.*[a-z])(?=.*[0-9]))).*$", "g");
@@ -120,7 +120,7 @@
           console.log(res);
           let data=res.data;
           if(data.h.code==200){
-	          this.$router.replace("/accountlogin");
+	          this.$router.replace("/verificationlogin");
           }else{
             this.tips=data.h.msg;
           }

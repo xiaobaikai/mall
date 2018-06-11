@@ -47,7 +47,11 @@
             <div class="goods-details">
               <div class="goods-desc">{{item.goodsName}}</div>
               <div class="goods-opr">
-                <div class="price">￥{{item.goodsStorePrice}}</div>
+                <div class="price">￥{{item.goodsStorePrice}}
+                  <div class="promotion-flag" v-if="item.promotionType === 'YH'">券</div>
+                  <div class="promotion-flag" v-if="item.promotionType === 'ZK'">折</div>
+                  <div class="promotion-flag" v-if="item.promotionType === 'TG'">团</div>
+                </div>
                 <div class="buy">
                   <i class="iconfont icon-xiaogouwucheicon" @click.prevent="addToCart(index)"></i>
                   <span class="btn-buy"  @click.prevent="buyNow(index)">立即购买</span>
@@ -285,7 +289,7 @@
             if(this.isApp.state){
               window.location.href = "epipe://?&mark=login";
             }else{
-              this.$router.replace("/accountlogin");
+	            this.$router.replace("/verificationlogin?loginUrl="+encodeURIComponent(window.location.href));
             }
           }else{
             this.$toast(res.data.h.msg);
@@ -310,7 +314,7 @@
             if(this.isApp.state){
               window.location.href = "epipe://?&mark=login";
             }else{
-              this.$router.replace("/accountlogin");
+	            this.$router.replace("/verificationlogin?loginUrl="+encodeURIComponent(window.location.href));
             }
           }else{
             this.$toast(res.data.h.msg);
@@ -537,6 +541,20 @@
     font-size: 0.18rem;
     line-height: 1;
     color: #d74845;
+    position relative;
+  }
+  .promotion-flag{
+    width 0.2rem;
+    height 0.18rem;
+    line-height 0.18rem;
+    border-radius 2px;
+    text-align  center;
+    font-size .11rem;
+    background #e54545;
+    color #fff;
+    position absolute;
+    top 0;
+    right -0.28rem;
   }
   .buy{
     font-size: 0;

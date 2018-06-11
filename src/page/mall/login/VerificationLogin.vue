@@ -7,7 +7,10 @@
     <input type="text" class="inputpart" placeholder="请输入收到的验证码" v-model="verCode">
     <div class="warn-tip">{{tips}}</div>
     <input type="button" value="确认登录" id="sub" @click="confimSubmit">
-    <div class="operate"><a href="#/AccountLogin">账号密码登录</a></div>
+    <div class="operate">
+      <a href="#/AccountLogin">账号密码登录</a>
+      <a href="#/Register">注册</a>
+    </div>
   </div>
 </template>
 <script>
@@ -89,7 +92,11 @@
               this.mallToken.setToken(res.data.b.token);
               localStorage.setItem('preLoginPhone',this.phone);
               console.log("new_token",res.data.b.token);
-              this.$router.push({path:'/mallhome'});
+	            if(this.$route.query.loginUrl){
+		            window.location.href=this.$route.query.loginUrl;
+	            }else{
+		            this.$router.push({path:'/mallhome'});
+	            }
             }else{
               this.tips=dataMes.msg;
             }
@@ -168,10 +175,15 @@
   }
   .operate{
     font-size .14rem;
-    float right;
     margin-top .15rem;
     a{
       color #6699ff;
+      &:first-child{
+        float left;
+      }
+      &:last-child{
+        float right;
+      }
     }
   }
 </style>

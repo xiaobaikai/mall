@@ -19,7 +19,11 @@
             <P class="p2" v-if="item.specInfo!==''" v-html="item.specInfo"></P>
             <P class="p2" v-if="item.specInfo===''">无具体规格</P>
             <section class="price-num">
-              <section class="price"><i>￥</i>{{item.goodsPrice}}</section>
+              <section class="price"><i>￥</i>{{item.goodsPrice}}
+                <div class="promotion-flag" v-if="item.promotionType === 'YH'">券</div>
+                <div class="promotion-flag" v-if="item.promotionType === 'ZK'">折</div>
+              </section>
+              <section class="original-price" v-if="item.goodsOriginalPrice">￥{{item.goodsOriginalPrice}}</section>
               <section class="num">
                 <span @click.stop.prevent="reduce(index1,index)"><i class="iconfont icon-jian"></i></span>
                 <span><input type="text" v-model="item.goodsNum" @click.stop.prevent="" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
@@ -109,7 +113,7 @@
           	if(this.isApp.state){
               window.location.href = "epipe://?&mark=login";
             }else{
-              this.$router.replace("/accountlogin");
+		          this.$router.replace("/verificationlogin?loginUrl="+encodeURIComponent(window.location.href));
             }
           }else{
             this.$toast(res.data.h.msg);
@@ -139,7 +143,7 @@
             if(this.isApp.state){
               window.location.href = "epipe://?&mark=login";
             }else{
-              this.$router.replace("/accountlogin");
+	            this.$router.replace("/verificationlogin?loginUrl="+encodeURIComponent(window.location.href));
             }
           }else{
             this.$toast(res.data.h.msg);
@@ -168,7 +172,7 @@
             if(this.isApp.state){
               window.location.href = "epipe://?&mark=login";
             }else{
-              this.$router.replace("/accountlogin");
+	            this.$router.replace("/verificationlogin?loginUrl="+encodeURIComponent(window.location.href));
             }
           }else{
             this.$toast(res.data.h.msg);
@@ -199,7 +203,7 @@
             if(this.isApp.state){
               window.location.href = "epipe://?&mark=login";
             }else{
-              this.$router.replace("/accountlogin");
+	            this.$router.replace("/verificationlogin?loginUrl="+encodeURIComponent(window.location.href));
             }
           }
         })
@@ -535,10 +539,32 @@
               float left;
               color #d74a45;
               font-size .16rem;
+              position relative;
               i{
                 font-style normal;
                 font-size .12rem;
               }
+              .promotion-flag{
+                width 0.2rem;
+                height 0.18rem;
+                line-height 0.18rem;
+                border-radius 2px;
+                text-align  center;
+                font-size .11rem;
+                background #e54545;
+                color #fff;
+                position absolute;
+                top .06rem;
+                right -0.28rem;
+                margin-right 0;
+              }
+            }
+            .original-price{
+              float left;
+              margin-left .1rem;
+              color #999;
+              text-decoration line-through;
+              font-size .14rem;
             }
             .num{
               font-size 0;

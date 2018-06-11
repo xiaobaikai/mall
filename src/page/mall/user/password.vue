@@ -1,16 +1,23 @@
 <template>
   <div class="password-wrapper">
+    <!--<div class="setting-item">-->
+      <!--<div class="setting-title">旧密码</div>-->
+      <!--<input type="text" v-model="oldPassword">-->
+    <!--</div>-->
     <div class="setting-item">
-      <div class="setting-title">旧密码</div>
-      <input type="text" v-model="oldPassword">
+      <input type="text" v-model="mobile" readonly>
+      <button class="verifi-code" :class="btnclass" :disabled="btndisabled" @click="sendcode">{{btntxt}}</button>
     </div>
     <div class="setting-item">
-      <div class="setting-title">新密码</div>
-      <input type="password" v-model="newPassword">
+      <input type="text" class="inputpart" placeholder="请输入收到的验证码" v-model="verCode">
     </div>
     <div class="setting-item">
-      <div class="setting-title">确认新密码</div>
-      <input type="password" v-model="confirmPassword">
+      <!--<div class="setting-title">新密码</div>-->
+      <input type="password" v-model="newPassword" placeholder="请输入新密码">
+    </div>
+    <div class="setting-item">
+      <!--<div class="setting-title">确认新密码</div>-->
+      <input type="password" v-model="confirmPassword" placeholder="请再次输入新密码">
     </div>
     <div class="btn" :class="{'btn-confirm': confirmFlag}" @click="handleConfirm">确认</div>
     <footer-tab :category="3"></footer-tab>
@@ -29,6 +36,11 @@
         newPassword: "",
         confirmPassword: "",
         mobile: "",
+	      verCode:"",
+	      btndisabled:false,
+	      btntxt:"获取验证码",
+	      tips:'',
+	      btnclass:"verifi-code-false",
       }
     },
     created(){
@@ -37,7 +49,7 @@
     },
     computed:{
       confirmFlag(){
-        if(this.oldPassword && this.newPassword && this.confirmPassword){
+        if( this.newPassword && this.confirmPassword && this.verCode){
           return true;
         }else{
           return false;
@@ -45,6 +57,31 @@
       }
     },
     methods:{
+	    sendcode() {
+        this.time=60;
+        this.btndisabled=true;
+        this.btnclass="verifi-code-true";
+        this.timer();
+        this.axios.post(this.baseURL.mall+"/m/user/sendMessage"+this.Service.queryString({
+          mobile:this.mobile,
+          type:4
+        })).then(res=>{
+          console.log(res);
+        })
+	    },
+	    timer() {
+		    if (this.time > 0) {
+			    this.time--;
+			    this.btntxt=this.time+"s后重新获取";
+			    setTimeout(this.timer, 1000);
+			    this.tips="";
+		    } else{
+			    this.time=0;
+			    this.btntxt="获取验证码";
+			    this.btndisabled=false;
+			    this.btnclass="verifi-code-false";
+		    }
+	    },
       /*获取用户信息*/
       getData(){
         this.axios.post(this.baseURL.mall + '/m/my/queryPersonalMsg' + this.Service.queryString({
@@ -53,9 +90,12 @@
           console.log("个人信息",res);
           if(res.data.h.code === 200){
             this.mobile = res.data.b.phone;
-          }
-          if(res.data.h.code === 50){
-            this.$router.push("/accountlogin");
+          }else if(res.data.h.code === 50 || res.data.h.code === 30){
+	          if(this.isApp.state){
+		          window.location.href = "epipe://?&mark=login";
+	          }else{
+		          this.$router.replace("/verificationlogin?loginUrl="+encodeURIComponent(window.location.href));
+	          }
           }
         })
       },
@@ -63,15 +103,16 @@
       handleConfirm(){
         if(this.confirmFlag){
           if(this.checkPasswords()){
-            this.axios.post(this.baseURL.mall + '/m/my/modifyPass' + this.Service.queryString({
+            this.axios.post(this.baseURL.mall + '/m/user/setNewPassword' + this.Service.queryString({
               token: this.mallToken.getToken(),
               mobile: this.mobile,
-              password: this.oldPassword,
-              newpassword: this.newPassword,
+              code:this.verCode,
+              password: this.newPassword,
             })).then(res =>{
               console.log("修改密码",res);
               if(res.data.h.code === 200){
-                this.logout();
+	              this.$toast('修改密码成功');
+	              setTimeout(this.logout(),500)
               }else{
                 this.$toast(res.data.h.msg);
               }
@@ -138,18 +179,43 @@
     align-items center;
     height: 0.4rem;
     margin-bottom 0.15rem;
+    position relative;
+  }
+  .verifi-code{
+    position absolute;
+    right 0;
+    bottom .05rem;
+    height .29rem;
+    line-height .29rem;
+    text-align center;
+    font-size .13rem;
+    padding 0 .06rem;
+    border-radius .04rem;
+    background none;
+  }
+  .verifi-code-true{
+    border .01rem solid #ccc;
+    color #999;
+  }
+  .verifi-code-false{
+    border .01rem solid #999;
+    color #333;
+  }
+  input:focus{
+    outline none;
+    border-bottom .01rem solid #ff8800;
   }
   .setting-title{
     font-size 0.14rem;
     color #666;
   }
   input{
-    width: 2.5rem;
+    width: 100%;
     height: inherit;
     padding 0 0.1rem;
     border-radius: 2px;
     background-color:transparent;
-    border: 1px solid #e5e5e5;
+    border-bottom: 1px solid #e5e5e5;
     -webkit-appearance: none;
   }
   .btn{

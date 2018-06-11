@@ -58,7 +58,11 @@
               this.mallToken.setToken(res.data.b.token);
               localStorage.setItem('preLoginPhone',this.phone);
               console.log("new_token",res.data.b.token);
-              this.$router.push({path:'/mallhome'});
+              if(this.$route.query.loginUrl){
+	              window.location.href=this.$route.query.loginUrl;
+              }else{
+	              this.$router.push({path:'/mallhome'});
+              }
             }else{
               this.tips=dataMes.msg;
             }
@@ -68,7 +72,7 @@
     },
     created(){
     	document.title="登录";
-      this.phone=localStorage.getItem("preLoginPhone") || '';
+	    this.phone=localStorage.getItem("preLoginPhone") || '';
     }
   }
 </script>
