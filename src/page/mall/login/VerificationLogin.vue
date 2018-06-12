@@ -6,7 +6,7 @@
     </div>
     <input type="text" class="inputpart" placeholder="请输入收到的验证码" v-model="verCode">
     <div class="warn-tip">{{tips}}</div>
-    <input type="button" value="确认登录" id="sub" @click="confimSubmit">
+    <input type="button" value="确认登录" id="sub" @click="confimSubmit" :disabled="disabled">
     <div class="operate">
       <a href="#/AccountLogin">账号密码登录</a>
       <a href="#/Register">注册</a>
@@ -24,7 +24,8 @@
         formMess:{
           phone:this.phone,
           verCode:this.verCode,
-        }
+        },
+	      disabled:false
       }
     },
     methods: {
@@ -36,24 +37,15 @@
         } else if (!reg.test(this.phone)) {
           this.tips = "手机格式不正确";
         } else {
-          this.axios.post(this.baseURL.mall+"/m/user/checkUser"+this.Service.queryString({
-            mobile:this.phone
+          this.time=60;
+          this.btndisabled=true;
+          this.btnclass="verifi-code-true";
+          this.timer();
+          this.axios.post(this.baseURL.mall+"/m/user/sendMessage"+this.Service.queryString({
+            mobile:this.phone,
+            type:5
           })).then(res=>{
             console.log(res);
-            if(res.data.h.code!=200){
-              this.time=60;
-              this.btndisabled=true;
-              this.btnclass="verifi-code-true";
-              this.timer();
-              this.axios.post(this.baseURL.mall+"/m/user/sendMessage"+this.Service.queryString({
-                mobile:this.phone,
-                type:5
-              })).then(res=>{
-                console.log(res);
-              })
-            }else{
-              this.tips="该用户尚未注册";
-            }
           })
         }
       },
@@ -82,6 +74,7 @@
           return false;
         }else{
           this.tips="";
+	        this.disabled=true;
           this.axios.post(this.baseURL.mall+"/m/user/codeLogin"+this.Service.queryString({
               mobile: this.phone,
               code: this.verCode
@@ -97,8 +90,10 @@
 	            }else{
 		            this.$router.push({path:'/mallhome'});
 	            }
+	            this.disabled=false;
             }else{
               this.tips=dataMes.msg;
+	            this.disabled=false;
             }
           });
         }
