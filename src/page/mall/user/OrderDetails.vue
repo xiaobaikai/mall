@@ -124,7 +124,7 @@
     </section>
     <section class="section-item section-price">
       <div class="price-line">
-        <span class="price-title">实付金额</span>
+        <span class="price-title">商品金额</span>
         <span class="price-amount">￥{{objData.goodsAmount}}</span>
       </div>
       <div class="price-line">

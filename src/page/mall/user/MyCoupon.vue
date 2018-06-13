@@ -16,7 +16,7 @@
           <p v-if="item.isTotal === 0">{{item.storeName}}店铺通用</p>
           <p>{{item.startTimeStr.substring(0,10)}}～{{item.endTimeStr.substring(0,10)}}</p>
         </div>
-        <div class="receive">立即使用</div>
+        <div class="receive"><router-link :to="{path:'/StoreHome',query:{storeId:item.storeId}}">立即使用</router-link></div>
       </div>
       <div class="remove" @click="deletCoupon(item.shopCouponMemberId)">删除</div>
     </div>
@@ -260,14 +260,16 @@
       height .25rem;
       line-height .25rem;
       text-align center;
-      font-size .12rem;
-      color #fff;
       background #ffcc33;
       border-radius .2rem;
       position relative;
       top 50%;
       margin-top -.125rem;
       margin-right .12rem;
+      a{
+        font-size .12rem;
+        color #fff;
+      }
     }
     .color-ccc{
       background #ccc;
