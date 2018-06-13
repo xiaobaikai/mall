@@ -24,7 +24,7 @@
             <div class="promotion-more" @click="showPromotionInfo('YH')">...</div>
           </div>
           <div class="promotion-detail" v-if="item.promotionType === 'ZK'">
-            <div class="promotion-tit discount-tit">折扣{{ promotionList.length}}</div>
+            <div class="promotion-tit discount-tit">折扣</div>
             <div class="promotion-con" @click="showPromotionInfo">
               <span class="discount-span" v-for="(coupon,index) in item.promotionList" :key="index" v-if="index === 0 && item.promotionList.length == 1">{{coupon.couponDesc}}</span>
               <span class="discount-span" v-for="(coupon,index) in item.promotionList" :key="index" v-if="index === 0 && item.promotionList.length>1">{{coupon.couponDesc + '，'}}</span>
@@ -34,7 +34,7 @@
           </div>
           <div class="promotion-detail" v-if="item.promotionType === 'TG'">
             <div class="promotion-tit discount-tit">团购</div>
-            <div class="promotion-con">本商品参与团购活动，活动与{{item.promotionList[0].endTimeStr}}结束。</div>
+            <div class="promotion-con">本商品参与团购活动，活动于{{item.promotionList[0].endTimeStr}}结束。</div>
           </div>
         </div>
         <div class="goods-spec">
