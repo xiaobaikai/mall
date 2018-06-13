@@ -12,7 +12,10 @@
       <div>
         <span><a href="#/ForgetPassword">忘记密码</a></span>
         <span>|</span>
-        <span><a href="#/VerificationLogin">验证登录</a></span>
+        <span>
+          <a href="#/VerificationLogin" v-if="!backUrl">验证登录</a>
+           <router-link :to="{path:'/VerificationLogin', query:{loginUrl:backUrl}}" v-if="backUrl">验证登录</router-link>
+        </span>
       </div>
       <div>
         <span><a href="#/Register">注册</a></span>
@@ -28,7 +31,8 @@
         formMess:{
           phone:this.phone,
           password:this.password
-        }
+        },
+	      backUrl:''      //登录成功，返回原页面地址参数
       }
     },
     methods:{
@@ -73,6 +77,7 @@
     created(){
     	document.title="登录";
 	    this.phone=localStorage.getItem("preLoginPhone") || '';
+	    this.backUrl= this.$route.query.loginUrl || '';
     }
   }
 </script>

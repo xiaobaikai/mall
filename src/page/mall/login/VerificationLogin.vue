@@ -8,7 +8,8 @@
     <div class="warn-tip">{{tips}}</div>
     <input type="button" value="确认登录" id="sub" @click="confimSubmit" :disabled="disabled">
     <div class="operate">
-      <a href="#/AccountLogin">账号密码登录</a>
+      <a href="#/AccountLogin" v-if="!backUrl">账号密码登录</a>
+      <router-link :to="{path:'/AccountLogin', query:{loginUrl:backUrl}}" v-if="backUrl">账号密码登录</router-link>
       <a href="#/Register">注册</a>
     </div>
   </div>
@@ -25,7 +26,8 @@
           phone:this.phone,
           verCode:this.verCode,
         },
-	      disabled:false
+	      disabled:false,
+        backUrl:''      //登录成功，返回原页面地址参数
       }
     },
     methods: {
@@ -101,6 +103,7 @@
     },
     created(){
       this.phone=localStorage.getItem("preLoginPhone") || '';
+      this.backUrl= this.$route.query.loginUrl || '';
     }
   }
 </script>
