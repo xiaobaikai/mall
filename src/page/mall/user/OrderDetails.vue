@@ -47,7 +47,7 @@
     <section class="section-item">
       <div class="sup">
         <p class="line">
-          <span class="line-title">商品金额:</span>
+          <span class="line-title">实付金额:</span>
           <span class="line-content line-price">￥{{objData.orderAmount}}</span>
         </p>
         <p class="line">
@@ -125,11 +125,15 @@
     <section class="section-item section-price">
       <div class="price-line">
         <span class="price-title">商品金额</span>
-        <span class="price-amount">￥{{objData.orderAmount}}</span>
+        <span class="price-amount">￥{{objData.goodsAmount}}</span>
       </div>
       <div class="price-line">
         <span class="price-title">运费</span>
         <span class="price-amount">+￥0</span>
+      </div>
+      <div class="price-line">
+        <span class="price-title">优惠</span>
+        <span class="price-amount">-￥{{objData.discount}}</span>
       </div>
       <div class="price-sub"><span class="sub-title">实付金额:</span><span class="price-amount">￥{{objData.orderAmount}}</span></div>
     </section>
@@ -243,7 +247,7 @@
 		          this.$toast('登录过期');
 		          window.location.href = "epipe://?&mark=login";
 	          }else{
-		          this.$router.replace("/accountlogin");
+		          this.$router.replace("/verificationlogin?loginUrl="+encodeURIComponent(window.location.href));
 	          }
           }else{
 	          this.$toast(res.data.h.msg);

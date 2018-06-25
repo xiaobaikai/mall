@@ -6,7 +6,11 @@
     <div class="floor-3-view">
       <a :href="item.advUrl" class="item" v-for="(item,index) in floorObj.floorAdvs" :key="index">
         <p class="item-title" v-html="item.advTitle"></p>
-        <p class="item-des" v-html="item.advDescribe"></p>
+        <div class="item-des">{{item.advDescribe}}
+          <div class="promotion-flag" v-if="item.promotionType === 'YH'">券</div>
+          <div class="promotion-flag" v-if="item.promotionType === 'ZK'">折</div>
+          <div class="promotion-flag" v-if="item.promotionType === 'TG'">团</div>
+        </div>
         <div class="item-img">
           <img :src="imgPrefix + item.advImg" alt="">
         </div>
@@ -87,23 +91,39 @@
       margin-bottom 0.12rem;
       background: white;
       line-height 1.27;
-      text-align center;
     }
     .item-title{
-      margin-bottom 0.1rem;
       font-size: 0.14rem;
       font-weight bold;
       color: #333;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      text-align left;
+      width .9rem;
+      margin 0 auto;
+      margin-bottom 0.1rem;
     }
     .item-des{
       font-size: 0.12rem;
       color: #99;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      text-align left;
+      display inline-block;
+      margin-left .09rem;
+      position relative;
+      .promotion-flag{
+        width 0.2rem;
+        height 0.18rem;
+        line-height 0.18rem;
+        border-radius 2px;
+        text-align  center;
+        font-size .11rem;
+        background #e54545;
+        color #fff;
+        position absolute;
+        top 0;
+        right -0.28rem;
+      }
     }
     .item-img{
       width: 0.9rem;

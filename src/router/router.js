@@ -83,6 +83,8 @@ const Permission= r => require.ensure([], () => r(require('@/page/user/permissio
 const MallAddressList = r => require.ensure([], () => r(require('@/page/mall/user/AddressList.vue')), 'mall-user')
 const MallCollection = r => require.ensure([], () => r(require('@/page/mall/user/Collection.vue')), 'mall-user')
 const MyOrder = r => require.ensure([], () => r(require('@/page/mall/user/MyOrder.vue')), 'mall-user')
+const MyCoupon = r => require.ensure([], () => r(require('@/page/mall/user/MyCoupon.vue')), 'mall-user')
+const SlideDelTest = r => require.ensure([], () => r(require('@/page/mall/user/SlideDelTest.vue')), 'mall-user')
 const OrderDetails = r => require.ensure([], () => r(require('@/page/mall/user/OrderDetails.vue')), 'mall-user')
 const RecentHistory = r => require.ensure([], () => r(require('@/page/mall/user/RecentHistory.vue')), 'mall-user')
 const GoodsComment = r => require.ensure([], () => r(require('@/page/mall/user/GoodsComment.vue')), 'mall-user')
@@ -441,6 +443,14 @@ export default new Router({
       path: '/myorder',  //我的订单
       component: MyOrder,
     },
+	  {
+		  path: '/mycoupon',  //我的优惠券
+		  component: MyCoupon,
+	  },
+	  {
+		  path: '/slidedeltest',  //优惠券删除测试
+		  component: SlideDelTest,
+	  },
     {
       path: '/manageaddress',  //专用发票
       component: ManageAddress,

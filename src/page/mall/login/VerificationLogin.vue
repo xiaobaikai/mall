@@ -6,8 +6,12 @@
     </div>
     <input type="text" class="inputpart" placeholder="请输入收到的验证码" v-model="verCode">
     <div class="warn-tip">{{tips}}</div>
-    <input type="button" value="确认登录" id="sub" @click="confimSubmit">
-    <div class="operate"><a href="#/AccountLogin">账号密码登录</a></div>
+    <input type="button" value="确认登录" id="sub" @click="confimSubmit" :disabled="disabled">
+    <div class="operate">
+      <a href="#/AccountLogin" v-if="!backUrl">账号密码登录</a>
+      <router-link :to="{path:'/AccountLogin', query:{loginUrl:backUrl}}" v-if="backUrl">账号密码登录</router-link>
+      <a href="#/Register">注册</a>
+    </div>
   </div>
 </template>
 <script>
@@ -21,7 +25,9 @@
         formMess:{
           phone:this.phone,
           verCode:this.verCode,
-        }
+        },
+	      disabled:false,
+        backUrl:''      //登录成功，返回原页面地址参数
       }
     },
     methods: {
@@ -33,24 +39,15 @@
         } else if (!reg.test(this.phone)) {
           this.tips = "手机格式不正确";
         } else {
-          this.axios.post(this.baseURL.mall+"/m/user/checkUser"+this.Service.queryString({
-            mobile:this.phone
+          this.time=60;
+          this.btndisabled=true;
+          this.btnclass="verifi-code-true";
+          this.timer();
+          this.axios.post(this.baseURL.mall+"/m/user/sendMessage"+this.Service.queryString({
+            mobile:this.phone,
+            type:5
           })).then(res=>{
             console.log(res);
-            if(res.data.h.code!=200){
-              this.time=60;
-              this.btndisabled=true;
-              this.btnclass="verifi-code-true";
-              this.timer();
-              this.axios.post(this.baseURL.mall+"/m/user/sendMessage"+this.Service.queryString({
-                mobile:this.phone,
-                type:5
-              })).then(res=>{
-                console.log(res);
-              })
-            }else{
-              this.tips="该用户尚未注册";
-            }
           })
         }
       },
@@ -79,6 +76,7 @@
           return false;
         }else{
           this.tips="";
+	        this.disabled=true;
           this.axios.post(this.baseURL.mall+"/m/user/codeLogin"+this.Service.queryString({
               mobile: this.phone,
               code: this.verCode
@@ -89,9 +87,15 @@
               this.mallToken.setToken(res.data.b.token);
               localStorage.setItem('preLoginPhone',this.phone);
               console.log("new_token",res.data.b.token);
-              this.$router.push({path:'/mallhome'});
+	            if(this.$route.query.loginUrl){
+		            window.location.href=this.$route.query.loginUrl;
+	            }else{
+		            this.$router.push({path:'/mallhome'});
+	            }
+	            this.disabled=false;
             }else{
               this.tips=dataMes.msg;
+	            this.disabled=false;
             }
           });
         }
@@ -99,6 +103,7 @@
     },
     created(){
       this.phone=localStorage.getItem("preLoginPhone") || '';
+      this.backUrl= this.$route.query.loginUrl || '';
     }
   }
 </script>
@@ -168,10 +173,15 @@
   }
   .operate{
     font-size .14rem;
-    float right;
     margin-top .15rem;
     a{
       color #6699ff;
+      &:first-child{
+        float left;
+      }
+      &:last-child{
+        float right;
+      }
     }
   }
 </style>
