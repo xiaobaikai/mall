@@ -178,19 +178,19 @@
         window.location.href = "epipe://?&mark=mallhome"
       },
       go_newsdetail(item){
-        
+
+        item.url+='?isActivety=1'
 
         if(item.title=='优商城'){
             window.location.href = "epipe://?&mark=mallhome"
           return
-        }else if(item.title=="2018母亲节"){
+        }else if(item.url.indexOf("isActivity=1")){
             window.location.href = "epipe://?&mark=mallhome&title=" + item.title + "&url=" + item.url;
             return
         }
 
         if (item.h5Uri != "" && item.h5Uri) {
           let title = Util.Title_format(item.title) 
-
           window.location.href = "epipe://?&mark=newsdetail&title=" + title+'&data='+ data + "&url=" + item.h5Uri;
         } else if (item.url) {
             if (item.coverImgUrl != "#") {

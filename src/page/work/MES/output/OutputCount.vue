@@ -138,7 +138,7 @@
         tabItem: null,
         mask: false,
         showContent: true,
-        result: true,
+        result: false,
         date: "日期",
         workshop_arr:[],
         workline_arr:[],
@@ -223,12 +223,30 @@
       },
       /*选择日期*/
       pickDate(index){
-        let dateString = this.dateObj.year+""+this.dateObj.month+""+this.days[index];
+        let month = this.timeF(this.dateObj.month)
+        let days =  this.timeF(this.days[index])
+        let dateString = this.dateObj.year+""+month+""+days;
         let ms = Date.parse(dateString.substr(4,2)+"/"+dateString.substr(6,2)+"/"+dateString.substr(0,4));
+
+          if(this.workdateType==1&&this.end_time.day){
+              let endTime = Date.parse(this.end_time.year+'/'+this.end_time.month+'/'+this.end_time.day)
+              if(ms=>endTime){
+                this.$toast('开始时间不能小于等于结束时间')
+                return
+              }
+          }else if(this.workdateType==2&&this.start_time.day){
+              let startTime = Date.parse(this.start_time.year+'/'+this.start_time.month+'/'+this.start_time.day)
+                if(ms<=startTime){
+                this.$toast('结束时间不能小于等于开始时间')
+                return
+              }
+          }
+
         this.ms = ms;
         this.dateObj = DateFormat(ms);
         let date = new Date(ms);
         sessionStorage.setItem("ms",ms);
+
         this.currentDate = {
           year: date.getFullYear(),
           month: date.getMonth() + 1,
@@ -305,6 +323,7 @@
           console.log("产出统计",res);
           if(res.h.code === 200){
             this.result_length = res.b.length;
+            this.result = true;
             this.objs = res.b;
             setTimeout(()=>{
               for(let i=0;i<res.b.length;i++){
@@ -399,10 +418,16 @@
       echarts(target,data){
         let el = echarts.init(target);
         this.echartsLib.Bars(el,data);
+      },
+    /*时间反0*/
+      timeF(str){
+        str+=''
+        return str.length<2?'0'+str:str;
       }
     },
     created(){
       if(sessionStorage.getItem("ms")){
+        console.log(sessionStorage.getItem("ms"))
         let ms = parseInt(sessionStorage.getItem("ms"));
         this.dateObj = DateFormat(ms);
         this.ms = ms;
@@ -426,7 +451,7 @@
       this.getWorkshop();
     },
     mounted(){
-      this.getData();
+      // this.getData();
     },
   }
 </script>

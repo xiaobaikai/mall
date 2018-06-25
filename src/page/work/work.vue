@@ -287,7 +287,15 @@
               </svg>
             </div>
             <div style="font-size:0.14rem;margin-top: 0.05rem">请示函</div>
-          </li>  
+          </li> 
+          <li @click="go_contract">
+            <div>
+              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
+                <use xlink:href="#icon-hetongshenpi"></use>
+              </svg>
+            </div>
+            <div style="font-size:0.14rem;margin-top: 0.05rem">合同审批</div>
+          </li>
           <li @click="go_Maillist">
             <div>
               <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
@@ -384,7 +392,7 @@
             </div>
             <div style="font-size:0.14rem;margin-top: 0.05rem">能源管理</div>
           </li>
-          <li @click="go_energyMonitor">
+          <!-- <li @click="go_energyMonitor">
             <div>
               <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
                 <use xlink:href="#icon-nengyuanjiankong"></use>
@@ -399,7 +407,7 @@
               </svg>
             </div>
             <div style="font-size:0.14rem;margin-top: 0.05rem">趋势监控</div>
-          </li>
+          </li> -->
         </ul>
       </div>
     </div>
@@ -533,6 +541,11 @@
         TDAPP.onEvent('letter_of_request','请示函')                        
         window.location.href = "epipe://?&mark=letterOfRequest"
       },
+      //合同审批
+      go_contract(){
+        TDAPP.onEvent('contract','合同审批')
+        window.location.href = "epipe://?&mark=contract"
+      },
       //跳转群组
       go_Grouplist(){
         TDAPP.onEvent('group','群组')                                
@@ -563,7 +576,7 @@
       //能源管理
       go_energy(){
         TDAPP.onEvent('energyControl','能源管理')                        
-        window.location.href = "epipe://?&mark=water";
+        window.location.href = "epipe://?&mark=power";
       },
       //能源监控
       go_energyMonitor(){

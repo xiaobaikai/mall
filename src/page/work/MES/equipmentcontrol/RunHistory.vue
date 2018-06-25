@@ -116,6 +116,7 @@
       },
       /*获取车间*/
       getWorkshop(){
+       
         this.$mes.get("/common/workshop").then(res =>{
           console.log("获取车间",res);
           if(res.h.code === 200){

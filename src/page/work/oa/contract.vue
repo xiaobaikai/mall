@@ -2,30 +2,61 @@
     <section>
         <TopHead
         :native= native
-        bgcolor = '#ff8800'
-        title="请示函" 
+        bgcolor = '#fd545c'
+        title="合同审批" 
         v-on:history_back="history_back_click"
          ></TopHead>
         <div class="content">
-            <div class="styles">
-                <span class="title">主题</span>
-                <input  v-model="theme" placeholder="请输入主题"/>
+            <div class="styles input_group">
+                <div class="bor_bottom">
+                    <span class="title">合同名称</span>
+                    <input  v-model="contractName" />
+                </div>
+                <div>
+                    <span class="title">合同编号</span>
+                    <input  v-model="contractNoInput" />
+                </div>
+            </div>
+            <div class="styles input_group">
+                <div class="bor_bottom">
+                    <span class="title">送审单位</span>
+                    <input style="color:#666" v-model="applyCompanyName" disabled/>
+                </div>
+                <div class="bor_bottom">
+                    <span class="title">项目责任人</span>
+                    <input  v-model="userName" disabled/>
+                </div>
+                <div class="bor_bottom">
+                    <span class="title">使用单位</span>
+                    <input  v-model="receiveCompanyName" />
+                </div>
+                <div>
+                    <span class="title">使用单位责任人</span>
+                    <input  v-model="receiveName" />
+                </div>
             </div>
 
-            <div class="styles">
-                <p class="title">请示函内容</p>
-                <textarea v-model="content" name="" id="" cols="30" rows="10" placeholder="请输入请示函内容">
+            <div class="styles input_group">
+                <div>
+                    <span class="title">合同标的</span>
+                    <input v-model="contractObj"/>
+                </div>
+            </div>
+
+            <div class="styles" style="padding:0 0.15rem;">
+                <p class="title">合同要点说明</p>
+                <textarea v-model.trim="contractDesc" name="" id="" cols="30" rows="10" placeholder="请输入要点内容">
 
                 </textarea>
             </div>
 
-            <div class="styles">
+            <div class="styles" style="padding:0 0.15rem;">
                 <p class="title">附件</p>
                 <div style="padding-bottom:0.15rem">
                     <ul class="accessory">
                         <li  v-for="(item,index) in accessory">
                             <img @click="go_fildDetails(item.url)" v-if="item.isImg"  :src="item.url"/>
-                            <img @click="go_fildDetails(item.url)" v-if="!item.isImg" src="../../assets/wenjian.png"/>
+                            <img @click="go_fildDetails(item.url)" v-if="!item.isImg" src="../../../assets/wenjian.png"/>
                             <div @click="go_fildDetails(item.url)"  class="accessory-cont">
                                 <p >{{item.fileName}}</p>
                                 <span>{{item.fileSize | fileSize}}kb</span>
@@ -83,12 +114,30 @@
 </template>
 
 <script>
-
+let reg = /[\u4e00-\u9fa5]/g;
+let regs = /[0-9]/;
 let save_leave = (index,text,that) =>{
-    if(that.theme== ''){
-        that.$toast('主题不能为空')
-    }else if(that.content==''){
-        that.$toast('请示函内容不能为空')
+    if(that.contractName== ''){
+        that.$toast('合同名称不能为空')
+    }else if(that.contractName.length>64||that.contractName.length<6){
+        that.$toast('合同名称不能低于6个或超过64个字符')
+    }else if(that.receiveCompanyName==''){
+        that.$toast('使用单位名称不能为空')
+    }else if(that.receiveName==''){
+        that.$toast('使用责任人名称不能为空')
+    }else if(regs.test(that.receiveName)){
+        that.$toast('使用责任人名称不能有数字')
+    }else if(that.receiveName.length<2||that.receiveName.length>12){
+        that.$toast('使用责任人名称不能低于2个或超过12个字符')
+    }
+    else if(that.receiveCompanyName.length>64||that.receiveCompanyName.length<6){
+        that.$toast('使用单位名称不能低于6个或超过64个字符')
+    }else if(reg.test(that.contractNoInput)){
+        that.$toast('合同编号不能含有中文')
+    }else if(that.contractDesc==''){
+        that.$toast('合同要点详情不能为空')
+    }else if(that.contractDesc.length>1000){
+        that.$toast('合同要点详情不能超过1000字符')
     }else if(that.approver_list.length == 0){
         that.$toast('请选择审批人')
     }else{
@@ -130,19 +179,17 @@ let save_leave = (index,text,that) =>{
         urlStr = urlStr.slice(1)
         fileSizeStr = fileSizeStr.slice(1)
         fileNameStr = fileNameStr.slice(1)
-
-        // let string_img = "" //附件
-        // for (let i = 0; i < that.accessory.length; i++) {
-        //     string_img = string_img + "|" + that.accessory[i]
-        // }
-        // console.log(that.chosed_list.that.approver_list)
-        // console.log(chosed_id,approver_id)
-        // string_img = string_img.slice(1)
-        that.axios.post('/work/letter/save' + that.Service.queryString({
+        that.axios.post('/work/contract/save' + that.Service.queryString({
           Id :that.id, // id
-          theme:that.theme,//主题
-          content:that.content, //请示函内容
-          Url : urlStr, //附件
+          contractName:that.contractName,//合同名称
+          contractNoInput:that.contractNoInput, //合同编号
+          applyCompany:that.applyCompanyName,//送审单位名称
+          applyUserName:that.userName, //项目责任人
+          receiveCompany:that.receiveCompanyName, //使用单位名称
+          reveiveUserName:that.receiveName, //使用单位负责人
+          contractDesc:that.contractDesc, //合同要点说明
+          contractObj:that.contractObj, //合同标的
+          url : urlStr, //附件
           fileName:fileNameStr, 
           fileSize:fileSizeStr,
           auditUserIds: approver_id, //审批人
@@ -162,8 +209,11 @@ let save_leave = (index,text,that) =>{
                     that.$toast('提交成功！')
                     window.location.href = "epipe://?&mark=workUpdate";
                     setTimeout(()=>{
-                        // that.$router.push({path:'/leOfReDetails',query:{letterId:res.data.b,isH5:true}})
-                        window.location.href = "epipe://?&mark=submitLetter&_id="+res.data.b;
+                        // that.$router.push({path:'/leOfReDetails',query:{contractId:res.data.b,isH5:true}})
+                        // window.location.href = "epipe://?&mark=submitLetter&_id="+res.data.b;
+                        console.log(res.data.b)
+                        window.location.href = "epipe://?&mark=submitContract&_id="+res.data.b.contractId;
+                        
                     },500)
                 }
             }
@@ -172,17 +222,23 @@ let save_leave = (index,text,that) =>{
 }
 
 import {mapState, mapMutations} from 'vuex';
-import WorkButton  from '../../components/worknews/work_button.vue'   //提交按钮
-import CopeMan  from '../../components/worknews/copy_man.vue'    //抄送人
-import ApproverMan  from '../../components/worknews/approver_man.vue'    //审批人
-import TopHead  from '../../components/topheader.vue'  //header导航栏
+import WorkButton  from '../../../components/worknews/work_button.vue'   //提交按钮
+import CopeMan  from '../../../components/worknews/copy_man.vue'    //抄送人
+import ApproverMan  from '../../../components/worknews/approver_man.vue'    //审批人
+import TopHead  from '../../../components/topheader.vue'  //header导航栏
 export default {
         data(){
             return{
                 dataObj:[],
                 id:'',
-                theme: '', //主题
-                content:'',//内容
+                contractName:'', //合同名称
+                contractNoInput:'', //合同编号
+                applyCompanyName:'',//送审单位
+                userName:'',//项目负责人
+                receiveCompanyName:'',//使用单位
+                receiveName:'',//使用责任人
+                contractObj:'', //合同标的
+                contractDesc:'',//合同要点说明
                 chosed_list: [], //抄送人
                 approver_list : [], //审批人
                 accessory :[],
@@ -231,14 +287,6 @@ export default {
                 window.location.href = "epipe://?&mark=imgdetail&url=" + JSON.stringify(obj);
         },
         check:function(){
-            if(this.theme.length<6||this.theme.length>30){
-                this.$toast('主题内容需6~30字之间')
-                return false
-            }
-            if(this.content.length>1000){
-                this.$toast('请示函内容不能超过1000字')
-                return false
-            }
             if(this.newCopy){
                 for(let i=0;i<this.newCopy.length;i++){
 
@@ -270,16 +318,14 @@ export default {
                     var p = str.lastIndexOf(".");
                     var strPostfix=str.substring(p,str.length) + '|';        
                     strPostfix = strPostfix.toLowerCase();
-                    if(strFilter.indexOf(strPostfix)>-1)
-                    {
+                    if(strFilter.indexOf(strPostfix)>-1){
                         return true;
                     }
                 }        
                 return false;   
-
             },
         accessoryFor:function(data){
-              if(!data.accessory.length) return false;
+              if(!data.accessory||data.accessory.url==null) return false;
                var urlArr = data.accessory.url.split('|')
                var fileSizeArr = data.accessory.fileSize.split('|')
                var fileNameArr = data.accessory.fileName.split('|')
@@ -315,7 +361,6 @@ export default {
                     }
                     that.isImg(url)?obj.isImg=true:obj.isImg=false;
                     that.accessory.push(obj)
-
                 }
 
                 this.dataObj=[];
@@ -324,22 +369,36 @@ export default {
                 this.content='';//内容
                 this.chosed_list=[]; //抄送人
                 this.approver_list=[]; //审批人
+                
                 this.accessory=[];
                 this.isDraftFlag=0;
                 this.dataObj = [];
                 this.approver_man_state = []
                 this.chosed_man_state = []
             let that = this;
-            if(this.$route.query.letterId){
-                  this.axios.get('/work/letter/info?letterId='+this.$route.query.letterId).then(function(res){
+
+            this.axios.get('/user/info').then(function(res){
+                that.applyCompanyName = res.data.b.organName
+                that.userName = res.data.b.name
+            })
+
+            if(this.$route.query.contractId){
+                  this.axios.post('/work/contract/info?contractId='+this.$route.query.contractId).then(function(res){
+                    //   console.log(res.data.b.data)
                        let data = res.data.b.data[0];
-                       that.id = data.letterId;
+                       that.id = data.contractId;
                        that.isDraftFlag = 1;
                        that.native = 'mark';
                         that.accessoryFor(data)
-                        that.theme = data.theme;
-                        that.content = data.content;
-                        that.theme = data.theme;
+                        that.contractName = data.contractName;
+                        that.contractNoInput = data.contractNoInput;
+                        that.applyCompanyName = data.applyCompanyName;
+                        that.applyUserName = data.userName;
+                        that.receiveCompanyName = data.receiveCompanyName;
+                        that.receiveName = data.receiveName;
+                        that.chosed_list = data.receivers;
+                        that.contractObj = data.contractObj;
+                        that.contractDesc = data.contractDesc;
                         that.chosed_list = data.receivers;
                         that.change_man(that.chosed_list);
                         that.approver_list = data.auditers;
@@ -374,7 +433,6 @@ export default {
         padding 0 0.15rem;
 
          .styles{
-            padding 0 0.15rem;
             margin-bottom 0.15rem;
              -webkit-box-shadow: 0 0 0.2rem rgba(238,65,54,.1);    
              box-shadow 0 0 0.2rem rgba(238,65,54,.1);
@@ -382,12 +440,16 @@ export default {
              overflow hidden
 
              input{
+                 box-sizing border-box
                  float right;
-                 width 2.5rem;
+                 width 2.1rem;
                  height 0.44rem;
                  border none;
                  outline none;
                  font-size:0.14rem;
+                 text-align right;
+                 padding-right 0.15rem;
+                 color:#666;
              }
              input::-webkit-input-placeholder{
                  font-size:0.13rem;
@@ -420,6 +482,7 @@ export default {
         li{
             display:flex;
             margin-bottom 0.1rem;
+            padding-left 0.15rem;
          }
 
         img{
@@ -454,6 +517,7 @@ export default {
 
     .add-btn{
         display flex;
+        padding-left:0.15rem;
 
         div{
             height:0.33rem;
@@ -469,6 +533,34 @@ export default {
             word-wrap: break-word;
             word-break: break-all;
         }
+    }
+
+    .input_group>div{
+        overflow hidden;
+        padding 0 0.15rem;
+    }
+
+    input[disabled],input:disabled,input.disabled{  
+    color: #666;  
+    -webkit-text-fill-color:#666;  
+    -webkit-opacity:1;  
+    opacity: 1;
+    background-color:#fff;
+} 
+
+    .bor_bottom{
+        position:relative;
+    }
+
+    .bor_bottom:after{
+        position:absolute;
+        content:'';
+        display:block;
+        bottom : 0;
+        left:0;
+        height:0.01rem;
+        width:100%;
+        background-color:#f5f5f5;
     }
 
 </style>

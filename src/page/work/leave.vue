@@ -155,8 +155,8 @@ let save_leave = (index,text,that) =>{
         that.axios.post(that.Service.saveLeave + that.Service.queryString({
           Id :that.leaveId, // id
           leaveType: that.leaveIndex, //请假类型
-          beginTime: '2018-05-25 11:39', //开始时间
-          endTime : '2018-05-26 11:39:10', //结束时间
+          beginTime: that.beginTime, //开始时间
+          endTime : that.endTime, //结束时间
           leaveDuration : that.leaveDay, //请假天数
           auditUserIds: approver_id, //审批人
           receiverIds: chosed_id, //抄送人

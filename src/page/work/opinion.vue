@@ -32,7 +32,12 @@ export default {
                     this.$toast("请填写拒绝理由!")
                     return false;
                 }
-                this.$route.query.isLetter?this.letter():this.leave();
+                console.log(this.$route.query.type)
+                if(this.$route.query.type=='contract'){
+                        this.contract()
+                }else{
+                  this.$route.query.isLetter?this.letter():this.leave();
+                }
             },
             letter:function(){
                     let that = this;
@@ -40,17 +45,31 @@ export default {
                             window.location.href = "epipe://?&mark=workUpdate";
                             that.$toast('拒绝审批!')                            
                             setTimeout(()=>{
-                                window.location.href = "epipe://?&mark=leOfReDetails&_id="+that.id+'&data=1';
+                                window.location.href = "epipe://?&mark=leOfReDetails&_id="+that.id+'&data='+JSON.stringify({text:1});
                                 
                             },500)      
                     })
-                
             },
             leave:function(){
                 this.axios.post('/work/leave /update?leaveId='+this.id+'&type=3&reason='+this.textVal).then(function(res){
                             window.location.href = "epipe://?&mark=workUpdate";
                             setTimeout(()=>{
-                               window.location.href = "epipe://?&mark=leaveDetails&_id="+that.id+'&data=1';
+                               window.location.href = "epipe://?&mark=leaveDetails&_id="+that.id+'&data='+JSON.stringify({text:1});
+                            },500)      
+                    })
+            },
+            contract:function(){
+                     let that = this;
+                    this.axios.post('/work/audit'+that.Service.queryString({
+                        applyType:2,
+                        type:3,
+                        applyId:this.id,
+                        reason:this.textVal,
+                    })).then(function(res){
+                            window.location.href = "epipe://?&mark=workUpdate";
+                            that.$toast('拒绝审批!')                            
+                            setTimeout(()=>{
+                                window.location.href = "epipe://?&mark=contractDetails&_id="+that.id+'&data='+JSON.stringify({text:1});
                             },500)      
                     })
             }

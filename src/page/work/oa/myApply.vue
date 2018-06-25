@@ -51,8 +51,34 @@
                     </div>
                 
 
-                <div @click="letterDetail(item.extend[1].value,item.extend[3].value)"   class="skip" >
-                        查看详情
+                    <div @click="letterDetail(item.extend[1].value,item.extend[3].value)"   class="skip" >
+                            查看详情
+                    </div>
+
+                </div>
+
+                <div v-if="item.extend[0].value == 3"  class="affairs_item myaffairs_shadow">
+                    <div class="affirs_child">
+                        <div class="affairs_title">
+                            <img :src="item.extend[4].value" @click="go_user(item.userId)"/>
+                            <h2 >我的合同审批</h2>
+                            <time >{{item.extend[10].value | timeFormat}}</time>
+                        </div>
+                        <div class="affairs_infor">
+                        <div class="request_infor lineHeight">
+                            <span class="lesp">合同名称 :</span>
+                            <p class="line1">{{item.extend[12].value}}</p>
+                        </div>
+                            <div class="request_infor margin10">
+                                <span>项目责任人 :</span>
+                                <p class="line2" style="line-height:0.2rem;">{{item.extend[13].value}}</p>
+                            </div>
+                        </div>
+                    </div>
+                
+
+                    <div @click="contractDetail(item.extend[1].value,item.extend[6].value)"   class="skip" >
+                            查看详情
                     </div>
 
                 </div>
@@ -120,13 +146,20 @@
             },
             letterDetail(id,name){
                 window.location.href = "epipe://?&mark=leOfReDetails&_id="+id+'&data='+JSON.stringify({text:0});
+            },
+            contractDetail(id,type){
+                if(type==4){
+                 window.location.href = "epipe://?&mark=contract&_id="+id;
+                    return 
+                }
+                window.location.href = "epipe://?&mark=contractDetails&_id="+id+'&data='+JSON.stringify({text:0});
             }
         },
         mounted:function(){
 
                  let that = this;
                  this.axios.get('/work/my/apply/list').then(function(res){
-                        that.leaveData = res.data.b;
+                        that.leaveData = res.data.b.data;
                  })
         },
         filters : {
@@ -168,6 +201,10 @@
 
 
 <style scoped lang="stylus">
+
+    .lesp{
+        letter-spacing 3px;
+    }
 
     body{
         overflow hidden;

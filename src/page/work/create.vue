@@ -106,6 +106,40 @@
       }
     }
   }
+
+  .dialog{
+      position fixed;
+      width 100%;
+      height 100%;
+      top 0;
+      z-index 5;
+      font-size 0.18rem;
+      background-color rgba(0,0,0,0.5)
+
+      .dialog_box{
+          width 2.7rem;
+          height 0.8rem;
+          position absolute;
+          left 0;
+          right 0;
+          top 0;
+          bottom 0;
+          margin auto;
+          background #fff;
+          text-align center;
+      }
+      
+      .dialog_option{
+        height 0.4rem;
+        line-height 0.4rem;
+        position relative;
+        font-size:0.16rem;
+      }
+
+       .dialog_border{
+        border 1px solid #f5f5f5
+      }
+  }
 </style>
 
 <template>
@@ -146,7 +180,7 @@
         </div>
         <div class="form-item">
           <div class="form-title">组织类型</div>
-          <div class="form-content organize">
+          <div class="form-content organize" @click="isShow=true">
             <!--<router-link :to="{ path:'/edit', query: { title:  '组织类型',bg: '#0fc37c',value:this.category} }">-->
               <!--<span v-if="category.length > 0">{{category}}</span>-->
               <!--<span v-else>企业</span>-->
@@ -154,7 +188,10 @@
                 <!--<use xlink:href="#icon-into"></use>-->
               <!--</svg>-->
             <!--</router-link>-->
-              <span>企业</span>
+              <span v-html="category==1?'企业':'集团'"></span>
+              <svg class="icon icon-into" aria-hidden="false">
+                <use xlink:href="#icon-into"></use>
+              </svg>
           </div>
         </div>
         <div class="form-item">
@@ -182,7 +219,7 @@
         <div class="form-item">
           <div class="form-title">手机号码</div>
           <div class="form-content">
-            <router-link :to="{ path:'/edit', query: { title:  '手机号码',bg: '#499844',value:this.phone}}">
+            <router-link :to="{ path:'/edit', query: { title:  '手机号码', bg: '#499844',value:this.phone}}">
               <span  v-if="phone.length > 0">{{phone}}</span>
               <span v-else>请输入联系人手机号码</span>
               <svg class="icon icon-into" aria-hidden="false">
@@ -232,6 +269,13 @@
           <span class="link" @click="agreement()">《服务使用协议》</span>
         </p>
       </div>
+
+    <div class="dialog" v-show="isShow" @touchmove.prevent>
+            <div class="dialog_box">
+                <div class="dialog_option dialog_border" @click="organizationFn(1)">企业</div>
+                <div class="dialog_option" @click="organizationFn(0)">集团</div>
+            </div>
+        </div>
   </div>
 </template>
 
@@ -248,7 +292,7 @@
       return{
         organization: this.$store.state.create.organization?this.$store.state.create.organization:"",
         abbreviation: this.$store.state.create.abbreviation?this.$store.state.create.abbreviation:"",
-        category: this.$store.state.create.category?this.$store.state.create.category:"",
+        category: this.$store.state.create.category?this.$store.state.create.category:"1",
         area: this.$store.state.create.area?this.$store.state.create.area:"",
         name: this.$store.state.create.chargeman?this.$store.state.create.chargeman:"",
         phone: this.$store.state.create.tel?this.$store.state.create.tel:"",
@@ -261,6 +305,7 @@
         areaId: this.$store.state.create.areaId?this.$store.state.create.areaId:"",  //城区id
         address: this.$store.state.create.address?this.$store.state.create.address:"",  //详细地址
         loading: false,
+        isShow:false,
       }
     },
     methods: {
@@ -322,7 +367,7 @@
           this.axios.post(vm.Service.createOrg + vm.Service.queryString({
             universalName: vm.organization,
             abbreviationName: vm.abbreviation,
-            organizationType: 1,
+            organizationType: vm.category,
             provinceId: vm.provinceId,
             cityId: vm.cityId,
             areaId: vm.areaId,
@@ -353,6 +398,11 @@
         }else{
           this.submit_active = false;
         }
+      },
+      //组织类型选择
+      organizationFn(type){
+          this.category = type
+          this.isShow = false;
       },
       /*返回*/
       goback(){

@@ -100,7 +100,7 @@ const echartsLib = {
       ],
       yAxis : [
         {
-          name: '单位/米',
+          name:param.unit?param.unit:'单位/米',
           type : 'value',
           boundaryGap: false,
           axisLine : {
@@ -283,7 +283,7 @@ const echartsLib = {
       ],
       yAxis : [
         {
-          name:'用水量(吨)',
+          name:'kw/h',
           type: 'value',
           min : 0,
           nameTextStyle : {

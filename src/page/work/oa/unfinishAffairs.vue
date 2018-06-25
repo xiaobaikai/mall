@@ -2,53 +2,81 @@
     <section>
         <div v-for="item in leaveData">
 
-        <div v-if="item[0].value == 1" class="affairs_content" >
-            <div class="affirs_child">
-                 <div>
-                    <div class="affairs_title">
-                        <img :src="item[4].value"/>
-                        <h2>{{item[3].value}}的请假审批</h2>
-                        <time >{{item[10].value |timeFormat}}</time>
-                    </div>
-                    <div class="affairs_infor">
-                        <p>请假类型:<span style="color:#609ef6">{{item[5].value}}</span></p>
-                       
-                         <p >开始时间:<span>{{item[8].value |slice}}</span></p>
-                        <p >结束时间:<span>{{item[9].value |slice}}</span></p>
-                    </div>
-                </div>
-                <div @click="leaveDetail(item[1].value,item[3].value)"   class="skip" >
-                    查看详情
-                </div>
-
-            </div>
-        </div>
-
-        <div v-if="item[0].value == 2"  class="affairs_content" :key="item.id">
-            <div class="affirs_child">
-                 <div>
-                    <div class="affairs_title">
-                        <img :src="item[4].value"/>
-                        <h2>{{item[3].value}}的请示函</h2>
-                        <time >{{item[10].value | timeFormat}}</time>
-                    </div>
-                    <div class="affairs_infor">
-                       <div class="request_infor lineHeight">
-                           <span>主&emsp;&emsp;题 :</span>
-                           <p class="line1"> {{item[12].value}}</p>
-                       </div>
-                        <div class="request_infor margin10">
-                            <span>请示内容 :</span>
-                            <p class="line2" style="line-height:0.2rem;">{{item[13].value}}</p>
+            <div v-if="item[0].value == 1" class="affairs_content" >
+                <div class="affirs_child">
+                    <div>
+                        <div class="affairs_title">
+                            <img :src="item[4].value"/>
+                            <h2>{{item[3].value}}的请假审批</h2>
+                            <time >{{item[10].value |timeFormat}}</time>
+                        </div>
+                        <div class="affairs_infor">
+                            <p>请假类型:<span style="color:#609ef6">{{item[5].value}}</span></p>
+                        
+                            <p >开始时间:<span>{{item[8].value |slice}}</span></p>
+                            <p >结束时间:<span>{{item[9].value |slice}}</span></p>
                         </div>
                     </div>
+                    <div @click="leaveDetail(item[1].value,item[3].value)"   class="skip" >
+                        查看详情
+                    </div>
+
                 </div>
-                 <div @click="letterDetail(item[1].value,item[3].value)"   class="skip" >
-                    查看详情
+            </div>
+
+            <div v-if="item[0].value == 2"  class="affairs_content" :key="item.id">
+                <div class="affirs_child">
+                    <div>
+                        <div class="affairs_title">
+                            <img :src="item[4].value"/>
+                            <h2>{{item[3].value}}的请示函</h2>
+                            <time >{{item[10].value | timeFormat}}</time>
+                        </div>
+                        <div class="affairs_infor">
+                        <div class="request_infor lineHeight">
+                            <span>主&emsp;&emsp;题 :</span>
+                            <p class="line1"> {{item[12].value}}</p>
+                        </div>
+                            <div class="request_infor margin10">
+                                <span>请示内容 :</span>
+                                <p class="line2" style="line-height:0.2rem;">{{item[13].value}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div @click="letterDetail(item[1].value,item[3].value)"   class="skip" >
+                        查看详情
+                    </div>
+
                 </div>
+            </div>
+            <div v-if="item[0].value == 3"  class="affairs_content" :key="item.id">
+                    <div class="affirs_child">
+                        <div>
+                            <div class="affairs_title">
+                                <img :src="item[4].value"/>
+                                <h2>{{item[3].value}}的合同审批</h2>
+                                <time >{{item[10].value | timeFormat}}</time>
+                            </div>
+                            <div class="affairs_infor">
+                                <div class="request_infor lineHeight">
+                                    <span class="lesp">合同名称 :</span>
+                                    <p class="line1"> {{item[12].value}}</p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span>项目负责人 :</span>
+                                    <p class="line1"> {{item[13].value}}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div @click="contractDetail(item[1].value,item[3].value)"   class="skip" >
+                            查看详情
+                        </div>
+
+                    </div>
+                 <div>
+            </div>
 
             </div>
-        </div>
         </div>
         <div class="footLine marginBot" v-if="leaveData.length>2">
             <span>我是有底线的</span>
@@ -74,8 +102,7 @@ export default {
             let that = this;
 
             this.axios.get(this.Service.affairsList).then(function(res){
-                        let datas = res.data.b;
-                        console.log(datas)
+                        let datas = res.data.b.data;
                         for(let i=0; i< datas.length;i++){
                             if(datas[i].extend[7].value=='0'){            
                                     that.leaveData.push(datas[i].extend) 
@@ -89,6 +116,9 @@ export default {
             },
             letterDetail(id,name){
                 window.location.href = "epipe://?&mark=leOfReDetails&_id="+id+'&data='+JSON.stringify({text:0});
+            },
+            contractDetail(id){
+                window.location.href = "epipe://?&mark=contractDetails&_id="+id+'&data='+JSON.stringify({text:0});
             }
         },
         filters : {
@@ -119,7 +149,9 @@ export default {
 
 
 <style lang="stylus" scoped>
-
+    .lesp{
+        letter-spacing 3px;
+    }
     .affirs_child{
         padding  0.15rem;
         padding-bottom 0;

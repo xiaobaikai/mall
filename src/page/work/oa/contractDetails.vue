@@ -2,7 +2,7 @@
     <section>
         <TopHead
         mark='mark'
-        bgcolor = '#ff8800'
+        bgcolor = '#fd545c'
         :title=title
         v-on:history_back="history_back_click"
          ></TopHead>
@@ -12,7 +12,7 @@
                     <img class="imgHead" :src="dataObj.profileImg" @click="go_user(dataObj.userId)">
                     <div>
                         <p class="nameTl">{{dataObj.userName}}</p>
-                        <p :class="leaveType==2?'careOf':leaveType==4?'res':'consent'" v-if="leaveType!=''&leaveType!=3">{{leaveType |details}}</p>
+                        <p :class="leaveType==2?'careOf':leaveType==0?'res':'consent'" v-if="leaveType!=''&leaveType!=3">{{leaveType |details}}</p>
                         <p class="res" v-if="leaveType==3||leaveType==4">{{'等待'+dataObj.auditName+'的审批'}}</p>
                     </div>
                 </div>
@@ -20,31 +20,52 @@
             <div class="styles infor">
                 <div class="infor-box">
                     <span>审批编号</span>
-                    <p>{{dataObj.applyNo}}</p>
+                    <p>{{dataObj.contractNoAuto}}</p>
                 </div>
                 <div class="infor-box">
-                    <span >部&emsp;&emsp;门</span>
-                    <p>{{dataObj.officeName}}</p>
+                    <span >合同编号</span>
+                    <p>{{dataObj.contractNoInput}}</p>
                 </div>
                 <div class="infor-box">
-                    <span>主&emsp;&emsp;题</span>
-                    <p>{{dataObj.theme}}</p>
+                    <span>合同名称</span>
+                    <p>{{dataObj.contractName}}</p>
                 </div>
-          
                 <div class="infor-box">
-                    <span>请示内容</span>
-                    <p>{{dataObj.content}}</p>
+                    <span>送审单位</span>
+                    <p>{{dataObj.applyCompanyName}}</p>
                 </div>
-                
+                <div class="infor-box">
+                    <span>项目责任人</span>
+                    <p>{{dataObj.userName}}</p>
+                </div>
+                <div class="infor-box">
+                    <span>使用单位</span>
+                    <p>{{dataObj.receiveCompanyName}}</p>
+                </div>
+                <div class="infor-box">
+                    <span>使用单位责任人</span>
+                    <p>{{dataObj.receiveName}}</p>
+                </div>
+                 <div class="infor-box">
+                    <span>合同标的</span>
+                    <p>{{dataObj.contractObj}}</p>
+                </div>
+            </div>
+
+            <div class="styles">
+                <div class="infor-box">
+                    <span class="contractDescTitle">合同要点说明</span>
+                    <p style="margin-top:0.1rem;">{{dataObj.contractDesc}}</p>
+                </div>
             </div>
 
             <div class="styles infor" v-if="accessory.length">
                     <ul class="accessory">
                         <li  v-for="(item,index) in accessory">
                             <img @click="go_fildDetails(item.url)" v-if="item.isImg"  :src="item.url"/>
-                            <img @click="go_fildDetails(item.url)" v-if="!item.isImg" src="../../assets/wenjian.png"/>
+                            <img @click="go_fildDetails(item.url)" v-if="!item.isImg" src="../../../assets/wenjian.png"/>
                             <div @click="go_fildDetails(item.url)"  class="accessory-cont">
-                                <p >{{item.fileName}}</p>
+                                <p style="text-align:left">{{item.fileName}}</p>
                                 <span>{{item.fileSize | fileSize}}kb</span>
                             </div>
                         </li>
@@ -52,7 +73,7 @@
             </div>
             
             <div class="styles approve">
-                <p class="title">审批人<span>（已添加{{dataObj.auditers.length}}人）</span></p>
+                <p class="title">审批人<span>（已添加{{dataObj.auditers.length+newAppr.length}}人）</span></p>
                 <ul class="list">
                     <li>
                         <div class="approve_list">
@@ -88,7 +109,7 @@
                                 <span>{{item.auditTime | timeStrSlice}}</span>
                             </div>
                         </div>
-                        <svg class="icon icon-back" aria-hidden="false" v-if="index!=dataObj.auditers.length-1&item.status!=2&item.connectFslag!=1">
+                        <svg class="icon icon-back" aria-hidden="false" v-if="(index!=dataObj.auditers.length-1&item.status!=2&item.connectFslag!=1)||newAppr.length!=0">
                             <use xlink:href="#icon-jiantou1"></use>
                         </svg>
                         <div class="reason" v-if="item.status==2">
@@ -103,7 +124,7 @@
                             <ul class="accessory">
                                 <li  v-for="child in item.accessory">
                                     <img @click="go_fildDetails(child.url)"  v-if="child.isImg"  :src="item.url"/>
-                                    <img @click="go_fildDetails(child.url)" v-if="!child.isImg" src="../../assets/wenjian.png"/>
+                                    <img @click="go_fildDetails(child.url)" v-if="!child.isImg" src="../../../assets/wenjian.png"/>
                                     <div @click="go_fildDetails(child.url)"  class="accessory-cont">
                                         <p style="margin-bottom:0">{{child.fileName}}</p>
                                         <span>{{child.fileSize | fileSize}}kb</span>
@@ -113,6 +134,29 @@
                         </div>
                         </div>
                         
+                    </li>
+
+                    <li v-for="(it,ind) in newAppr">
+                        <div class="approve_list newList">
+                            <svg @click="removeAppr(ind)" style="font-size: 0.15rem" class="icon" aria-hidden="false">
+                                <use xlink:href="#icon-shanchu"></use>
+                            </svg>
+                            <img class="imgHead" :src="it.profileImg">
+                            <div class="approve_inf">
+                                <span>{{it.name}}</span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                        </div>
+                        <svg class="icon icon-back" aria-hidden="false" v-if="ind!=newAppr.length-1">
+                            <use xlink:href="#icon-jiantou1"></use>
+                        </svg>
+                    </li>
+
+                     <li style="margin-top:0.1rem;"  class="list_item" @click="go_imchoice(1)" v-if="dataObj.myselfApply==0">
+                        <svg style="font-size: 0.33rem;margin-top: 0.085rem" class="icon" aria-hidden="false">
+                            <use xlink:href="#icon-tianjiarenyuan"></use>
+                        </svg>
                     </li>
                     
                 </ul>
@@ -133,12 +177,12 @@
                             <use xlink:href="#icon-shanchu"></use>
                         </svg>
                         <img class="imgHead" @click="go_user(item.receiverId)" v-if="item.profileImg!=''" :src="item.profileImg">
-                        <img class="imgHead" v-else src="../../assets/tou.png">
+                        <img class="imgHead" v-else src="../../../assets/tou.png">
                         <span>
                             {{item.name}}
                          </span>
                     </li>
-                    <li  class="list_item" @click="go_imchoice" v-if="dataObj.myselfApply==0">
+                    <li class="list_item" @click="go_imchoice(0)" v-if="dataObj.myselfApply==0" >
                         <svg style="font-size: 0.33rem;margin-top: 0.085rem" class="icon" aria-hidden="false">
                             <use xlink:href="#icon-tianjiarenyuan"></use>
                         </svg>
@@ -153,13 +197,12 @@
                 <div v-if="dataObj.myselfApply==3&dataObj.auditStatus!='3'&leaveType!=4"  class="revocation_btn" @click="isDialog=true">撤销</div>
                 <!-- <div> -->
                     <a v-if="dataObj.myselfApply!=3&dataObj.myselfApply==0&dataObj.auditStatus!='3'"  class="consent_btn" @click="consent()">同意</a> 
-                    <a v-if="dataObj.myselfApply!=3&dataObj.myselfApply==0&dataObj.auditStatus!='3'"  class="deliver_btn" @click="deliverTo()">转交</a>
                     <a v-if="dataObj.myselfApply!=3&dataObj.myselfApply==0&dataObj.auditStatus!='3'"  class="refuse_btn" @click="refuse()">拒绝</a>
+                    <a v-if="dataObj.myselfApply!=3&dataObj.myselfApply==0&dataObj.auditStatus!='3'"  class="deliver_btn" @click="more()">更多</a>
                 <!-- </div> -->
                 <div style="clear:both"></div>
             </div>
         </div>
-
 
         <div class="dialog" v-show="isDialog" @touchmove.prevent>
             <div class="dialog_box">
@@ -170,14 +213,21 @@
                 </div>
             </div>
         </div>
+
+        <div class="dialog" v-show="isShow" @touchmove.prevent @click="isShow=!isShow">
+            <div class="dialog_box" style="height:0.8rem;">
+                <div class="dialog_option dialog_border" @click="approveBack()">退回</div>
+                <div class="dialog_option" @click="deliverTo()">转交</div>
+            </div>
+        </div>
           
     </section>
 </template>
 
 <script>
     import {mapState, mapMutations} from 'vuex';
-    import TopHead  from '../../components/topheader.vue'  //header导航栏
-    import CopeMan  from '../../components/worknews/copy_man.vue'    //抄送人
+    import TopHead  from '../../../components/topheader.vue'  //header导航栏
+    import CopeMan  from '../../../components/worknews/copy_man.vue'    //抄送人
     export default {
         data(){
             return{
@@ -192,9 +242,12 @@
                 refuseSvgIndex:-1,
                 mark :'marks',
                 accessory:[],
-                letterId:'',
+                contractId:'',
                 newCopy:[],
-                head:'native'
+                newAppr:[],
+                head:'native',
+                isShow:false,
+                title:'',
             }
         },
         
@@ -202,9 +255,9 @@
             TopHead
         },
         methods :{
-            ...mapMutations(['change_man']),
+        ...mapMutations(['change_man','approver_man']),
             refuse:function(){
-                 this.$router.push({path:'/opinion',query:{id:this.dataObj.letterId,isLetter:true}})
+                 this.$router.push({path:'/opinion',query:{id:this.dataObj.contractId,type:'contract'}})
             },
             history_back_click:function(){
                     if(location.href.indexOf('goWork=0')>0){
@@ -213,28 +266,28 @@
                     }
                     window.location.href = "epipe://?&mark=goWork"
             },
-            deliverTo(){
-                this.$router.push({path:'/imchoices',query:{id:this.dataObj.letterId,careOf:true}})
+            more(){ //更多
+                this.isShow=true
+            },
+            deliverTo(){ //转交
+                let newApprStr = this.appAndCopy(this.newAppr)
+                let newCopy = this.appAndCopy(this.newCopy)
+                this.$router.push({path:'/imchoices',query:{id:this.dataObj.contractId,careOf:true,type:'contract'}})
+            },
+            approveBack(){
+                 this.$router.push({path:'/approveBack',query:{id:this.dataObj.contractId,type:'contract'}})
             },
             consent:function(){
-                    // this.axios.post('/work/letter/result?letterId='+this.dataObj.letterId+'&type=2').then(function(res){
-                    //         window.location.href = "epipe://?&mark=workUpdate";
-                    //         setTimeout(()=>{
-                    //             history.back()
-                    //         },500)      
-                    // })
-                let that = this;
-                let copyStr = '';
-                for(let i=0;i<this.newCopy.length;i++){
-                        copyStr = copyStr + "|" + this.newCopy[i].userId
-                }
+              let that = this;
+               let copyStr =  this.appAndCopy(this.newCopy)
+               let apprStr = this.appAndCopy(this.newAppr)
 
-                copyStr = copyStr.slice(1)
-
-                this.axios.post('/work/letter/result'+this.Service.queryString({
-                    letterId:this.dataObj.letterId,
+                this.axios.post('/work/audit'+this.Service.queryString({
+                    applyId:this.dataObj.contractId,
                     type:2,
+                    applyType:2,
                     receiverIds:copyStr,
+                    auditerIds:apprStr,
                 })).then(function(res){
                             if(res.data.h.code==1502){
                                 that.$toast(res.data.h.msg)
@@ -244,24 +297,40 @@
                              window.location.href = "epipe://?&mark=workUpdate";
                             setTimeout(()=>{
                                 // location.reload() 
-                                window.location.href = "epipe://?&mark=leOfReDetails&_id="+that.dataObj.letterId+'&data='+JSON.stringify({text:1});;
+                                window.location.href = "epipe://?&mark=contractDetails&_id="+that.dataObj.contractId+'&data='+JSON.stringify({text:1});;
                             },500)      
                         }
                     })
             },
-            
-            
+            appAndCopy:function(arr){
+                let str = '';
+                for(let i=0;i<arr.length;i++){
+                        str = str + "|" + arr[i].userId
+                }
+
+                return str.slice(1);
+            },
             revocation:function(){
                     let that = this;
-                     this.axios.post('/work/letter/result?letterId='+this.dataObj.letterId+'&type=1').then(function(res){
+                    this.isDialog = false;
+                    //  this.axios.post('/work/audit?applyId='+this.dataObj.contractId+'&applyType=3&type=1').then(function(res){
+                this.axios.post('/work/audit'+this.Service.queryString({
+                    applyId:this.dataObj.contractId,
+                    type:1,
+                    applyType:2,
+                })).then(function(res){
+                        if(res.data.h.code!=200){
+                            that.$toast(res.data.h.msg)
+                        }else{
                             window.location.href = "epipe://?&mark=workUpdate";
                             that.$toast('撤销成功！')
-                            window.location.href = "epipe://?&mark=workUpdate";
+          
                             setTimeout(()=>{
                                 //   location.reload()
-                                window.location.href = "epipe://?&mark=leOfReDetails&_id="+that.dataObj.letterId+'&data='+JSON.stringify({text:1});;
+                                window.location.href = "epipe://?&mark=contractDetails&_id="+that.dataObj.contractId+'&data='+JSON.stringify({text:1});;
                                   
-                            },500)      
+                            },500)     
+                        } 
                     })
             },
             go_fildDetails: function (url) { //查看图片详情
@@ -270,7 +339,7 @@
                 window.location.href = "epipe://?&mark=imgdetail&url=" + JSON.stringify(obj);
             },
             accessoryFor:function(){
-                if(this.dataObj.accessory.url==null) return false
+                if(this.dataObj.accessory==null||this.dataObj.accessory.url==null) return false
                var urlArr = this.dataObj.accessory.url.split('|')
                var fileSizeArr = this.dataObj.accessory.fileSize.split('|')
                var fileNameArr = this.dataObj.accessory.fileName.split('|')
@@ -305,26 +374,30 @@
                 return arrs
 
             },
-            go_imchoice:function(){
-                this.$router.push({path: 'imchoices', query: {bgcolor:this.color,num:0}})
+            go_imchoice:function(num){
+                this.$router.push({path: 'imchoices', query: {bgcolor:this.color,num:num}})
             },
             remove:function(index){
                 this.newCopy.splice(index, 1);
                 this.change_man(this.newCopy)
             },
+            removeAppr:function(index){
+                this.newAppr.splice(index, 1);
+                this.approver_man(this.newAppr)
+            },
              go_user(id){
                 window.location.href = "epipe://?&mark=userinfo&_id="+id;
             },
             // computed: mapState(["chosed_man_state","approver_man_state"])
-            
         },
         mounted:function(){
             let that = this;
-            this.letterId = this.Util.getUrlValue('letterId').slice(1)
-            this.axios.get('/work/letter/info?letterId='+this.letterId).then(function(res){
-                that.dataObj = res.data.b.data[0]
+            this.contractId = this.Util.getUrlValue('contractId').slice(1)
+            this.axios.post('/work/contract/info?contractId='+this.contractId).then(function(res){
+                that.dataObj = res.data.b.data[0];
+                console.log(that.dataObj)
                 that.accessoryFor();
-                that.title = that.dataObj.userName+'的请示函'
+                that.title = that.dataObj.userName+'的合同审批'
                 for(let i =0;i<that.dataObj.auditers.length;i++){   
 
                         if(that.dataObj.auditers[i].status=='2'){
@@ -343,7 +416,7 @@
                         return;
                     }
 
-                    if(that.dataObj.auditers[0].status!='0'){ //审批开始
+                    if(that.dataObj.auditers[0].status!='0'&&that.dataObj.auditers[0].status!='00'){ //审批开始
                         that.leaveType = '4';
                         return;
                     }
@@ -357,7 +430,8 @@
 
         },
         activated(){
-            this.newCopy = this.chosed_man_state
+            this.newCopy = this.chosed_man_state;
+            this.newAppr = this.approver_man_state;
          },
         filters:{
             timeStrSlice:function(value){
@@ -377,12 +451,27 @@
                     return value=='0'?'审批中':value=='1'?'已同意':value=='2'?'已拒绝':'';
             },
         },
-        computed: mapState(["chosed_man_state"])
-
+        computed: mapState(["chosed_man_state","approver_man_state"])
     }
 </script>
 
 <style scoped lang="stylus">
+
+        .contractDescTitle{
+            color:#666;
+            font-size:0.15rem;
+        }
+
+        .newList{
+
+            position relative;
+
+            svg{
+                position absolute;
+                left 0.32rem;
+                top -0.05rem;
+            }
+        }
 
         .reasonImg{
             overflow hidden;
@@ -447,6 +536,17 @@
                 }
             }
 
+             .dialog_option{
+                height 0.4rem;
+                line-height 0.4rem;
+                position relative;
+                font-size:0.16rem;
+            }
+
+            .dialog_border{
+                border 1px solid #f5f5f5
+            }
+
             .confirm_btn{
                 color #0fc37c;
             }
@@ -461,6 +561,7 @@
              overflow: scroll;
             height: 6.4rem;
             margin-bottom 0.5rem;
+
 
             .styles{
                 padding 0.15rem;
@@ -529,6 +630,7 @@
                 width:2.4rem;
                 word-wrap:break-word;
                 word-break: break-all;
+                text-align:right;
             }
         }
 
@@ -623,6 +725,7 @@
                     left:0.1rem;
                     bottom:0;
                     margin:auto;
+
                 }
             }
         }
@@ -637,6 +740,8 @@
                     margin 0 auto;
                     margin-bottom 0.1rem;
                 }
+
+
             }
 
             .list li:nth-child(5),.list li:nth-child(10),
@@ -740,6 +845,7 @@
                 height 0.34rem;
                 margin-right 0.1rem;
             }
+
 
         .accessory-cont{
             flex 1;

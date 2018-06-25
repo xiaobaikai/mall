@@ -157,13 +157,7 @@
         this.more_prople = !this.more_prople
       },
       go_imchoice: function () {
-//        window.location.href = "epipe://?&mark=imchoice"
-      if(this.isGroup){
           this.$router.push({path: 'imchoices', query: {bgcolor:this.color,num:1}})
-      }else{
-          this.$router.push({path: 'imchoice', query: {bgcolor:this.color,num:1}})
-      }
-        
       },
       remove_man: function (item, index) {
         if (this.has_journal) {

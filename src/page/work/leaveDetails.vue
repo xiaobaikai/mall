@@ -13,7 +13,7 @@
                     <div>
                         <p class="nameTl">{{dataObj.userName}}</p>
                         <p class="res" >{{leaveType |details}}</p>
-                        <p class="res" v-if="leaveType==4">{{'等待'+dataObj.auditName+'的审批'}}</p>
+                        <p class="res" v-if="leaveType==3||leaveType==4">{{'等待'+dataObj.auditName+'的审批'}}</p>
                     </div>
                 </div>
             </div>
@@ -240,7 +240,6 @@
                         return;
                     }
                 }
-
             })
 
         },

@@ -15,6 +15,10 @@
           <span v-if="selection.unit">{{selection.unit}}</span>
           <span v-else>单位</span>
         </div>
+        <div class="selection-item" :class="{'tab-active':contentType === 4}" @click="tabSelection(4)">
+          <span v-if="selection.unit">{{selection.shift}}</span>
+          <span v-else>班次</span>
+        </div>
       </div>
       <div class="selection-content" v-show="!showContent">
         <div class="workshop-content" v-if="contentType === 1">
@@ -27,6 +31,11 @@
         </div>
         <div class="unit-content" v-if="contentType === 3">
           <div class="choose-item" v-for="(item,index) in unitList" :key="index" @click="selectUnit(index)">
+            {{item}}
+          </div>
+        </div>
+        <div class="unit-content" v-if="contentType === 4">
+          <div class="choose-item" v-for="(item,index) in shiftList" :key="index" @click="selectShif(index)">
             {{item}}
           </div>
         </div>
@@ -43,7 +52,7 @@
 
       </div>
     </div>
-    <footer>
+    <!-- <footer>
       <footer>
         <router-link to="/water" tag="div" class="tab-item">
           <svg class="icon" aria-hidden="false">
@@ -58,7 +67,7 @@
           <p class="tab-title tab-active">电耗分析</p>
         </div>
       </footer>
-    </footer>
+    </footer> -->
   </div>
 </template>
 
@@ -76,15 +85,27 @@
         result: false,
         workshopList: [],
         unitList: ["日分析","周分析","月分析"],
+        shiftList:['白班','晚班'],
         showContent: true,
         contentType: 0,
         selection:{
           date: "",
           workshop: "",
           workshopId: "",
-          unit: ""
+          unit: "",
+          shift:"",
         },
       }
+    },
+    mounted:function(){
+
+        this.$mes.get("/common/currentWorkDateAndShift").then(res=>{
+          console.log(res)
+        })
+
+         this.$mes.get("/common/shift/type").then(res=>{
+          console.log(res)
+        })
     },
     watch:{
       selection:{
@@ -110,6 +131,11 @@
         if(!this.selection.workshop){
           this.selection.workshop = "所有车间";
         }
+
+        if(!this.selection.shift){
+          this.selection.shift = "白班";
+        }
+
       },
       /*获取车间*/
       getWorkshop(){
@@ -137,16 +163,23 @@
         this.contentType = 0;
         this.showContent = true;
       },
+       /*选择班次*/
+      selectShif(index){
+        this.selection.shift = this.shiftList[index];
+        this.contentType = 0;
+        this.showContent = true;
+      },
       /*获取数据*/
       getData(selection){
         if(selection.date){
-          this.$mes.get("/energy/ powerConsumption",{
+          this.$mes.get("/energy/powerConsumption",{
             "workShopId": selection.workshopId,
             "workDate": selection.date
           }).then(res =>{
             console.log("电耗分析",res);
             if(res.h.code === 200){
               this.result = true;
+              console.log(this.selection.unit==='周分析')
               if(this.selection.unit === "日分析"){
                 let timeList = [],
                 outputList = [];
@@ -158,18 +191,19 @@
                   time: timeList,
                   outputQty: outputList,
                   title: "日用电量分析",
-                  legend: ["用电量"]
+                  legend: ["用电量"],
+                  unit:'kw/h',
                 };
                 setTimeout(()=>{
                   this.echarts(params,1);
                 },0);
               }else if(this.selection.unit === "月分析"){
                 let a = [],b = [];
-                res.b.powerConsumptionMonthCompare[0].data.forEach(function(item,index){
-                  a.push(item.outputQty);
+                 res.b.powerConsumptionMonthCompare.forEach(function(item,index){
+                  a.push(item.data[0].outputQty);
                 });
-                res.b.powerConsumptionMonthCompare[1].data.forEach(function(item,index){
-                  b.push(item.outputQty);
+                res.b.powerConsumptionMonthCompare.forEach(function(item,index){
+                  b.push(item.data[0].workPeriod);
                 });
                 let params = {
                   a: a,
@@ -183,19 +217,20 @@
                 },0);
               }else{
                 let a = [],b = [];
-                res.b.powerConsumptionWeekCompare[0].data.forEach(function(item,index){
-                  a.push(item.outputQty);
+                res.b.powerConsumptionWeekCompare.forEach(function(item,index){
+                  a.push(item.data[0].outputQty);
                 });
-                res.b.powerConsumptionWeekCompare[1].data.forEach(function(item,index){
-                  b.push(item.outputQty);
+                res.b.powerConsumptionWeekCompare.forEach(function(item,index){
+                  b.push(item.data[0].workPeriod);
                 });
                 let params = {
                   a: a,
                   b: b,
                   title: "周用电量对比",
                   legend: ['本周','上周','用电量'],
-                  xAxis: ['周一','周二','周三','周四','周五','周六','周日']
+                  xAxis: ['周一','周二','周三','周四','周五','周六','周日'],
                 };
+                console.log(params)
                 setTimeout(()=>{
                   this.echarts(params,2);
                 },0);

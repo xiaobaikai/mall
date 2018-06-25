@@ -56,48 +56,70 @@ export default {
             name:'张三',
             counts : 0,
             textVal : '',
-            letterId : '',  
+            id : '',  
             accessory:[], 
+            accessoryData:{}, //格式化后附件数据
         }
     },
      methods : {
             affirm : function(){
-                let that = this;
-
-                // let accessoryObj = that.accessoryFor();
-                let urlStr = '',fileSizeStr = '',fileNameStr = '';
-
-                for(let i=0;i<this.accessory.length;i++){
-
-                    urlStr+='|'+this.accessory[i].url;
-                    fileSizeStr+='|'+this.accessory[i].fileSize;
-                    fileNameStr+='|'+this.accessory[i].fileName;  
+                this.accessoryData = this.accessoryFor();
+                
+                if(this.$route.query.type=='contract'){
+                    this.contract()
+                }else{
+                    this.letter()
                 }
-                urlStr = urlStr.slice(1)
-                fileSizeStr = fileSizeStr.slice(1)
-                fileNameStr = fileNameStr.slice(1)
-             
-                this.axios.post('/work/letter/result'+that.Service.queryString({
-                    letterId:this.letterId,
+            },
+            //请示函转交
+            letter(){
+                let that = this;
+                 this.axios.post('/work/letter/result'+that.Service.queryString({
+                    letterId:this.id,
                     type:4,
-                    url:urlStr,
-                    fileSize:fileSizeStr,
-                    fileName:fileNameStr,
+                    url:this.accessoryData.url,
+                    fileSize:this.accessoryData.fileSize,
+                    fileName:this.accessoryData.fileName,
                     reason:this.textVal,
                     connectUserId:this.$route.query.userId,
 
                 })).then(function(res){
-                            window.location.href = "epipe://?&mark=workUpdate";
+                    window.location.href = "epipe://?&mark=workUpdate";
+                    if(res.data.h.code==200){
+                        that.$toast('转交成功!')
+                        window.location.href = "epipe://?&mark=workUpdate";
+                        setTimeout(()=>{
+                            window.location.href = "epipe://?&mark=leOfReDetails&_id="+that.id+'&data='+JSON.stringify({text:1});
+                        },200)      
+                    }else{
+                        that.$toast(res.data.h.msg)
+                    }
+                })
+            },
+            //合同转交
+            contract(){
+                let that = this;
+                this.axios.post('/work/audit'+that.Service.queryString({
+                    applyId:this.id,
+                    type:4,
+                    applyType:2,
+                    urls:this.accessoryData.url,
+                    fileSizes:this.accessoryData.fileSize,
+                    fileNames:this.accessoryData.fileName,
+                    reason:this.textVal,
+                    connectUserId:this.$route.query.userId,
+           
+                })).then(function(res){
                             if(res.data.h.code==200){
                                 that.$toast('转交成功!')
                                 window.location.href = "epipe://?&mark=workUpdate";
                                 setTimeout(()=>{
-                                    window.location.href = "epipe://?&mark=leOfReDetails&_id="+that.letterId+'&data='+JSON.stringify({text:1});
+                                    window.location.href = "epipe://?&mark=contractDetails&_id="+that.id+'&data='+JSON.stringify({text:1});
                                 },200)      
                             }else{
                                 that.$toast(res.data.h.msg)
                             }
-                    })
+                })
             },
             isImg:function(str){
                  //判断是否是图片 - strFilter必须是小写列举
@@ -159,7 +181,7 @@ export default {
             
         },
         mounted:function(){
-            this.letterId = this.$route.query.id;
+            this.id = this.$route.query.id;
             this.name = this.$route.query.userName;
         },
         components:{

@@ -35,7 +35,7 @@ axios.interceptors.request.use(
     }else{
       if(!config.headers.auth_token){
         // config.headers.auth_token = window.localStorage.auth_token;
-         config.headers.auth_token = "e65c730b-6eeb-4ebf-ab47-6182f9049096";
+         config.headers.auth_token = "7628adb1-1f93-4ebd-a3bd-ae8c5da13f86";
       }
     }
     return config;
@@ -43,7 +43,6 @@ axios.interceptors.request.use(
   err => {
     return Promise.reject(err);
   });
-
 // http响应拦截器
 axios.interceptors.response.use(data => {// 如果code是10  就是token过期了
   if (data.data.h.code == 10) {

@@ -43,7 +43,7 @@
                            <p class="line1">{{item.extend[12].value}}</p>
                        </div>
                         <div class="request_infor margin10">
-                            <span>请示内容 :</span>
+                            <span class="lesp">请示内容 :</span>
                             <p class="line2" style="line-height:0.2rem;">{{item.extend[13].value}}</p>
                         </div>
                     </div>
@@ -54,6 +54,29 @@
                 </div>
             </div>
 
+            <div v-if="item.extend[0].value == 3"  v-for="(item,index) in draftsData" class="affairs_item myaffairs_shadow">
+                 <div class="affirs_child">
+                    <div class="affairs_title">
+                        <img :src="item.extend[4].value" @click="go_user(item.userId)"/>
+                        <h2 >我的合同审批</h2>
+                        <time >{{item.extend[10].value | timeFormat}}</time>
+                    </div>
+                     <div class="affairs_infor">
+                       <div class="request_infor lineHeight">
+                           <span>&emsp;合同名称 :</span>
+                           <p class="line1">{{item.extend[12].value}}</p>
+                       </div>
+                        <div class="request_infor margin10">
+                            <span>项目责任人 :</span>
+                            <p class="line2" style="line-height:0.2rem;">{{item.extend[13].value}}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div @click="goContractDraft(item.extend[1].value)" class="skip" tag="div">
+                    查看详情
+                </div>
+            </div>
         </div>
         <div class="footLine marginBot" v-if="draftsData.length>2">
             <span>我是有底线的</span>
@@ -105,7 +128,10 @@
             },
             goLetterDraft(id){
                 window.location.href = "epipe://?&mark=letterOfRequest&_id="+id;
-            }
+            },
+            goContractDraft(id){
+                window.location.href = "epipe://?&mark=contract&_id="+id;
+            },
         },
         filters : {
             timeFormat : function(value) {
@@ -136,6 +162,10 @@
 
 
 <style scoped lang="stylus">
+
+.lesp{
+        letter-spacing 3px;
+    }
 
     body{
         overflow hidden;

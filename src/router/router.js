@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 Vue.use(Router)
-
 const Home = r => require.ensure([], () => r(require('@/page/home/home.vue')), 'group-foo')
 const Work = r => require.ensure([], () => r(require('@/page/work/work.vue')), 'group-foo')
 const Find = r => require.ensure([], () => r(require('@/page/find/find.vue')), 'group-foo')
@@ -119,6 +118,10 @@ const UnFinishAffairs = r => require.ensure([], () => r(require('@/page/work/oa/
 const MyApply = r => require.ensure([], () => r(require('@/page/work/oa/myApply.vue')), 'group-work')
 const Drafts = r => require.ensure([], () => r(require('@/page/work/oa/drafts.vue')), 'group-work')
 const Imchoices = r => require.ensure([], () => r(require('@/page/work/oa/imchoices.vue')), 'group-work')
+const AddressList = r => require.ensure([], () => r(require('@/page/work/addressList.vue')), 'group-work')
+const Contract = r => require.ensure([], () => r(require('@/page/work/oa/contract.vue')), 'group-work')
+const ContractDetails = r => require.ensure([], () => r(require('@/page/work/oa/contractDetails.vue')), 'group-work')
+const ApproveBack = r => require.ensure([], () => r(require('@/page/work/oa/approveBack.vue')), 'group-work')
 
 export default new Router({
   routes: [
@@ -247,7 +250,7 @@ export default new Router({
       component: OutputLive,
     },
     {
-      path: '/outputcount',  //产出看板
+      path: '/outputcount',  //产出统计
       component: OutputCount,
     },
     {
@@ -565,5 +568,23 @@ export default new Router({
       path:'/drafts',//草稿箱
       component : Drafts
     },
+    {
+      path:'/addressList',//新通讯录
+      component : AddressList
+    },
+    {
+      path:'/contract', //合同申请
+      component : Contract,
+      meta: {keepAlive: true}
+    },
+    {
+      path:'/contractDetails', //合同详情
+      component : ContractDetails,
+      meta: {keepAlive: true}
+    },
+    {
+      path:'/approveBack', //退回
+      component : ApproveBack
+    }
   ]
 })

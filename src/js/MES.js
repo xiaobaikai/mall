@@ -1,9 +1,10 @@
 'use strict'
 import $ from "jquery";
 
-const dev = 'http://192.168.3.166:8580/mes-webapi/v1';  //测试
+const dev = 'http://192.168.3.171:8080/mes-webapi/v1';  //测试
 const product = "http://cmesapi.epipe.cn/mes-webapi/v1";  //正式
 const baseURL = window.location.href.indexOf("app.epipe.cn")>0 ? product : dev;
+// const baseURL = product;
 function getCookie(name) {
   var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
   if (arr = document.cookie.match(reg))
@@ -12,7 +13,7 @@ function getCookie(name) {
     return null;
 }
 function getInitToken(){
-  return getCookie("auth_token")?getCookie("auth_token"):"bc0b43b3-c9b2-49a5-b1c9-72c029580437";
+  return getCookie("auth_token")?getCookie("auth_token"):"de573ef5-57d0-4635-a441-390a486b9fe7";
 }
 function getNewToken(){
   let new_token = "";

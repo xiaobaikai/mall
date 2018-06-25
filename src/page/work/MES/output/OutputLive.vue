@@ -147,10 +147,11 @@
       workshopSelect(index){
         this.selection.workshop = this.workshop_arr[index].workshopName;
         this.selection.workshop_id = this.workshop_arr[index].workShopId;
+        // debugger
         this.mask = false;
         this.showContent = true;
         this.tabItem = null;
-        this.getWorkline(this.workshop_id);
+        this.getWorkline(this.selection.workshop_id);
       },
       /*选择产线*/
       worklineSelect(index){
@@ -236,6 +237,7 @@
           workShopId: workshop_id,
           lineId: workline_id,
           workDate: date,
+          shift:'01'
         }).then(res =>{
           console.log("产出看板",res);
           if(res.h.code === 200){
