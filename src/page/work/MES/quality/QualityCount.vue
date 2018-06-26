@@ -84,7 +84,7 @@
         <p class="tips">点击条件筛选进行查询</p>
       </div>
       <div class="result-wrapper" v-else>
-        <div class="result" v-for="(item,index) in result_length" :id="index">
+        <div class="result" v-for="(item,index) in 1" :id="index">
           <div class="my-selections">
             <p>产品: {{objs[index].partName}}</p>
             <p>车间: {{objs[index].workshopName}}</p>
@@ -93,14 +93,14 @@
           </div>
           <div class="my-echarts" ref="echarts"></div>
           <div class="information-wrapper">
-            <div class="info-item">
+            <!-- <div class="info-item">
               <p><span class="info-title">达成率:</span> <span class="info-number info-green">{{objs[index].achievingRate}}</span></p>
               <p><span class="info-title">差异数量:</span> <span class="info-number info-orange">{{objs[index].differenceNumber}}</span></p>
             </div>
             <div class="flex-item">
               <p><span class="info-title">计划完成:</span> <span class="info-number info-blue">{{objs[index].woFinishQty}}</span></p>
               <p><span class="info-title">实际完成:</span> <span class="info-number info-red">{{objs[index].woQty}}</span></p>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -156,7 +156,7 @@
         tabItem: null,
         mask: false,
         showContent: true,
-        result: true,
+        result: false,
         date: "日期",
         workshop_arr:[],
         workline_arr:[],
@@ -220,7 +220,7 @@
         this.mask = false;
         this.showContent = true;
         this.tabItem = null;
-        this.getWorkline(this.workshop_id);
+        this.getWorkline(this.selection.workshop_id);
       },
       /*获取车间*/
       getWorkshop(){
@@ -266,9 +266,29 @@
       },
       /*选择日期*/
       pickDate(index){
-        let dateString = this.dateObj.year+""+this.dateObj.month+""+this.days[index];
+         let month = this.timeF(this.dateObj.month)
+        let days =  this.timeF(this.days[index])
+        let dateString = this.dateObj.year+""+month+""+days;
         let ms = Date.parse(dateString.substr(4,2)+"/"+dateString.substr(6,2)+"/"+dateString.substr(0,4));
         this.ms = ms;
+
+        if(this.workdateType==1&&this.end_time.day){
+          console.log(this.end_time.year+'/'+this.end_time.month+'/'+this.end_time.day)
+              let endTime = Date.parse(this.end_time.year+'/'+this.end_time.month+'/'+this.end_time.day)
+              if(ms>=endTime){
+                this.$toast('开始时间不能小于等于结束时间')
+                return
+              }
+          }else if(this.workdateType==2&&this.start_time.day){
+          console.log(this.end_time.year+'/'+this.end_time.month+'/'+this.end_time.day)
+            
+              let startTime = Date.parse(this.start_time.year+'/'+this.start_time.month+'/'+this.start_time.day)
+                if(ms<=startTime){
+                this.$toast('结束时间不能小于等于开始时间')
+                return
+              }
+          }
+
         this.dateObj = DateFormat(ms);
         let date = new Date(ms);
         sessionStorage.setItem("ms",ms);
@@ -313,7 +333,7 @@
       },
       /*获取产品*/
       getProduct(id){
-        this.$mes.get("/common/part?lineId"+id).then(res =>{
+        this.$mes.get("/common/part?lineId="+id).then(res =>{
           console.log("获取产品",res);
           if(res.h.code === 200){
             this.product_arr = res.b.list;
@@ -339,7 +359,12 @@
       },
       /*获取良率统计数据*/
       getData(product_id,workshop_id,workline_id,start_date,end_date){
-        this.$mes.get("/quality /statistics",{
+        console.log('获取数据')
+        
+        if(!(workshop_id!="" && workline_id!="" && start_date!="" && end_date!="")){
+            return false;
+        }
+        this.$mes.get("/quality/statistics",{
           partId: product_id,
           workShopId: workshop_id,
           lineId: workline_id,
@@ -347,26 +372,45 @@
           endDate: end_date
         }).then(res =>{
           console.log("良率统计",res);
+
           if(res.h.code === 200){
+
             this.result_length = res.b.list.length;
+            if(!this.result_length){
+              this.$toast('你筛选的条件无数据')
+              return;
+            }
             this.objs = res.b.list;
+            this.result = true;
+            let params ={passQty:[],failQty:[],yield:[],dates:[]};
             setTimeout(()=>{
-              for(let i=0;i<this.objs.length;i++){
-                let params = this.setParams(this.objs[i]);
-                this.echarts(this.$refs.echarts[i],params);
-              }
+               for(let i =0;i<this.objs.length;i++){
+                params.passQty.push(this.objs[i].passQty)
+                params.failQty.push(this.objs[i].failQty)
+                params.yield.push(this.objs[i].yield.slice(0,-1))
+                params.dates.push(this.objs[i].workDate.slice(5))
+            }
+            //   for(let i=0;i<this.objs.length;i++){
+                let param = this.setParams(params);
+                this.echarts(this.$refs.echarts[0],param);
+            //   }
             },0);
           }
         });
       },
       /*设置echarts参数*/
-      setParams(param){
+      setParams(par){
         let vm = this;
-        let series_data = [param.passQty,param.failQty];
+        let series_data = [par.passQty,par.failQty];
         let params = {
-          title: "质检良率统计详情",
-          type: ["bar","bar"],
-          xAxis: ["良品数","不良品数"],
+          // title: "质检良率统计详情",
+          type: ["bar"],
+          xAxis:[{
+            data:par.dates
+          }],
+          legend:{
+            data:['良品数','不良品数']
+          },
           yAxis:[{
             type: 'value',
             nameTextStyle: {
@@ -391,11 +435,13 @@
           },
             {
               type: 'value',
-              name: '达成率%',
+              name: '良率%',
               nameTextStyle: {
                 color: ['#333333'],
                 fontSize: 12
               },
+               min: 0,
+               max: 100,
               axisLine: { //控制x轴
                 lineStyle: {
                   color: '#ccc',
@@ -416,11 +462,45 @@
               },
             }],
           series: [{
-            name: '计划',
+            name: '良品数',
             type: 'bar',
-            stack: '计划',
+            stack: '产出',
             barWidth: 20,
-            data: series_data,
+            data: par.passQty,
+            itemStyle: {
+              normal: {
+                label: {
+                  show: true,
+                  position: "top",
+                },
+                color:'#00a0b0',
+              }
+            }
+          },{
+            
+            name: '不良品数',
+            type: 'bar',
+            stack: '产出',
+            barWidth: 20,
+            data:  par.failQty,
+            itemStyle: {
+              normal: {
+                label: {
+                  show: true,
+                  position: "top",
+                },
+                color:'#FD545C',
+                barBorderRadius: [500, 500, 0, 0]
+              }
+            }
+          },{
+            
+            name: '计划',
+            type: 'line',
+            stack: '良率',
+            yAxisIndex: 1,
+            barWidth: 20,
+            data:  par.yield,
             itemStyle: {
               normal: {
                 label: {
@@ -440,8 +520,13 @@
       },
       /*绘图*/
       echarts(target,data){
+        debugger
         let el = echarts.init(target);
-        this.echartsLib.Bars(el,data);
+        this.echartsLib.barLine(el,data);
+      },
+      timeF(str){
+        str+=''
+        return str.length<2?'0'+str:str;
       }
     },
     created(){
@@ -457,6 +542,7 @@
         };
         this.selection.date = date.getFullYear()+"-"+(date.getMonth() + 1)+"-"+date.getDate();
       }else{
+        debugger
         this.dateObj = DateFormat(new Date());
         this.ms = new Date().getTime();
         this.currentDate = {
@@ -466,11 +552,11 @@
         };
       }
       this.days = setDaysArr(this.dateObj.year,this.dateObj.month);
-      this.getProduct();
+      this.getProduct('');
       this.getWorkshop();
     },
     mounted(){
-      this.getData();
+      // this.getData();
     },
   }
 </script>

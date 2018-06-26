@@ -296,7 +296,7 @@ export default new Router({
       component: QualityDaily,
     },
     {
-      path: '/qualitycount',  //良率日报
+      path: '/qualitycount',  //良率统计
       component: QualityCount,
     },
     {

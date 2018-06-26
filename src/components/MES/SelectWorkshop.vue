@@ -44,7 +44,7 @@
           console.log("获取车间",res);
           if(res.h.code === 200){
             this.choice = res.b.list;
-            this.choice.unshift({workshopName:"所有产线",workShopId:null});
+            this.choice.unshift({workshopName:"所有车间",workShopId:null});
           }
         });
       },

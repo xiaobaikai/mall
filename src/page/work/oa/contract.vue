@@ -196,7 +196,7 @@ let save_leave = (index,text,that) =>{
           receiverIds: chosed_id, //抄送人
           draftFlag : index, //草稿还是发送
         })).then(function (res){
-            if(res.data.h.code==1503||res.data.h.code==1500||res.data.h.code==1502||res.data.h.code==1501){
+            if(res.data.h.code!=200){
                 that.$toast(res.data.h.msg)
             }else if(res.data.h.code == 200){
                 if(index){

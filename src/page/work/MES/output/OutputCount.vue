@@ -229,13 +229,19 @@
         let ms = Date.parse(dateString.substr(4,2)+"/"+dateString.substr(6,2)+"/"+dateString.substr(0,4));
 
           if(this.workdateType==1&&this.end_time.day){
+               console.log(this.end_time.year+'/'+this.end_time.month+'/'+this.end_time.day)
               let endTime = Date.parse(this.end_time.year+'/'+this.end_time.month+'/'+this.end_time.day)
-              if(ms=>endTime){
+              console.log(new Date(ms),new Date(endTime))
+              console.log(ms)
+              if(ms>=endTime){
                 this.$toast('开始时间不能小于等于结束时间')
                 return
               }
           }else if(this.workdateType==2&&this.start_time.day){
+              console.log(this.end_time.year+'/'+this.end_time.month+'/'+this.end_time.day)
+              
               let startTime = Date.parse(this.start_time.year+'/'+this.start_time.month+'/'+this.start_time.day)
+              console.log( new Date(startTime),new Date(ms))
                 if(ms<=startTime){
                 this.$toast('结束时间不能小于等于开始时间')
                 return

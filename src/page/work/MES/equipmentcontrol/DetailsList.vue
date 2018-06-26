@@ -52,6 +52,8 @@
                 let data = {
                   lines: [item.parName],
                   time: [],
+                  parAlarmUL:item.parAlarmUL,
+                  parAlarmLL:item.parAlarmLL,
                   x_unit: "min",
                   y_unit: "单位/"+item.parUnit,
                   outputQty: {

@@ -87,6 +87,7 @@
     background: white !important;
   }
   .echarts{
+    width 3rem;
     height: 4rem;
   }
 </style>
