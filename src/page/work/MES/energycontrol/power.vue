@@ -16,7 +16,7 @@
           <span v-else>单位</span>
         </div>
         <div class="selection-item" :class="{'tab-active':contentType === 4}" @click="tabSelection(4)">
-          <span v-if="selection.unit">{{selection.shift}}</span>
+          <span v-if="selection.shift">{{selection.shift}}</span>
           <span v-else>班次</span>
         </div>
       </div>
@@ -99,16 +99,8 @@
       }
     },
     mounted:function(){
-        let that = this;
-         this.$mes.get("/common/shift/type").then(res=>{
-          that.shiftList = res.b.list;
-        })
-
-        this.$mes.get("/common/currentWorkDateAndShift").then(res=>{
-           that.selection.shiftCode = res.b.shift;
-        })
-
-
+       
+    
         setTimeout(function(){
              var target  = document.querySelector(".result");
             let el = echarts.init(target);
@@ -194,6 +186,9 @@
               this.result = true;
               console.log(this.selection.unit==='周分析')
               if(this.selection.unit === "日分析"){
+                if(!res.b.powerConsumptionDay.length){
+                  this.$toast('你查询的条件暂无数据')
+                }
                 let timeList = [],
                 outputList = [];
                 res.b.powerConsumptionDay[0].data.forEach(function(item,index){
@@ -258,6 +253,7 @@
       echarts(params,type){
         var target  = document.querySelector(".result");
         if(type === 1){
+          console.log(params)
           let el = echarts.init(target);
           el.clear();
           this.echartsLib.MutipleBars(el,params);
@@ -269,6 +265,20 @@
       }
     },
     created(){
+        let that = this;
+        this.$mes.get("/common/shift/type").then(res=>{
+          that.shiftList = res.b.list;
+        })
+
+          this.$mes.get("/common/currentWorkDateAndShift").then(res=>{
+              for(let i=0;i<that.shiftList.length;i++){
+                    if(res.b.shift == that.shiftList[i].shiftCode){
+                        that.selection.shift = that.shiftList[i].shiftName;
+                        that.selection.shiftCode = that.shiftList[i].shiftCode;
+                    }
+              }
+          })
+
       this.getWorkshop();
     },
   }

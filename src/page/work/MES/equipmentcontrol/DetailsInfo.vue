@@ -59,6 +59,8 @@
               outputQty: {
                 "outputQty0":[],
               },
+              parAlarmUL:this.object.parAlarmUL,
+              parAlarmLL:this.object.parAlarmLL
             };
             this.object.data.map(function(item,index){
               data.time.push(item.time.substring(11,16));
@@ -87,7 +89,6 @@
     background: white !important;
   }
   .echarts{
-    width 3rem;
     height: 4rem;
   }
 </style>

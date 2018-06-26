@@ -9,6 +9,7 @@
           <span v-if="currentDate">{{currentDate.year}}-{{currentDate.month}}-{{currentDate.day}}</span>
           <span v-else>日期</span>
         </div>
+        <div class="selection" :class="{'selection-active': tabItem === 2}" @click="tab(4)">{{selection.shift}}</div>
       </div>
       <div class="selections-items" v-show="mask">
         <div class="workshop" v-show="tabItem === 1">
@@ -52,6 +53,11 @@
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+        <div class="workline" v-show="tabItem === 4">
+          <div class="selection-item" v-for="(item,index) in shift_arr" :key="index" @click="shiftSelect(index)">
+            {{item.shiftName}}
           </div>
         </div>
       </div>
@@ -111,15 +117,19 @@
         date: "日期",
         workshop_arr:[],
         workline_arr:[],
+        shift_arr:[],
         dateObj: {},
         currentDate: {},
         days: [],
         showDatePicker: false,
+        nowDate:'',//接口返回的当前时间
         selection:{
           workshop: "车间",
           workshop_id: "",
           workline: "产线",
           workline_id: "",
+          shift:'班次',
+          shiftCode:"01",
           date: new Date().getFullYear()+"-"+(new Date().getMonth() + 1)+"-"+new Date().getDate(),
         }
       }
@@ -127,8 +137,7 @@
     watch:{
       selection:{
         handler(curVal){
-          console.log("选择条件发生变化",curVal);
-          this.getData(curVal.workshop_id,curVal.workline_id,curVal.date);
+          this.getData(curVal.shiftCode,curVal.workshop_id,curVal.workline_id,curVal.date);
         },
         deep:true
       }
@@ -160,6 +169,14 @@
         this.mask = false;
         this.showContent = true;
         this.tabItem = null;
+      },
+      //选择班次
+      shiftSelect(index){
+           this.selection.shift = this.shift_arr[index].shiftName;
+          this.selection.shiftCode = this.shift_arr[index].shiftCode;
+          this.mask = false;
+          this.showContent = true;
+          this.tabItem = null;
       },
       /*前一个月*/
       lastMonth(){
@@ -204,7 +221,6 @@
       /*获取车间*/
       getWorkshop(){
         this.$mes.get("/common/workshop").then(res =>{
-          console.log("获取车间",res);
           if(res.h.code === 200){
             this.workshop_arr = res.b.list;
             this.workshop_arr.unshift({
@@ -228,7 +244,7 @@
         });
       },
       /*获取产出看板数据*/
-      getData(workshop_id,workline_id,date){
+      getData(shiftCode,workshop_id,workline_id,date){
         let line = false;
         if(workshop_id){
           line = true;
@@ -237,14 +253,12 @@
           workShopId: workshop_id,
           lineId: workline_id,
           workDate: date,
-          shift:'01'
+          shift:shiftCode,
         }).then(res =>{
-          console.log("产出看板",res);
           if(res.h.code === 200){
             if(res.b.length>0){
               this.result = true;
               if(!line){
-                console.log("柱形图");
                 let obj = res.b[0].data[res.b[0].data.length-1].data;
                 let data = {
                   time: [],
@@ -260,7 +274,6 @@
                   this.echarts(data,1);
                 },0);
               }else{
-                console.log("折线图");
                 let data = {
                   lines: [],
                   time: {},
@@ -305,33 +318,59 @@
         }else{
           this.echartsLib.lines(el,data);
         }
+      },
+      creat(){
+        if(this.nowDate!=''){
+            this.dateObj = DateFormat(this.nowDate);
+            this.ms = new Date().getTime();
+            this.currentDate = {
+              year: new Date().getFullYear(),
+              month: new Date().getMonth() + 1,
+              day: new Date().getDate()
+            };
+        }else if(sessionStorage.getItem("ms")){
+            let ms = parseInt(sessionStorage.getItem("ms"));
+            this.dateObj = DateFormat(ms);
+            this.ms = ms;
+            let date = new Date(ms);
+            this.currentDate = {
+              year: date.getFullYear(),
+              month: date.getMonth() + 1,
+              day: date.getDate()
+            };
+            this.selection.date = date.getFullYear()+"-"+(date.getMonth() + 1)+"-"+date.getDate();
+          }else{
+            this.dateObj = DateFormat(new Date());
+            this.ms = new Date().getTime();
+            this.currentDate = {
+              year: new Date().getFullYear(),
+              month: new Date().getMonth() + 1,
+              day: new Date().getDate()
+            };
+          }
+          this.days = setDaysArr(this.dateObj.year,this.dateObj.month);
+          this.getWorkshop();
       }
     },
     created(){
-      if(sessionStorage.getItem("ms")){
-        let ms = parseInt(sessionStorage.getItem("ms"));
-        this.dateObj = DateFormat(ms);
-        this.ms = ms;
-        let date = new Date(ms);
-        this.currentDate = {
-          year: date.getFullYear(),
-          month: date.getMonth() + 1,
-          day: date.getDate()
-        };
-        this.selection.date = date.getFullYear()+"-"+(date.getMonth() + 1)+"-"+date.getDate();
-      }else{
-        this.dateObj = DateFormat(new Date());
-        this.ms = new Date().getTime();
-        this.currentDate = {
-          year: new Date().getFullYear(),
-          month: new Date().getMonth() + 1,
-          day: new Date().getDate()
-        };
-      }
-      this.days = setDaysArr(this.dateObj.year,this.dateObj.month);
-      this.getWorkshop();
+        let that = this;
+        this.$mes.get("/common/shift/type").then(res=>{
+          that.shift_arr = res.b.list;
+        })
+
+        this.$mes.get("/common/currentWorkDateAndShift").then(res=>{
+            that.nowDate = res.b.workDate;
+            that.creat();
+            for(let i=0;i<that.shift_arr.length;i++){
+                  if(res.b.shift==that.shift_arr[i].shiftCode){
+                      that.selection.shift = that.shift_arr[i].shiftName;
+                      that.selection.shiftCode = res.b.shift
+                  }
+            }
+        })
     },
     mounted(){
+        
     },
   }
 </script>

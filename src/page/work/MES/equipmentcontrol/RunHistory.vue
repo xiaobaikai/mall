@@ -121,10 +121,7 @@
           console.log("获取车间",res);
           if(res.h.code === 200){
             this.workshopList = res.b.list;
-            this.workshopList.unshift({
-              workShopId: "",
-              workshopName: "所有车间"
-            });
+            this.workshopList.unshift();
           }
         });
       },
@@ -136,10 +133,7 @@
           console.log("获取产线",res);
           if(res.h.code === 200){
             this.worklineList = res.b.list;
-            this.worklineList.unshift({
-              lineId: "",
-              lineName: "所有产线"
-            });
+            this.worklineList.unshift();
           }
         });
       },

@@ -84,7 +84,7 @@
         <p class="tips">点击条件筛选进行查询</p>
       </div>
       <div class="result-wrapper" v-else>
-        <div class="result" v-for="(item,index) in 1" :id="index">
+        <div class="result" v-for="(item,index) in result_length" :id="index">
           <div class="my-selections">
             <p>产品: {{objs[index].partName}}</p>
             <p>车间: {{objs[index].workshopName}}</p>
@@ -174,11 +174,11 @@
           product: "产品",
           product_id: "",
           workshop: "车间",
-          workshop_id: "",
+          workshop_id: "no",
           workline: "产线",
-          workline_id: "",
-          start_time: "",
-          end_time: "",
+          workline_id: "no",
+          start_time: "no",
+          end_time: "no",
         },
         objs: [],
       }
@@ -361,7 +361,7 @@
       getData(product_id,workshop_id,workline_id,start_date,end_date){
         console.log('获取数据')
         
-        if(!(workshop_id!="" && workline_id!="" && start_date!="" && end_date!="")){
+        if(!(workshop_id!="no" && workline_id!="no" && start_date!="no" && end_date!="no")){
             return false;
         }
         this.$mes.get("/quality/statistics",{
@@ -382,17 +382,21 @@
             }
             this.objs = res.b.list;
             this.result = true;
-            let params ={passQty:[],failQty:[],yield:[],dates:[]};
             setTimeout(()=>{
                for(let i =0;i<this.objs.length;i++){
+               let params ={passQty:[],failQty:[],yield:[],dates:[]};
+                 
                 params.passQty.push(this.objs[i].passQty)
                 params.failQty.push(this.objs[i].failQty)
                 params.yield.push(this.objs[i].yield.slice(0,-1))
                 params.dates.push(this.objs[i].workDate.slice(5))
+
+                 let param = this.setParams(params);
+                this.echarts(this.$refs.echarts[i],param);
             }
             //   for(let i=0;i<this.objs.length;i++){
-                let param = this.setParams(params);
-                this.echarts(this.$refs.echarts[0],param);
+                // let param = this.setParams(params);
+                // this.echarts(this.$refs.echarts[0],param);
             //   }
             },0);
           }
@@ -520,7 +524,6 @@
       },
       /*绘图*/
       echarts(target,data){
-        debugger
         let el = echarts.init(target);
         this.echartsLib.barLine(el,data);
       },
@@ -542,7 +545,6 @@
         };
         this.selection.date = date.getFullYear()+"-"+(date.getMonth() + 1)+"-"+date.getDate();
       }else{
-        debugger
         this.dateObj = DateFormat(new Date());
         this.ms = new Date().getTime();
         this.currentDate = {

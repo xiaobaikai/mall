@@ -13,7 +13,7 @@ function getCookie(name) {
     return null;
 }
 function getInitToken(){
-  return getCookie("auth_token")?getCookie("auth_token"):"1033c91a-1520-4df5-aae2-98937a09c49a";
+  return getCookie("auth_token")?getCookie("auth_token"):"272ab765-c00b-490c-b286-f7a0d3ea377e";
 }
 function getNewToken(){
   let new_token = "";

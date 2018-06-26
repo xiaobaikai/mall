@@ -390,7 +390,7 @@
                 <use xlink:href="#icon-nengyuanguanli"></use>
               </svg>
             </div>
-            <div style="font-size:0.14rem;margin-top: 0.05rem">能源管理</div>
+            <div style="font-size:0.14rem;margin-top: 0.05rem">电耗分析</div>
           </li>
           <!-- <li @click="go_energyMonitor">
             <div>

@@ -22,7 +22,6 @@ Vue.prototype.Service = Service;
 import axios from "axios";
 import VueAxios from "vue-axios";
 Vue.use(VueAxios, axios);
-
 // 引用封装的插件
 import Util from "./js/Util";
 Vue.prototype.Util = Util;
