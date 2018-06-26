@@ -82,7 +82,7 @@
           <div class="my-selections">
             <p>车间: {{objs[index].workshopName}}</p>
             <p>产线: {{objs[index].lineName}}</p>
-            <p>时间: {{objs[index].workDate}}</p>
+            <p>时间: {{start_time.year}}-{{start_time.month}}-{{start_time.day}}～{{end_time.year}}-{{end_time.month}}-{{end_time.day}}</p>
           </div>
           <div class="my-echarts" ref="echarts"></div>
           <div class="information-wrapper">
