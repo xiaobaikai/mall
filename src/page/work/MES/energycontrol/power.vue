@@ -36,7 +36,7 @@
         </div>
         <div class="unit-content" v-if="contentType === 4">
           <div class="choose-item" v-for="(item,index) in shiftList" :key="index" @click="selectShif(index)">
-            {{item}}
+            {{item.shiftName}}
           </div>
         </div>
       </div>
@@ -85,7 +85,7 @@
         result: false,
         workshopList: [],
         unitList: ["日分析","周分析","月分析"],
-        shiftList:['白班','晚班'],
+        shiftList:[],
         showContent: true,
         contentType: 0,
         selection:{
@@ -94,18 +94,29 @@
           workshopId: "",
           unit: "",
           shift:"",
+          shiftCode:"",
         },
       }
     },
     mounted:function(){
+        let that = this;
+         this.$mes.get("/common/shift/type").then(res=>{
+          that.shiftList = res.b.list;
+        })
 
         this.$mes.get("/common/currentWorkDateAndShift").then(res=>{
-          console.log(res)
+           that.selection.shiftCode = res.b.shift;
         })
 
-         this.$mes.get("/common/shift/type").then(res=>{
-          console.log(res)
-        })
+
+        setTimeout(function(){
+             var target  = document.querySelector(".result");
+            let el = echarts.init(target);
+
+            el.clear();
+            that.echartsLib.barLine(el,{});
+        },200)
+
     },
     watch:{
       selection:{
@@ -165,7 +176,8 @@
       },
        /*选择班次*/
       selectShif(index){
-        this.selection.shift = this.shiftList[index];
+        this.selection.shift = this.shiftList[index].shiftName;
+        this.selection.shiftCode = this.shiftList[index].shiftCode
         this.contentType = 0;
         this.showContent = true;
       },
@@ -174,7 +186,8 @@
         if(selection.date){
           this.$mes.get("/energy/powerConsumption",{
             "workShopId": selection.workshopId,
-            "workDate": selection.date
+            "workDate": selection.date,
+            "shiftCode":selection.shiftCode,
           }).then(res =>{
             console.log("电耗分析",res);
             if(res.h.code === 200){

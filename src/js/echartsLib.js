@@ -49,11 +49,16 @@ const echartsLib = {
       yAxis: param.yAxis,
       series: param.series
     };
+
+    if(option.series[0].data.length<5){
+      option.series[0].barWidth = 20
+    }
+
+    console.log(option)
     el.setOption(option);
   },
   /*多柱状图*/
   MutipleBars(el,param){
-    console.log(param);
     var	option = {
       title : {
         x: 'center',
@@ -79,7 +84,7 @@ const echartsLib = {
       },
       xAxis : [
         {
-          name : 'h',
+          // name : 'h',
           nameGap:0,
           type : 'category',
           data: param.time,
@@ -140,6 +145,10 @@ const echartsLib = {
         }
       ]
     };
+    
+    if(option.series[0].data.length<5){
+      option.series[0].barWidth = 20
+    }
     el.setOption(option);
   },
   /*折线图*/
@@ -148,93 +157,163 @@ const echartsLib = {
     let index = 0;
     let _title = param.title?param.title:"";
     let colors = ['#9386DC','#71D4F1','#00A0B0'];
-    for(let i in param.outputQty){
-      let temp =  param.outputQty[i];
-      _serias.push({
-        name : param.lines[index],
-        type : 'line',
-        symbol : 'circle',
-        symbolSize :8,
-        data : temp,
-        itemStyle : {
-          normal : {
-            color : 'color' in param?param.color : colors[index]
-          }
-        },
-        lineStyle : {
-          normal : {
-            color : 'color' in param?param.color : colors[index]
-          }
-        }
-      });
-      index ++;
-    }
-    var	option = {
-      title: {
-        x: 'center',
-        text: _title,
-        textStyle: {
-          color: ['#333'],
-          fontWeight: 'bold',
-          fontSize: 16,
-        },
-      },
-      grid : {
-        left : '15%',
-      },
-      legend : {
-        data : param.lines,
-        bottom:0,
-        show : 'showLegend' in param?param.showLegend:true,
-      } ,
-      tooltip: {
-        trigger: 'axis'
-      },
-      xAxis : [{
-        name : param.x_unit?param.x_unit:'h',
-        nameGap:0,
-        type : 'category',
-        data : param.time?param.time:[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24],
-        axisLine : {  //控制x轴
-          lineStyle : {
-            color : '#ccc',
-            shadowOffsetX : 0
-          }
-        },
-        axisTick : {  //控制x轴刻度
-          show : false,
-        },
-        axisLabel :  { //控制刻度标签
-          color : '#666',
-        },
-        boundaryGap : ['100%','100%']
-      }],
-      yAxis : [
-        {
-          name: param.y_unit?param.y_unit:'单位/米',
-          type : 'value',
-          boundaryGap: false,
-          axisLine : {
-            lineStyle : {
-              color : '#ccc',
-            }
-          },
-          splitLine:{
-            lineStyle: {
-              type: 'dotted'
-            }
-          },
-          axisTick : {  //控制y轴刻度
-            show : false,
-          },
-          axisLabel :  { //控制刻度标签
-            color : '#666',
-          },
+    // for(let i in param.outputQty){
+    //   let temp =  param.outputQty[i];
+    //   _serias.push({
+    //     name : param.lines[index],
+    //     type : 'line',
+    //     symbol : 'circle',
+    //     symbolSize :8,
+    //     data : temp,
+    //     itemStyle : {
+    //       normal : {
+    //         color : 'color' in param?param.color : colors[index]
+    //       }
+    //     },
+    //     lineStyle : {
+    //       normal : {
+    //         color : 'color' in param?param.color : colors[index]
+    //       }
+    //     }
+    //   });
+    //   index ++;
+    // }
 
-        }
-      ],
-      series : _serias
-    };
+
+    // var	option = {
+    //   title: {
+    //     x: 'center',
+    //     text: _title,
+    //     textStyle: {
+    //       color: ['#333'],
+    //       fontWeight: 'bold',
+    //       fontSize: 16,
+    //     },
+    //   },
+    //   grid : {
+    //     left : '15%',
+    //   },
+    //   legend : {
+    //     data : param.lines,
+    //     bottom:0,
+    //     show : 'showLegend' in param?param.showLegend:true,
+    //   },
+
+    //   tooltip: {
+    //     trigger: 'axis'
+    //   },
+    //   xAxis : [{
+    //     name : param.x_unit?param.x_unit:'h',
+    //     nameGap:0,
+    //     type : 'category',
+    //     data : param.time?param.time:[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24],
+    //     axisLine : {  //控制x轴
+    //       lineStyle : {
+    //         color : '#ccc',
+    //         shadowOffsetX : 0
+    //       }
+    //     },
+    //     axisTick : {  //控制x轴刻度
+    //       show : false,
+    //     },
+    //     axisLabel :  { //控制刻度标签
+    //       color : '#666',
+    //     },
+    //     boundaryGap : ['100%','100%']
+    //   }],
+    //   yAxis : [
+    //     {
+    //       name: param.y_unit?param.y_unit:'单位/米',
+    //       type : 'value',
+    //       boundaryGap: false,
+    //       axisLine : {
+    //         lineStyle : {
+    //           color : '#ccc',
+    //         }
+    //       },
+    //       splitLine:{
+    //         lineStyle: {
+    //           type: 'dotted'
+    //         }
+    //       },
+    //       axisTick : {  //控制y轴刻度
+    //         show : false,
+    //       },
+    //       axisLabel :  { //控制刻度标签
+    //         color : '#666',
+    //       },
+
+    //     }
+    //   ],
+    //   series : _serias
+    // };
+
+    var option = {
+      title: {
+          text: '未来一周气温变化',
+          subtext: '纯属虚构'
+      },
+      tooltip: {
+          trigger: 'axis'
+      },
+      legend: {
+          data:['最高气温','最低气温']
+      },
+      toolbox: {
+          show: true,
+          feature: {
+              dataZoom: {
+                  yAxisIndex: 'none'
+              },
+              dataView: {readOnly: false},
+              magicType: {type: ['line', 'bar']},
+              restore: {},
+              saveAsImage: {}
+          }
+      },
+      xAxis:  {
+          type: 'category',
+          boundaryGap: false,
+          data: ['周一','周二','周三','周四','周五','周六','周日']
+      },
+      yAxis: {
+          type: 'value',
+          axisLabel: {
+              formatter: '{value} °C'
+          }
+      },
+      series: [
+          {
+              name:'最高气温',
+              type:'line',
+              data:[11, 11, 15, 13, 12, 13, 10],
+  
+              markLine: {
+                  data: [
+                      {type: 'average', name: '平均值'}
+                  ]
+              }
+          },
+          {
+              name:'最低气温',
+              type:'line',
+              data:[1, -2, 2, 5, 3, 2, 0],
+              markPoint: {
+                  data: [
+                      {name: '周最低', value: -2, xAxis: 1, yAxis: -1.5}
+                  ]
+              },
+              markLine: {
+                  data: [
+                      {type: 'average', name: '平均值'},
+                      
+                  ]
+              }
+          }
+      ]
+  };
+
+    console.log(option)
     el.setOption(option);
   },
   /*对比图*/
@@ -427,6 +506,137 @@ const echartsLib = {
         },
       ]
     };
+    el.setOption(option);
+  },
+  // 柱状折线趋势图
+  barLine(el,param){
+      console.log(el,param)
+    let _serias = [
+      {
+        name: '良品数',
+        type: 'bar',
+        stack: 'one',
+        itemStyle:{
+            normal:{
+              color:'#00a0b0',
+            }
+        },
+        data:param.series[0].data
+    },
+    {
+        name: '不良品数',
+        type: 'bar',
+        stack: 'one',
+        itemStyle : {
+          normal : {
+            color : '#9386e0',
+            barBorderRadius : [5000,5000,0,0]
+          }
+        },
+        data:param.series[1].data
+    },{
+      name: 'bar3',
+      type: 'line',
+      stack: 'two',
+      yAxisIndex: 1,
+      data:param.series[2].data
+    }
+    ];
+    let _title = param.title?param.title:"";
+    
+    var	option = {
+      title: {
+        x: 'center',
+        text: _title,
+        textStyle: {
+          color: ['#333'],
+          fontWeight: 'bold',
+          fontSize: 16,
+        },
+      },
+      grid : {
+        left : '15%',
+        right:'15%',
+      },
+      legend : {
+        // y:'bottom',
+        data : param.legend.data,
+        // bottom:10,
+        // show:true,
+        // show : 'showLegend' in param?param.showLegend:true,
+      } ,
+      tooltip: {
+        trigger: 'axis'
+      },
+      xAxis : [{
+        nameGap:0,
+        type : 'category',
+        data : param.xAxis[0].data,
+        axisLine : {  //控制x轴
+          lineStyle : {
+            color : '#ccc',
+            shadowOffsetX : 0
+          }
+        },
+        axisTick : {  //控制x轴刻度
+          show : false,
+        },
+        axisLabel :  { //控制刻度标签
+          color : '#666',
+        },
+        boundaryGap : ['100%','100%']
+      }],
+      yAxis : [
+        {
+          name: param.y_unit?param.y_unit:'单位/米',
+          type : 'value',
+          boundaryGap: false,
+          splitNumber: 5,
+          axisLine : {
+            lineStyle : {
+              color : '#ccc',
+            }
+          },
+          splitLine:{
+            lineStyle: {
+              type: 'dotted'
+            }
+          },
+          axisTick : {  //控制y轴刻度
+            show : false,
+          },
+          axisLabel :  { //控制刻度标签
+            color : '#666',
+          },
+
+        },
+          {
+            type: 'value',
+            name: '良率',
+            min: 0,
+            max: 100,
+            axisLine : {
+              lineStyle : {
+                color : '#ccc',
+              }
+            },
+            // interval:,
+            axisLabel: {
+                formatter: '{value}%'
+            }
+        
+        }
+      ],
+      series : _serias
+    };
+
+    // Object.assign(option,param)
+    if(option.series[0].data.length<5){
+      option.series[0].barWidth = 20
+    }
+
+
+    console.log(option)
     el.setOption(option);
   }
 };

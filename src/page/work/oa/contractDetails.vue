@@ -289,18 +289,18 @@
                     receiverIds:copyStr,
                     auditerIds:apprStr,
                 })).then(function(res){
-                            if(res.data.h.code==1502){
-                                that.$toast(res.data.h.msg)
-                            }else if(res.data.h.code==200){
+                        if(res.data.h.code==1502){
+                            that.$toast(res.data.h.msg)
+                        }else if(res.data.h.code==200){
 
-                            that.$toast('审批通过')
-                             window.location.href = "epipe://?&mark=workUpdate";
-                            setTimeout(()=>{
-                                // location.reload() 
-                                window.location.href = "epipe://?&mark=contractDetails&_id="+that.dataObj.contractId+'&data='+JSON.stringify({text:1});;
-                            },500)      
-                        }
-                    })
+                        that.$toast('审批通过')
+                            window.location.href = "epipe://?&mark=workUpdate";
+                        setTimeout(()=>{
+                            // location.reload() 
+                            window.location.href = "epipe://?&mark=contractDetails&_id="+that.dataObj.contractId+'&data='+JSON.stringify({text:1});;
+                        },500)      
+                    }
+                })
             },
             appAndCopy:function(arr){
                 let str = '';
@@ -370,9 +370,7 @@
                         isImg: bool,
                     })
                 }
-              
                 return arrs
-
             },
             go_imchoice:function(num){
                 this.$router.push({path: 'imchoices', query: {bgcolor:this.color,num:num}})
@@ -448,7 +446,7 @@
                 }
             },
             stateName: function(value){
-                    return value=='0'?'审批中':value=='1'?'已同意':value=='2'?'已拒绝':'';
+                    return value=='0'?'审批中':value=='1'?'已同意':value=='2'?'已拒绝':value=='4'?'已转交':'';
             },
         },
         computed: mapState(["chosed_man_state","approver_man_state"])
