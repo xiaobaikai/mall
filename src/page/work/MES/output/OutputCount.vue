@@ -78,23 +78,23 @@
         <p class="tips">点击条件筛选进行查询</p>
       </div>
       <div class="result-wrapper" v-else>
-        <div class="result" v-for="(item,index) in result_length" :id="index">
+        <div class="result" v-for="(item,index) in 1" :id="index">
           <div class="my-selections">
             <p>车间: {{objs[index].workshopName}}</p>
             <p>产线: {{objs[index].lineName}}</p>
             <p>时间: {{start_time.year}}-{{start_time.month}}-{{start_time.day}}～{{end_time.year}}-{{end_time.month}}-{{end_time.day}}</p>
           </div>
           <div class="my-echarts" ref="echarts"></div>
-          <div class="information-wrapper">
-            <div class="info-item">
-              <p><span class="info-title">达成率:</span> <span class="info-number info-green">{{objs[index].achievingRate}}</span></p>
-              <p><span class="info-title">差异数量:</span> <span class="info-number info-orange">{{objs[index].differenceNumber}}</span></p>
-            </div>
-            <div class="flex-item">
-              <p><span class="info-title">计划完成:</span> <span class="info-number info-blue">{{objs[index].woFinishQty}}</span></p>
-              <p><span class="info-title">实际完成:</span> <span class="info-number info-red">{{objs[index].woQty}}</span></p>
-            </div>
-          </div>
+          <!--<div class="information-wrapper">-->
+            <!--<div class="info-item">-->
+              <!--<p><span class="info-title">达成率:</span> <span class="info-number info-green">{{objs[index].achievingRate}}</span></p>-->
+              <!--<p><span class="info-title">差异数量:</span> <span class="info-number info-orange">{{objs[index].differenceNumber}}</span></p>-->
+            <!--</div>-->
+            <!--<div class="flex-item">-->
+              <!--<p><span class="info-title">计划完成:</span> <span class="info-number info-blue">{{objs[index].woFinishQty}}</span></p>-->
+              <!--<p><span class="info-title">实际完成:</span> <span class="info-number info-red">{{objs[index].woQty}}</span></p>-->
+            <!--</div>-->
+          <!--</div>-->
         </div>
       </div>
     </div>
@@ -320,6 +320,9 @@
       },
       /*获取产出统计数据*/
       getData(workshop_id,workline_id,start_date,end_date){
+      	if(!start_date || !end_date){
+      		return;
+        }
         this.$mes.get("/produce/outputStatistics",{
           workShopId: workshop_id,
           lineId: workline_id,
@@ -331,99 +334,229 @@
             this.result_length = res.b.length;
             this.result = true;
             this.objs = res.b;
-            setTimeout(()=>{
-              for(let i=0;i<res.b.length;i++){
-                let params = this.setParams(res.b[i]);
-                this.echarts(this.$refs.echarts[i],params);
-              }
-            },0);
+	          let param ={
+	          	woFinishQty:[],
+              woQty:[],
+		          achievingRate:[],
+		          workDate:[]
+	          };
+	          if(res.b.length>0){
+		          setTimeout(()=>{
+			          for(let i=0;i<res.b.length;i++){
+				          param.woFinishQty.push(res.b[i].woFinishQty);
+				          param.woQty.push(res.b[i].woQty);
+				          param.achievingRate.push(res.b[i].achievingRate);
+				          param.workDate.push(res.b[i].workDate.slice(5));
+			          }
+			          //console.log("yield:"+param.yield);
+			          let params = this.setParams(param);
+                console.log("params:"+JSON.stringify(params));
+			          this.echarts(this.$refs.echarts[0],params);
+		          },0);
+            }
           }
         })
       },
       /*设置echarts参数*/
-      setParams(param){
-        let vm = this;
-        let series_data = [param.woFinishQty,param.woQty];
-        let params = {
-          title: "产出详情",
-          type: ["bar","bar"],
-          xAxis: ["实际","计划"],
-          yAxis:[{
-            type: 'value',
-            name: '单位/米',
-            nameTextStyle: {
-              color: ['#333333'],
-              fontSize: 12
-            },
-            axisLine: { //控制x轴
-              lineStyle: {
-                color: '#ccc',
-                shadowOffsetX: 0
-              }
-            },
-            splitLine: {
-              show: false
-            },
-            axisTick: { //控制y轴刻度
-              show: false,
-            },
-            axisLabel: { //控制刻度标签
-              color: '#666',
-            },
-          },
-            {
-              type: 'value',
-              name: '达成率%',
-              nameTextStyle: {
-                color: ['#333333'],
-                fontSize: 12
-              },
-              axisLine: { //控制x轴
-                lineStyle: {
-                  color: '#ccc',
-                  shadowOffsetX: 0
-                }
-              },
-              splitLine: {
-                show: false, //是否显示y轴指示线
-              },
-              axisLabel: {
-                formatter: '{value}%'
-              },
-              axisTick: { //控制y轴刻度
-                show: false,
-              },
-              axisLabel: { //控制刻度标签
-                color: '#666',
-              },
-            }],
-          series: [{
-            name: '计划',
-            type: 'bar',
-            stack: '计划',
-            barWidth: 20,
-            data: series_data,
-            itemStyle: {
-              normal: {
-                label: {
-                  show: true,
-                  position: "top",
-                },
-                color: function(params){
-                  let colors = ['#00a0b0','#FD545C'];
-                  return colors[params.dataIndex];
-                },
-                barBorderRadius: [500, 500, 0, 0]
-              }
-            }
-          }],
-        };
-        return params;
-      },
+//      setParams(param){
+//        let vm = this;
+//        let series_data = [param.woFinishQty,param.woQty];
+//        let params = {
+//          title: "产出详情",
+//          type: ["bar","bar"],
+//          xAxis: ["实际","计划"],
+//          yAxis:[{
+//            type: 'value',
+//            name: '单位/米',
+//            nameTextStyle: {
+//              color: ['#333333'],
+//              fontSize: 12
+//            },
+//            axisLine: { //控制x轴
+//              lineStyle: {
+//                color: '#ccc',
+//                shadowOffsetX: 0
+//              }
+//            },
+//            splitLine: {
+//              show: false
+//            },
+//            axisTick: { //控制y轴刻度
+//              show: false,
+//            },
+//            axisLabel: { //控制刻度标签
+//              color: '#666',
+//            },
+//          },
+//            {
+//              type: 'value',
+//              name: '达成率%',
+//              nameTextStyle: {
+//                color: ['#333333'],
+//                fontSize: 12
+//              },
+//              axisLine: { //控制x轴
+//                lineStyle: {
+//                  color: '#ccc',
+//                  shadowOffsetX: 0
+//                }
+//              },
+//              splitLine: {
+//                show: false, //是否显示y轴指示线
+//              },
+//              axisLabel: {
+//                formatter: '{value}%'
+//              },
+//              axisTick: { //控制y轴刻度
+//                show: false,
+//              },
+//              axisLabel: { //控制刻度标签
+//                color: '#666',
+//              },
+//            }],
+//          series: [{
+//            name: '计划',
+//            type: 'bar',
+//            stack: '计划',
+//            barWidth: 20,
+//            data: series_data,
+//            itemStyle: {
+//              normal: {
+//                label: {
+//                  show: true,
+//                  position: "top",
+//                },
+//                color: function(params){
+//                  let colors = ['#00a0b0','#FD545C'];
+//                  return colors[params.dataIndex];
+//                },
+//                barBorderRadius: [500, 500, 0, 0]
+//              }
+//            }
+//          }],
+//        };
+//        return params;
+//      },
+	    setParams(par){
+		    let datas = {
+			    type: ["bar"],
+			    xAxis:[{
+				    data:par.workDate
+			    }],
+			    legend:{
+				    data:['实际','计划']
+			    },
+			    yAxis:[{
+				    type: 'value',
+				    nameTextStyle: {
+					    color: ['#333333'],
+					    fontSize: 12
+				    },
+				    axisLine: { //控制x轴
+					    lineStyle: {
+						    color: '#ccc',
+						    shadowOffsetX: 0
+					    }
+				    },
+				    splitLine: {
+					    show: false
+				    },
+				    axisTick: { //控制y轴刻度
+					    show: false,
+				    },
+				    axisLabel: { //控制刻度标签
+					    color: '#666',
+				    },
+			    },
+				    {
+					    type: 'value',
+					    name: '达成率%',
+					    nameTextStyle: {
+						    color: ['#333333'],
+						    fontSize: 12
+					    },
+					    min: 0,
+					    max: 100,
+					    axisLine: { //控制x轴
+						    lineStyle: {
+							    color: '#ccc',
+							    shadowOffsetX: 0
+						    }
+					    },
+					    splitLine: {
+						    show: false, //是否显示y轴指示线
+					    },
+					    axisLabel: {
+						    formatter: '{value}%'
+					    },
+					    axisTick: { //控制y轴刻度
+						    show: false,
+					    },
+					    axisLabel: { //控制刻度标签
+						    color: '#666',
+					    },
+				    }],
+			    series: [{
+				    name: '实际',
+				    type: 'bar',
+				    stack: '产出',
+				    barWidth: 20,
+				    data: par.woFinishQty,
+				    itemStyle: {
+					    normal: {
+						    label: {
+							    show: true,
+							    position: "top",
+						    },
+						    color:'#00a0b0',
+					    }
+				    }
+			    },{
+				
+				    name: '计划',
+				    type: 'bar',
+				    stack: '产出',
+				    barWidth: 20,
+				    data:  par.woQty,
+				    itemStyle: {
+					    normal: {
+						    label: {
+							    show: true,
+							    position: "top",
+						    },
+						    color:'#FD545C',
+						    barBorderRadius: [500, 500, 0, 0]
+					    }
+				    }
+			    },{
+				
+				    name: '达成率',
+				    type: 'line',
+				    stack: '良率',
+				    yAxisIndex: 1,
+				    barWidth: 20,
+				    data:  par.achievingRate,
+				    itemStyle: {
+					    normal: {
+						    label: {
+							    show: true,
+							    position: "top",
+						    },
+						    color: function(params){
+							    let colors = ['#00a0b0','#FD545C'];
+							    return colors[params.dataIndex];
+						    },
+						    barBorderRadius: [500, 500, 0, 0]
+					    }
+				    }
+			    }],
+		    };
+		    return datas;
+	    },
       /*绘图*/
       echarts(target,data){
         let el = echarts.init(target);
-        this.echartsLib.Bars(el,data);
+        this.echartsLib.barLine(el,data);
       },
     /*时间反0*/
       timeF(str){
