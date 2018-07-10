@@ -3,6 +3,7 @@ export const baseURL = {
 	//mall: "http://192.168.3.160/epmall-front",  //刘春祥本地
 	//mall: "http://192.168.3.167:8888",          //167测试环境
    mall: "https://mall.epipe.cn",           //正式环境
+	
 };
 
 
