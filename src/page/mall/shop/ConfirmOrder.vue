@@ -67,14 +67,6 @@
     </div>
     <div class="wx-pay" @click="submitPayWx"  v-if="!isNotApp"><div>微信支付</div></div>
     <div class="wx-pay" @click="submitPayZfb" v-if="isNotApp"><div>支付宝支付</div></div>
-    <!--<form  :action="formUrl" method="post" v-if="isNotApp">-->
-      <!--<input type="hidden" v-model="token" name="token">-->
-      <!--<input type="hidden" v-model="cartIds" name="cartIds">-->
-      <!--<input type="hidden" v-model="addressId" name="addressId">-->
-      <!--<input type="hidden" v-model="openInv" name="openInv">-->
-      <!--<input type="hidden" v-model="invoiceId" name="invoiceId">-->
-      <!--<div class="wx-pay"><input type="submit" value="支付宝支付"></div>-->
-    <!--</form>-->
   </div>
 </template>
 <script>
@@ -98,7 +90,6 @@
     methods:{
       getSettlement(){
         let settleOrder=JSON.parse(localStorage.getItem("settleOrder"));
-        console.log(settleOrder);
         this.imgPrefix=settleOrder.imgPrefix;
         this.cartList=settleOrder.cartVoList;
         for(let i=0;i<this.cartList.length;i++){
