@@ -12,6 +12,14 @@
       </div>
       <p class="tab-title">分类</p>
     </router-link>
+    <router-link v-if="this.mallType.type === '2b' " to="inquirylist" tag="div" class="footer-tab-item" :class="{'tab-active': category===4}">
+      <div class="icon-container">
+        <i class="iconfont icon-car" :class="category===4 ? 'icon-xunjiadan':'icon-xunjiadan-weixuanzhong'">
+          <div class="goods-number" v-if="inquiryGoodsNum>0">{{inquiryGoodsNum}}</div>
+        </i>
+      </div>
+      <p class="tab-title">待询价单</p>
+    </router-link>
     <router-link to="shoplist" tag="div" class="footer-tab-item" :class="{'tab-active': category===2}">
       <div class="icon-container">
         <i class="iconfont icon-car" :class="category===2 ? 'icon-gouwuche-xuanzhongicon':'icon-gouwucheicon'">
@@ -36,6 +44,7 @@
     data(){
       return{
         goodsNum: 0,
+	      inquiryGoodsNum: 0
       }
     },
     methods:{
@@ -46,12 +55,21 @@
           if(res.data.h.code === 200){
             this.goodsNum = res.data.b.goodsNum;
           }
-          console.log("购物车",res);
         })
       },
+	    getInquiryGoodsNumber(){
+		    this.axios.post(this.baseURL.mall + '/m/cart/myInquiryNum' + this.Service.queryString({
+			    token: this.mallToken.getToken()
+		    })).then(res =>{
+			    if(res.data.h.code === 200){
+				    this.inquiryGoodsNum = res.data.b.myInquiryNum;
+			    }
+		    })
+	    }
     },
     created(){
       this.getGoodsNumber();
+      this.getInquiryGoodsNumber();
     },
   }
 </script>

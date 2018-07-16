@@ -1,9 +1,16 @@
 export const baseURL = {
 	//mall: "http://192.168.3.177/epmall-front",  //梁焱升本地
 	//mall: "http://192.168.3.160/epmall-front",  //刘春祥本地
-	mall: "http://192.168.3.167:8888",          //167测试环境
-   //mall: "https://mall.epipe.cn",           //正式环境
-};
+	//mall: "http://192.168.3.167:8888",          //2c 测试环境
+	mall: "http://192.168.3.167",               //2b 测试环境
+	//mall: "https://mall.epipe.cn",              //2c 正式环境
+	//mall: "https://b2b.epipe.cn",              //2b 正式环境
+	//mall: window.location.href.indexOf("b2b.epipe.cn") > 0 ? "https://b2b.epipe.cn" : "https://mall.epipe.cn"                 //正式环境
+}
+export const mallType = {
+	type: "2b"
+	//type: window.location.href.indexOf("b2b.epipe.cn") > 0 ? "2b" : "2c"
+}
 
 
 export const mallToken = {

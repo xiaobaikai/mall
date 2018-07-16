@@ -68,6 +68,7 @@ const TestDetail = r => require.ensure([], () => r(require('@/page/mall/goods/Te
 const MallSearch = r => require.ensure([], () => r(require('@/page/mall/home/MallSearch.vue')), 'group-mall')
 
 const ShopList = r => require.ensure([], () => r(require('@/page/mall/shop/ShopList.vue')), 'group-mall')
+const InquiryList = r => require.ensure([], () => r(require('@/page/mall/shop/InquiryList.vue')), 'group-mall')
 const ConfirmOrder = r => require.ensure([], () => r(require('@/page/mall/shop/ConfirmOrder.vue')), 'group-mall')
 const ReceivingAdress = r => require.ensure([], () => r(require('@/page/mall/shop/ReceivingAdress.vue')), 'group-mall')
 const Invoice = r => require.ensure([], () => r(require('@/page/mall/shop/Invoice.vue')), 'group-mall')
@@ -392,9 +393,13 @@ export default new Router({
       component: MallSearch,
     },
     {
-      path: '/shoplist',  //购物车列表
-      component: ShopList,
-    },
+		  path: '/shoplist',  //购物车列表
+		  component: ShopList,
+	  },
+	  {
+		  path: '/inquirylist',  //2b询价单列表
+		  component: InquiryList,
+	  },
     {
       path: '/malluser',  //商城个人中心
       component: MallUser,

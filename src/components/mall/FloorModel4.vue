@@ -11,11 +11,12 @@
           </div>
           <div class="item-title">{{item.goodsName}}</div>
           <div class="item-sub">
-            <div class="item-price">￥{{item.goodsStorePrice}}
+            <div class="item-price" v-if="item.priceNegotiable == 0">￥{{item.goodsStorePrice}}
               <div class="promotion-flag" v-if="item.promotionType === 'YH'">券</div>
               <div class="promotion-flag" v-if="item.promotionType === 'ZK'">折</div>
               <div class="promotion-flag" v-if="item.promotionType === 'TG'">团</div>
             </div>
+            <div class="item-price" v-if="item.priceNegotiable == 1">待询价</div>
             <div class="buy">
               <svg class="icon icon-car" aria-hidden="false">
                 <use xlink:href="#icon-gouwuche-xuanzhongicon"></use>

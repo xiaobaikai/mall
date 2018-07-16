@@ -15,14 +15,17 @@
             <div class="goods-details">
               <div class="goods-desc">{{item.goodsName}}</div>
               <div class="goods-opr">
-                <div class="price">￥{{item.goodsStorePrice}}
+                <div class="price"  v-if="item.priceNegotiable === 0">￥{{item.goodsStorePrice}}
                   <div class="promotion-flag" v-if="item.promotionType === 'YH'">券</div>
                   <div class="promotion-flag" v-if="item.promotionType === 'ZK'">折</div>
                   <div class="promotion-flag" v-if="item.promotionType === 'TG'">团</div>
                 </div>
+                <div class="price" v-if="item.priceNegotiable === 1">待询价</div>
                 <div class="buy">
-                  <i class="iconfont icon-xiaogouwucheicon" @click.prevent="addToCart(index)"></i>
-                  <span class="btn-buy" @click.prevent="buyNow(index)">立即购买</span>
+                  <i class="iconfont icon-xiaogouwucheicon" @click.prevent="addToCart(index)" v-if="item.priceNegotiable === 0"></i>
+                  <i class="iconfont icon-xiaogouwucheicon" @click.prevent="addToAskList(index)" v-if="item.priceNegotiable === 1"></i>
+                  <span class="btn-buy"  @click.prevent="buyNow(index)" v-if="item.priceNegotiable === 0">立即购买</span>
+                  <span class="btn-buy"  @click.prevent="askPrice(index)" v-if="item.priceNegotiable === 1">立即询价</span>
                 </div>
               </div>
             </div>
