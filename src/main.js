@@ -50,6 +50,10 @@ Vue.use(Toast);
 Vue.use(Alert);
 Vue.use(wcSwiper);
 
+//日历插件
+import Calendar from 'vue-mobile-calendar'
+Vue.use(Calendar);
+
 import FastClick from 'fastclick';
 FastClick.attach(document.body)
 

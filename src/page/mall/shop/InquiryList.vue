@@ -384,7 +384,7 @@
 			},
 			//结算
 			settlement(){
-				this.axios.post(this.baseURL.mall + "/m/cart/confirmOrder"+this.Service.queryString({
+				this.axios.post(this.baseURL.mall + "/m/cart/confirmInquiry"+this.Service.queryString({
 					token:this.mallToken.getToken(),
 					cartIds:this.cartIds.join(',')
 				})).then(res=>{
