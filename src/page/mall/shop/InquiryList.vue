@@ -103,7 +103,7 @@
 				if(this.shopList[i].list[j].checked){
 					this.totalPrice+=this.shopList[i].list[j].goodsPrice
 				}
-				this.axios.post(this.baseURL.mall + "/m/cart/mergeCartQuantity"+this.Service.queryString({
+				this.axios.post(this.baseURL.mall + "/m/cart/mergeInquiryGoodsQuantity"+this.Service.queryString({
 					isApp:this.isApp.state,
 					token:this.mallToken.getToken(),
 					cartId:this.shopList[i].list[j].cartId,
@@ -133,7 +133,7 @@
 						this.totalPrice-=this.shopList[i].list[j].goodsPrice
 					}
 				}
-				this.axios.post(this.baseURL.mall + "/m/cart/mergeCartQuantity"+this.Service.queryString({
+				this.axios.post(this.baseURL.mall + "/m/cart/mergeInquiryGoodsQuantity"+this.Service.queryString({
 					isApp:this.isApp.state,
 					token:this.mallToken.getToken(),
 					cartId:this.shopList[i].list[j].cartId,
@@ -162,7 +162,7 @@
 				}else if(value==0 || value==''){
 					value=1;
 				}
-				this.axios.post(this.baseURL.mall + "/m/cart/mergeCartQuantity"+this.Service.queryString({
+				this.axios.post(this.baseURL.mall + "/m/cart/mergeInquiryGoodsQuantity"+this.Service.queryString({
 					isApp:this.isApp.state,
 					token:this.mallToken.getToken(),
 					cartId:this.shopList[i].list[j].cartId,
