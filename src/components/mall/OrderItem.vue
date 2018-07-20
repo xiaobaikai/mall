@@ -87,7 +87,6 @@
         statusTitle: "",
         isNotApp:false,
         token:'',
-        formUrl:''
       }
     },
     filters:{
@@ -321,7 +320,6 @@
 		    this.isNotApp=true;
 	    }
 	    this.token=this.mallToken.getToken();
-	    this.formUrl=this.baseURL.mall+"/m/my/h5AlipayByOrderListOrDetail";
     }
   }
 </script>
@@ -332,15 +330,15 @@
         background transparent;
     }
   borderBottom(borderColor= #e9e9e9,borderWidth= 1px){
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    height: borderWidth;
-    background: borderColor;
-    transform: scaleY(0.5);
-    transform-origin: center;
+    content "";
+    position absolute;
+    left 0;
+    bottom 0;
+    width 100%;
+    height borderWidth;
+    background borderColor;
+    transform scaleY(0.5);
+    transform-origin center;
   }
   .list-item{
     position relative;

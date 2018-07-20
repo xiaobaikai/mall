@@ -84,9 +84,11 @@ const Permission= r => require.ensure([], () => r(require('@/page/user/permissio
 const MallAddressList = r => require.ensure([], () => r(require('@/page/mall/user/AddressList.vue')), 'mall-user')
 const MallCollection = r => require.ensure([], () => r(require('@/page/mall/user/Collection.vue')), 'mall-user')
 const MyOrder = r => require.ensure([], () => r(require('@/page/mall/user/MyOrder.vue')), 'mall-user')
+const MyInquiryOrder = r => require.ensure([], () => r(require('@/page/mall/user/MyInquiryOrder.vue')), 'mall-user')
 const MyCoupon = r => require.ensure([], () => r(require('@/page/mall/user/MyCoupon.vue')), 'mall-user')
 const SlideDelTest = r => require.ensure([], () => r(require('@/page/mall/user/SlideDelTest.vue')), 'mall-user')
 const OrderDetails = r => require.ensure([], () => r(require('@/page/mall/user/OrderDetails.vue')), 'mall-user')
+const InquiryOrderDetails = r => require.ensure([], () => r(require('@/page/mall/user/InquiryOrderDetails.vue')), 'mall-user')
 const RecentHistory = r => require.ensure([], () => r(require('@/page/mall/user/RecentHistory.vue')), 'mall-user')
 const GoodsComment = r => require.ensure([], () => r(require('@/page/mall/user/GoodsComment.vue')), 'mall-user')
 const ReturnList = r => require.ensure([], () => r(require('@/page/mall/user/ReturnList.vue')), 'mall-user')
@@ -449,6 +451,10 @@ export default new Router({
       component: MyOrder,
     },
 	  {
+		  path: '/myinquiryorder',  //我的询价单
+		  component: MyInquiryOrder,
+	  },
+	  {
 		  path: '/mycoupon',  //我的优惠券
 		  component: MyCoupon,
 	  },
@@ -464,6 +470,10 @@ export default new Router({
       path: '/orderdetails',  //订单详情
       component: OrderDetails,
     },
+	  {
+		  path: '/inquiryorderdetails',  //询价单详情
+		  component: InquiryOrderDetails,
+	  },
     {
       path: '/recenthistory',  //最近浏览
       component: RecentHistory,

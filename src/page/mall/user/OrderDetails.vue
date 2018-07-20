@@ -21,13 +21,6 @@
         <div class="btn btn-cancel" @click="handleCancel">取消订单</div>
         <div class="btn btn-pay" @click="wepay" v-if="!isNotApp">微信支付</div>
         <div class="btn btn-pay" @click="submitzfb" v-if="isNotApp">支付宝支付</div>
-        <!--<div class="btn btn-pay"  v-if="isNotApp">-->
-          <!--<form  :action="formUrl" method="post">-->
-            <!--<input type="hidden" v-model="token" name="token">-->
-            <!--<input type="hidden" v-model="orderSn" name="orderSn">-->
-            <!--<input type="submit" value="支付宝支付" style="background: none;font-size: 16px;color: #fff;">-->
-          <!--</form>-->
-        <!--</div>-->
       </div>
       <div class="btn-wrapper" v-else-if="objData.orderState === 20">
         <div class="btn btn-refund" @click="refund" v-if="!objData.returnGoodsState && !objData.returnRefundState">申请退款</div>

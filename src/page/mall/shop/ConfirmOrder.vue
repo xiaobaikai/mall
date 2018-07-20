@@ -288,6 +288,7 @@
 			    console.log('询价单',res);
 			    if(res.data.h.code == 200){
 			    	this.$toast('提交询价单成功');
+				    this.$router.push({path:'/MyInquiryOrder'});
           }else{
 			    	this.$toast(res.data.b.msg);
           }

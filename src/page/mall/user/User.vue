@@ -51,30 +51,26 @@
       </div>
     </div>
     <div class="orders">
-      <router-link to="myorder" class="link-item">
+      <router-link to="MyInquiryOrder" class="link-item">
         <div class="link-title">我的询价单</div>
         <div class="link-icon">
           <i class="iconfont icon-jinru"></i>
         </div>
       </router-link>
       <div class="status inquiry-status">
-        <router-link :to="{path:'myorder',query:{state:1}}" tag="div" class="status-item">
-          <p><i class="iconfont icon-xunjia"></i></p>
-          <p class="item-title">询价单</p>
-        </router-link>
-        <router-link :to="{path:'myorder',query:{state:2}}" tag="div" class="status-item">
+        <router-link :to="{path:'MyInquiryOrder',query:{state:1}}" tag="div" class="status-item">
           <p><i class="iconfont icon-baojia"></i></p>
           <p class="item-title">卖家报价</p>
         </router-link>
-        <router-link :to="{path:'myorder',query:{state:3}}" tag="div" class="status-item">
+        <router-link :to="{path:'MyInquiryOrder',query:{state:2}}" tag="div" class="status-item">
           <p><i class="iconfont icon-querenbaojia"></i></p>
           <p class="item-title">买家确认</p>
         </router-link>
-        <router-link :to="{path:'myorder',query:{state:4}}" tag="div" class="status-item">
+        <router-link :to="{path:'MyInquiryOrder',query:{state:3}}" tag="div" class="status-item">
           <p><i class="iconfont icon-yixiadan"></i></p>
           <p class="item-title">已下单</p>
         </router-link>
-        <router-link :to="{path:'myorder',query:{state:5}}" tag="div" class="status-item">
+        <router-link :to="{path:'MyInquiryOrder',query:{state:4}}" tag="div" class="status-item">
           <p><i class="iconfont icon-yiquxiao1"></i></p>
           <p class="item-title">已取消</p>
         </router-link>
