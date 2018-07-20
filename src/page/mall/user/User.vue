@@ -50,7 +50,7 @@
         </div>
       </div>
     </div>
-    <div class="orders">
+    <div class="orders" v-if="this.mallType.type === '2b'">
       <router-link to="MyInquiryOrder" class="link-item">
         <div class="link-title">我的询价单</div>
         <div class="link-icon">

@@ -19,7 +19,7 @@
                   <p class="desc-sub" v-html="item.specInfo"></p>
                 </div>
                 <div class="goods-price">
-                  <p class="price">￥{{item.goodsPrice}}</p>
+                  <p class="price">￥{{item.goodsPayPrice}}</p>
                   <p class="number">x{{item.goodsNum}}</p>
                   <p class="link-comment" v-if="obj.orderState === 50" @click.stop.prevent="linkToComment(item.recId)">评价</p>
                 </div>
