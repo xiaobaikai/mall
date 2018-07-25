@@ -177,7 +177,7 @@
         //alert(this.openInv);
         //console.log(this.addressList);
         if(this.addressList.length>0){
-	        this.axios.post(this.baseURL.mall + "/m/my/getCode"+this.Service.queryString({
+	        this.axios.post(this.baseURL.mall + "/m/my/"+(this.mallType.type === "2c" ? "getCode" : "h52bWXPay")+this.Service.queryString({
 		        token:this.mallToken.getToken(),
 		        cartIds:this.cartIds.join(','),
 		        addressId:this.addressList[0].addressId,

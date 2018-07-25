@@ -143,7 +143,7 @@
     methods:{
       /*微信支付*/
       wepay(){
-        this.axios.post(this.baseURL.mall + "/m/my/getCodeByOrderListOrDetail" + this.Service.queryString({
+        this.axios.post(this.baseURL.mall + "/m/my/"+ (this.mallType.type === "2c" ? "getCodeByOrderListOrDetail" : "h52bWXPay") + this.Service.queryString({
           token: this.mallToken.getToken(),
           orderSn: this.obj.orderSn
         })).then(res =>{
