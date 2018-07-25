@@ -7,7 +7,7 @@
       </div>
     </div>
     <div class="class-area">
-      <div class="class-area-l">
+      <div class="class-area-l" ref="leftPart">
         <ul ref="classpart">
           <li v-for="(item,index) in goodClassList" :key="index" :class="{calssActive:selected==index}" @click="changeClass(index)" v-if="item.gcshow === 1">{{item.gcName}}</li>
         </ul>
@@ -15,7 +15,7 @@
       <div class="class-area-r"  ref="conClass">
         <div class="con-class"  v-for="(items,index) in goodClassList" :key="index" v-if="showIndex===index">
           <div  v-for="(item,index) in items.classList" :key="index" v-if="item.gcshow === 1">
-            <div class="class-tit">{{item.gcName}}</div>
+            <div class="class-tit" @click="classSearch(item.gcId)">{{item.gcName}}</div>
             <ul>
               <li  v-for="(obj,index) in item.classList" :key="index" @click="classSearch(obj.gcId)" v-if="obj.gcshow === 1">{{obj.gcName}}</li>
             </ul>
@@ -40,22 +40,28 @@
       FooterTab,
     },
     mounted () {
-      document.title="分类";
-      this.axios.get(this.baseURL.mall+"/m/search/goodsClass",).then(res =>{
-        console.log(res);
-        if(res.data.h.code==200){
-          this.goodClassList=res.data.b.goodsClass;
-        }
-      });
       let searchH=window.getComputedStyle(this.$refs.search).height.replace("px","");
       console.log(searchH);
       let winH = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
       console.log(winH);
-      let classH=winH-searchH-50;
+	    let classH=winH-searchH-50;
       this.$refs.classpart.style.height = classH +'px';
       this.$refs.conClass.style.height = classH +'px';
     },
     methods:{
+    	getType(){
+		    this.axios.get(this.baseURL.mall+"/m/search/goodsClass",).then(res =>{
+			    console.log(res);
+			    if(res.data.h.code==200){
+				    this.goodClassList=res.data.b.goodsClass;
+				    this.$nextTick(function () {
+					    let leftW=this.$refs.leftPart.offsetWidth;
+					    console.log('leftW:'+leftW);
+					    this.$refs.conClass.style.marginLeft = leftW +'px';
+				    })
+			    }
+		    });
+      },
       changeClass(index){
         this.selected = index;
         this.showIndex = index;
@@ -66,6 +72,10 @@
       linkSearch(){
         this.$router.push({path:'/mallsearch'});
       },
+    },
+    created(){
+	    document.title="分类";
+    	this.getType();
     }
   }
 </script>
@@ -116,7 +126,7 @@
     margin-top .45rem;
     position relative;
     .class-area-l{
-      width .8rem;
+      //width 1.5rem;
       float left;
       ul{
         overflow-y scroll;
@@ -158,7 +168,7 @@
       }
     }
     .class-area-r{
-      margin-left .95rem;
+      padding-left .1rem;
       overflow-y scroll;
       -webkit-overflow-scrolling touch;
       .con-class{
