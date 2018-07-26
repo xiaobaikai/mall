@@ -42,11 +42,11 @@
         </div>
       </div>
     </div>
-    <div class="invoice-info" v-if="cartList[0].list[0].priceNegotiable === 0">
+    <div class="invoice-info invoice-info-first" v-if="cartList[0].list[0].priceNegotiable === 0">
       <div>配送服务</div>
       <div>快递运输</div>
     </div>
-    <div class="invoice-info">
+    <div class="invoice-info invoice-info-first">
       <a href="#/Invoice">
         <div>发票信息</div>
         <div>{{invoiceType}}<i class="iconfont icon-jinru"></i></div>
@@ -56,12 +56,12 @@
       <div>运输方式</div>
       <div>{{importWay}}</div>
     </div>
-    <div class="invoice-info" v-if="cartList[0].list[0].priceNegotiable === 1">
-      <div class="import-way"><i class="iconfont" :class="buyerReceive ? 'icon-xuanzhong1 select-d74a45' : 'icon-weixuan select-ccc' "  @click="chioceImportWay(1)"></i>买家自提</div>
+    <div class="invoice-info import-way-div" v-if="cartList[0].list[0].priceNegotiable === 1">
+      <div class="import-way"><i class="iconfont" :class="buyerReceive ? 'icon-xuanzhong1 select-d74a45' : 'icon-weixuan select-ccc' "  @click="chioceImportWay(1)"></i><span>买家自提</span></div>
       <div><input type="text" placeholder="请选择提货日期" v-model="calendarTime.selectedDateBuy" @click="dateSelect(1)" readonly ></div>
     </div>
-    <div class="invoice-info" v-if="cartList[0].list[0].priceNegotiable === 1">
-      <div class="import-way"><i i class="iconfont" :class="sellerSend ? 'icon-xuanzhong1 select-d74a45' : 'icon-weixuan select-ccc' "  @click="chioceImportWay(2)"></i>卖家发货</div>
+    <div class="invoice-info import-way-div import-way-div-last" v-if="cartList[0].list[0].priceNegotiable === 1">
+      <div class="import-way"><i i class="iconfont" :class="sellerSend ? 'icon-xuanzhong1 select-d74a45' : 'icon-weixuan select-ccc' "  @click="chioceImportWay(2)"></i><span>卖家发货</span></div>
       <div><input type="text" placeholder="请选择您希望送达的日期" v-model="calendarTime.selectedDateSell" @click="dateSelect(2)" readonly></div>
     </div>
     <calendar v-model="calendarTime.calendarShow" :default-date="calendarTime.defaultDate" @change="dateChange" :min-date="calendarTime.minDate"></calendar>
@@ -69,7 +69,7 @@
       <div>折扣优惠</div>
       <div>￥{{priceInfo.promoAmount}}<i class="iconfont icon-jinru" v-if="priceInfo.promoAmount !== 0"></i></div>
     </div>
-    <div class="invoice-info coupon-price" v-if="cartList[0].list[0].priceNegotiable === 0">
+    <div class="invoice-info coupon-price invoice-info-first" v-if="cartList[0].list[0].priceNegotiable === 0">
       <div>优惠券</div>
       <div>￥{{priceInfo.couponAmount}}<i class="iconfont icon-jinru" v-if="priceInfo.couponAmount !== 0"></i></div>
     </div>
@@ -279,7 +279,7 @@
 		    this.axios.post(this.baseURL.mall + "/m/cart/submitInquiry"+this.Service.queryString({
 			    token:this.mallToken.getToken(),
 			    cartIds:this.cartIds.join(','),
-			    addressId:this.addressList[0].addressId,
+			    addressId:this.addressList.length>0 ? this.addressList[0].addressId : '',
 			    openInv:this.openInv,
 			    invoiceId:this.invoiceId,
 			    transportWay: this.buyerReceive ? 1 : 2,
@@ -490,9 +490,14 @@
         }
       }
       .import-way{
+        font-size .14rem!important;
+        line-height .45rem;
         i{
-          font-size .20rem;
+          font-size .18rem;
           margin-right .1rem;
+          vertical-align middle;
+        }
+        span{
           vertical-align middle;
         }
       }
@@ -507,9 +512,14 @@
         color #333;
       }
     }
-    .invoice-info:last-child{
+    .invoice-info-first{
+      border-bottom none;
+    }
+    .import-way-div{
       margin-top 0;
-      border none;
+    }
+    .import-way-div-last{
+      border-bottom none;
     }
     .coupon-price{
       margin-top 0;

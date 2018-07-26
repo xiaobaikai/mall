@@ -118,23 +118,23 @@
             <p><i class="iconfont" :class="collectNum==0 ? 'icon-shoucang-weixuan color999' : 'icon-shoucang-xuanzhong colorff8800'"></i></p>
             <p>收藏</p>
           </div>
-          <div v-if="goodsList[0].priceNegotiable === 0 ">
+          <div v-if="priceNegotiable === 0">
             <a href="#/ShopList">
               <p><i class="iconfont icon-gouwucheicon color999"></i></p>
               <p>购物车</p>
             </a>
           </div>
-          <div v-if="goodsList[0].priceNegotiable === 1 ">
+          <div v-if="priceNegotiable === 1">
             <a href="#/InquiryList">
               <p><i class="iconfont icon-xunjiadan-weixuanzhong color999"></i></p>
               <p>待询价</p>
             </a>
           </div>
         </li>
-        <li @click="addToCartInquiry('addCartItems')" v-if="goodsList[0].priceNegotiable === 0 ">加入购物车</li>
-        <li @click="buyInquiryNow('buy_now')" v-if="goodsList[0].priceNegotiable === 0 ">立即购买</li>
-        <li @click="addToCartInquiry('addInquiry')" v-if="goodsList[0].priceNegotiable === 1 ">加入待询价</li>
-        <li @click="buyInquiryNow('inquiryNow')" v-if="goodsList[0].priceNegotiable === 1 ">立即询价</li>
+        <li v-if="priceNegotiable === 0 " @click="addToCartInquiry('addCartItems')">加入购物车</li>
+        <li v-if="priceNegotiable === 0 " @click="buyInquiryNow('buy_now')" >立即购买</li>
+        <li v-if="priceNegotiable === 1 " @click="addToCartInquiry('addInquiry')">加入待询价</li>
+        <li v-if="priceNegotiable === 1 " @click="buyInquiryNow('inquiryNow')">立即询价</li>
       </ul>
     </div>
     <div class="promotion-popup" v-if="promotionShowState && promotionType === 'YH'" @touchmove.prevent>
@@ -221,7 +221,8 @@
         collectNum:0,
         promotionShowState:false,
 	      promotionType:'',
-        promotionList:[]
+        promotionList:[],
+	      priceNegotiable:''
       }
     },
     components: {
@@ -437,6 +438,7 @@
             this.goodsStorePrice=goodsData.goods[0].goodsStorePrice;
             this.promotionType=goodsData.goods[0].promotionType;
             this.goodsList=goodsData.goods;
+            this.priceNegotiable=goodsData.goods[0].priceNegotiable;
             this.storeId=goodsData.goods[0].storeId;
             if(goodsData.goodsSpecObj){
               this.goodsSpecObj=goodsData.goodsSpecObj;

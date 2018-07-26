@@ -89,7 +89,7 @@
     .item-title{
         margin-top: .16rem;
         font-size: .14rem;
-        line-height: .18rem;
+        height .36rem;
         color: #666;
         display: -webkit-box;
         /* autoprefixer: off */
