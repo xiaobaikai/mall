@@ -80,6 +80,7 @@
           })).then(res=> {
             console.log(res);
             if(res.data.h.code==200){
+	            document.title=res.data.b.gcName;
               if (res.data.b.goods.length < 1) {
                 $state.complete();
               } else {
@@ -164,10 +165,7 @@
           }
         })
       }
-    },
-    created(){
-      document.title="分类";
-    },
+    }
   }
 </script>
 
