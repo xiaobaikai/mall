@@ -61,10 +61,10 @@
       <div><input type="text" placeholder="请选择提货日期" v-model="calendarTime.selectedDateBuy" @click="dateSelect(1)" readonly ></div>
     </div>
     <div class="invoice-info import-way-div import-way-div-last" v-if="cartList[0].list[0].priceNegotiable === 1">
-      <div class="import-way"><i i class="iconfont" :class="sellerSend ? 'icon-xuanzhong1 select-d74a45' : 'icon-weixuan select-ccc' "  @click="chioceImportWay(2)"></i><span>卖家发货</span></div>
+      <div class="import-way"><i class="iconfont" :class="sellerSend ? 'icon-xuanzhong1 select-d74a45' : 'icon-weixuan select-ccc' "  @click="chioceImportWay(2)"></i><span>卖家发货</span></div>
       <div><input type="text" placeholder="请选择您希望送达的日期" v-model="calendarTime.selectedDateSell" @click="dateSelect(2)" readonly></div>
     </div>
-    <calendar v-model="calendarTime.calendarShow" :default-date="calendarTime.defaultDate" @change="dateChange" :min-date="calendarTime.minDate"></calendar>
+    <calendar v-model="calendarTime.calendarShow" @change="dateChange" :min-date="calendarTime.minDate"></calendar>
     <div class="invoice-info" v-if="cartList[0].list[0].priceNegotiable === 0">
       <div>折扣优惠</div>
       <div>￥{{priceInfo.promoAmount}}<i class="iconfont icon-jinru" v-if="priceInfo.promoAmount !== 0"></i></div>
@@ -106,7 +106,6 @@
 	      pickUpTime:'',
 	      calendarTime: {
 		      calendarShow: false,
-		      defaultDate: new Date(),
 		      minDate: new Date(),
 		      selectedDateBuy: '',
 		      selectedDateSell: ''

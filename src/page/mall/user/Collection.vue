@@ -83,6 +83,7 @@
               this.goodsIdList.push(this.itemList[i].goodsId);
             }
           }
+          console.log(this.goodsIdList);
           if(this.goodsIdList.length === this.len){
             this.selectAll = true;
           }

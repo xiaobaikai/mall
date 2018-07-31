@@ -44,10 +44,11 @@
           <span class="line-content line-price">￥{{objData.orderAmount}}</span>
         </p>
         <p class="line">
-          <span class="line-title">收货地址:</span>
+          <span class="line-title" v-if="!objData.transportWay || objData.transportWay == 2">收货地址:</span>
+          <span class="line-title" v-if="objData.transportWay && objData.transportWay == 1">提货地址:</span>
           <span class="line-content" v-if="objData.address">{{objData.address.areaInfo | filterStr}}{{objData.address.address}}</span>
         </p>
-        <p class="line">
+        <p class="line" v-if="!objData.transportWay || objData.transportWay == 2">
           <span class="line-title">收货人:</span>
           <span class="line-content" v-if="objData.address">{{objData.address.trueName}}&emsp;{{objData.address.mobPhone | filterPhone}}</span>
         </p>
@@ -146,7 +147,7 @@
       return{
         objData: {},
         imgPrefix: this.$route.query.imgPrefix,
-        orderSn: this.$route.query.orderSn,
+        orderSn: '',
         token: this.$route.query.token || this.mallToken.getToken(),
         orderInvoice: {},
         invoice: {},
@@ -157,6 +158,8 @@
     },
     created(){
       document.title="订单详情";
+      this.orderSn = this.$route.query.orderSn;
+      this.$alert(window.location.href);
       this.getData();
       if(this.isApp.state){
         this.isNotApp=true;
