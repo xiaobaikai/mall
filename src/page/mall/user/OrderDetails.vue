@@ -159,7 +159,7 @@
     created(){
       document.title="订单详情";
       this.orderSn = this.$route.query.orderSn;
-      this.$alert(window.location.href);
+      //this.$alert(window.location.href);
       this.getData();
       if(this.isApp.state){
         this.isNotApp=true;
