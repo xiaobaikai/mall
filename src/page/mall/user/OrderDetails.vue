@@ -147,7 +147,7 @@
       return{
         objData: {},
         imgPrefix: this.$route.query.imgPrefix,
-        orderSn: '',
+        orderSn: this.$route.query.orderSn,
         token: this.$route.query.token || this.mallToken.getToken(),
         orderInvoice: {},
         invoice: {},
@@ -158,7 +158,7 @@
     },
     created(){
       document.title="订单详情";
-      this.orderSn = this.$route.query.orderSn;
+      //this.orderSn = this.$route.query.orderSn;
       //this.$alert(window.location.href);
       this.getData();
       if(this.isApp.state){

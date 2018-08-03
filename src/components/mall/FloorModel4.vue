@@ -87,16 +87,16 @@
       }
     }
     .item-title{
-        margin-top: .16rem;
-        font-size: .14rem;
-        height .36rem;
-        color: #666;
-        display: -webkit-box;
-        /* autoprefixer: off */
-        -webkit-box-orient: vertical;
-        /* autoprefixer: on */
-        -webkit-line-clamp: 2;
-        overflow: hidden;
+      margin-top: .16rem;
+      font-size: .14rem;
+      color: #666;
+      display: -webkit-box;
+      /* autoprefixer: off */
+      -webkit-box-orient: vertical;
+      /* autoprefixer: on */
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+      line-height .18rem;
     }
     .item-sub{
       display flex;
