@@ -68,8 +68,12 @@
 	    }
     },
     created(){
-      this.getGoodsNumber();
-      this.getInquiryGoodsNumber();
+	    if(this.mallType.type === '2c'){
+		    this.getGoodsNumber();
+      }
+      if(this.mallType.type === '2b'){
+	      this.getInquiryGoodsNumber();
+      }
     },
   }
 </script>
