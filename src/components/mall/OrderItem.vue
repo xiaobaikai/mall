@@ -19,7 +19,7 @@
                   <p class="desc-sub" v-html="item.specInfo"></p>
                 </div>
                 <div class="goods-price">
-                  <p class="price">￥{{item.goodsPrice}}</p>
+                  <p class="price">￥{{item.goodsPayPrice}}</p>
                   <p class="number">x{{item.goodsNum}}</p>
                   <p class="link-comment" v-if="obj.orderState === 50" @click.stop.prevent="linkToComment(item.recId)">评价</p>
                 </div>
@@ -37,11 +37,6 @@
           <div class="btn" @click.stop.prevent="cancleOrder">取消订单</div>
           <div class="btn btn-pay" @click.stop.prevent="wepay" v-if="!isNotApp">微信支付</div>
           <div class="btn btn-pay" @click.stop.prevent="submitzfb"  v-if="isNotApp">支付宝支付</div>
-          <!--<form  :action="formUrl" method="post">-->
-              <!--<input type="hidden" v-model="token" name="token">-->
-              <!--<input type="hidden" v-model="obj.orderSn" name="orderSn">-->
-              <!--<input type="submit"  value="支付宝支付" class="btn btn-pay" style="height: 32px;line-height: 32px; font-size: 14px;" >-->
-          <!--</form>-->
       </div>
       <div class="btn-wrapper" v-show="showBtn" v-else-if="obj.orderState === 20">
         <div class="btn" @click.stop.prevent="refund" v-if="!obj.returnRefundState && !obj.returnGoodsState">申请退款</div>
@@ -92,7 +87,6 @@
         statusTitle: "",
         isNotApp:false,
         token:'',
-        formUrl:''
       }
     },
     filters:{
@@ -149,7 +143,7 @@
     methods:{
       /*微信支付*/
       wepay(){
-        this.axios.post(this.baseURL.mall + "/m/my/getCodeByOrderListOrDetail" + this.Service.queryString({
+        this.axios.post(this.baseURL.mall + "/m/my/"+ (this.mallType.type === "2c" ? "getCodeByOrderListOrDetail" : "h52bWXPay") + this.Service.queryString({
           token: this.mallToken.getToken(),
           orderSn: this.obj.orderSn
         })).then(res =>{
@@ -326,7 +320,6 @@
 		    this.isNotApp=true;
 	    }
 	    this.token=this.mallToken.getToken();
-	    this.formUrl=this.baseURL.mall+"/m/my/h5AlipayByOrderListOrDetail";
     }
   }
 </script>
@@ -337,15 +330,15 @@
         background transparent;
     }
   borderBottom(borderColor= #e9e9e9,borderWidth= 1px){
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    height: borderWidth;
-    background: borderColor;
-    transform: scaleY(0.5);
-    transform-origin: center;
+    content "";
+    position absolute;
+    left 0;
+    bottom 0;
+    width 100%;
+    height borderWidth;
+    background borderColor;
+    transform scaleY(0.5);
+    transform-origin center;
   }
   .list-item{
     position relative;

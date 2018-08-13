@@ -11,11 +11,12 @@
           </div>
           <div class="item-title">{{item.goodsName}}</div>
           <div class="item-sub">
-            <div class="item-price">￥{{item.goodsStorePrice}}
+            <div class="item-price" v-if="item.priceNegotiable == 0">￥{{item.goodsStorePrice}}
               <div class="promotion-flag" v-if="item.promotionType === 'YH'">券</div>
               <div class="promotion-flag" v-if="item.promotionType === 'ZK'">折</div>
               <div class="promotion-flag" v-if="item.promotionType === 'TG'">团</div>
             </div>
+            <div class="item-price" v-if="item.priceNegotiable == 1">待询价</div>
             <div class="buy">
               <svg class="icon icon-car" aria-hidden="false">
                 <use xlink:href="#icon-gouwuche-xuanzhongicon"></use>
@@ -86,16 +87,16 @@
       }
     }
     .item-title{
-        margin-top: .16rem;
-        font-size: .14rem;
-        line-height: .18rem;
-        color: #666;
-        display: -webkit-box;
-        /* autoprefixer: off */
-        -webkit-box-orient: vertical;
-        /* autoprefixer: on */
-        -webkit-line-clamp: 2;
-        overflow: hidden;
+      margin-top: .16rem;
+      font-size: .14rem;
+      color: #666;
+      display: -webkit-box;
+      /* autoprefixer: off */
+      -webkit-box-orient: vertical;
+      /* autoprefixer: on */
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+      line-height .18rem;
     }
     .item-sub{
       display flex;

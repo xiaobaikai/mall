@@ -21,13 +21,6 @@
         <div class="btn btn-cancel" @click="handleCancel">取消订单</div>
         <div class="btn btn-pay" @click="wepay" v-if="!isNotApp">微信支付</div>
         <div class="btn btn-pay" @click="submitzfb" v-if="isNotApp">支付宝支付</div>
-        <!--<div class="btn btn-pay"  v-if="isNotApp">-->
-          <!--<form  :action="formUrl" method="post">-->
-            <!--<input type="hidden" v-model="token" name="token">-->
-            <!--<input type="hidden" v-model="orderSn" name="orderSn">-->
-            <!--<input type="submit" value="支付宝支付" style="background: none;font-size: 16px;color: #fff;">-->
-          <!--</form>-->
-        <!--</div>-->
       </div>
       <div class="btn-wrapper" v-else-if="objData.orderState === 20">
         <div class="btn btn-refund" @click="refund" v-if="!objData.returnGoodsState && !objData.returnRefundState">申请退款</div>
@@ -51,10 +44,11 @@
           <span class="line-content line-price">￥{{objData.orderAmount}}</span>
         </p>
         <p class="line">
-          <span class="line-title">收货地址:</span>
+          <span class="line-title" v-if="!objData.transportWay || objData.transportWay == 2">收货地址:</span>
+          <span class="line-title" v-if="objData.transportWay && objData.transportWay == 1">提货地址:</span>
           <span class="line-content" v-if="objData.address">{{objData.address.areaInfo | filterStr}}{{objData.address.address}}</span>
         </p>
-        <p class="line">
+        <p class="line" v-if="!objData.transportWay || objData.transportWay == 2">
           <span class="line-title">收货人:</span>
           <span class="line-content" v-if="objData.address">{{objData.address.trueName}}&emsp;{{objData.address.mobPhone | filterPhone}}</span>
         </p>
@@ -164,6 +158,8 @@
     },
     created(){
       document.title="订单详情";
+      //this.orderSn = this.$route.query.orderSn;
+      //this.$alert(window.location.href);
       this.getData();
       if(this.isApp.state){
         this.isNotApp=true;
@@ -272,7 +268,7 @@
       },
       /*微信支付*/
       wepay(){
-        this.axios.post(this.baseURL.mall + "/m/my/getCodeByOrderListOrDetail" + this.Service.queryString({
+        this.axios.post(this.baseURL.mall + "/m/my/"+ (this.mallType.type === "2c" ? "getCodeByOrderListOrDetail" : "h52bWXPay") + this.Service.queryString({
           token: this.token,
           orderSn: this.orderSn
         })).then(res =>{

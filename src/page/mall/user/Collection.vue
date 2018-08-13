@@ -13,10 +13,15 @@
         <div class="right" :class="{'edit-right': edit}">
           <div class="desc">{{item.goodsName}}</div>
           <div class="sub">
-            <div class="price">￥{{item.goodsStorePrice}}</div>
-            <div class="buy">
-              <i class="iconfont icon-gouwucheicon"></i>
-              <button class="buy-now">立即购买</button>
+            <div class="price" v-if="item.priceNegotiable === 0">￥{{item.goodsStorePrice}}</div>
+            <div class="price" v-if="item.priceNegotiable === 1">待询价</div>
+            <div class="buy" v-if="item.priceNegotiable === 0">
+              <i class="iconfont icon-gouwucheicon"  @click.prevent="addToCart(index,'addCartItems')"></i>
+              <button class="buy-now" @click.prevent="buyNow(index,'buy_now')">立即购买</button>
+            </div>
+            <div class="buy" v-if="item.priceNegotiable === 1">
+              <i class="iconfont icon-xunjiadan-weixuanzhong" @click.prevent="addToCart(index,'addInquiry')"></i>
+              <button class="buy-now" @click.prevent="buyNow(index,'inquiryNow')">立即询价</button>
             </div>
           </div>
         </div>
@@ -78,6 +83,7 @@
               this.goodsIdList.push(this.itemList[i].goodsId);
             }
           }
+          console.log(this.goodsIdList);
           if(this.goodsIdList.length === this.len){
             this.selectAll = true;
           }
@@ -86,6 +92,54 @@
       }
     },
     methods:{
+	    addToCart(index,type){
+		    console.log(index);
+		    this.axios.post(this.baseURL.mall + "/m/cart/"+type+this.Service.queryString({
+			    token:this.mallToken.getToken(),
+			    goodsId:this.itemList[index].goodsId,
+			    count:1,
+			    specId:this.itemList[index].specId
+		    })).then(res=>{
+			    console.log(res);
+			    if(res.data.h.code==200){
+				    this.$toast(res.data.b.msg);
+				    //this.$refs.footertab.getGoodsNumber();
+			    }else  if(res.data.h.code === 50 || res.data.h.code === 30){
+				    if(this.isApp.state){
+					    window.location.href = "epipe://?&mark=login";
+				    }else{
+					    this.$router.replace("/accountlogin?loginUrl="+encodeURIComponent(window.location.href));
+				    }
+			    }else{
+				    this.$toast(res.data.h.msg);
+			    }
+		    })
+	    },
+	    buyNow(index,type){
+		    console.log(index);
+		    this.axios.post(this.baseURL.mall + "/m/cart/"+type+this.Service.queryString({
+			    token:this.mallToken.getToken(),
+			    goodsId:this.itemList[index].goodsId,
+			    count:1,
+			    specId:this.itemList[index].specId
+		    })).then(res=>{
+			    console.log(res);
+			    if(res.data.h.code==200){
+				    localStorage.setItem("settleOrder",JSON.stringify(res.data.b));
+				    if(localStorage.getItem("settleOrder")){
+					    this.$router.push({path:'/ConfirmOrder'});
+				    }
+			    }else  if(res.data.h.code === 50 || res.data.h.code === 30){
+				    if(this.isApp.state){
+					    window.location.href = "epipe://?&mark=login";
+				    }else{
+					    this.$router.replace("/accountlogin?loginUrl="+encodeURIComponent(window.location.href));
+				    }
+			    }else{
+				    this.$toast(res.data.h.msg);
+			    }
+		    })
+	    },
       handleEdit(){
         this.edit = !this.edit;
       },
@@ -255,11 +309,11 @@
     }
     .buy{
       font-size 0;
-    }
-    .icon-gouwucheicon{
-      font-size 0.15rem;
-      color: #666;
-      margin-right 0.18rem;
+      i{
+        font-size .18rem;
+        color #999;
+        margin-right .18rem;
+      }
     }
     .buy-now{
       width: 0.75rem;

@@ -34,10 +34,11 @@ import MES from "./js/MES";
 Vue.prototype.$mes = MES;
 
 //引入http请求配置
-import {baseURL,mallToken,isApp} from "./js/IPconfig";
+import {baseURL,mallToken,isApp,mallType} from "./js/IPconfig";
 Vue.prototype.baseURL = baseURL;
 Vue.prototype.mallToken = mallToken;
 Vue.prototype.isApp = isApp;
+Vue.prototype.mallType = mallType;
 
 //  提示框
 import {Alert, Confirm, Prompt, Toast} from "wc-messagebox";
@@ -48,6 +49,10 @@ Vue.use(Confirm);
 Vue.use(Toast);
 Vue.use(Alert);
 Vue.use(wcSwiper);
+
+//日历插件
+import Calendar from 'vue-mobile-calendar'
+Vue.use(Calendar);
 
 import FastClick from 'fastclick';
 FastClick.attach(document.body)
