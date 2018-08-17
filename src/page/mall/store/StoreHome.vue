@@ -37,7 +37,7 @@
         </swiper>
         <img src="../../../assets/default-banner.png" alt="" v-else>
       </div>
-      <div class="store-coupon">
+      <div class="store-coupon" v-if="storeCoupons.length>0">
         <div class="coupon-div">
           <div class="one-coupon" v-for="(item,index) in storeCoupons" :key="index">
             <div>
