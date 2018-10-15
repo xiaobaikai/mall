@@ -35,7 +35,7 @@
       <div class="btn-wrapper" v-show="showBtn" v-else-if="obj.orderState === 10">
           <div class="btn">订单详情</div>
           <div class="btn" @click.stop.prevent="cancleOrder">取消订单</div>
-          <div class="btn btn-pay" @click.stop.prevent="wepay" v-if="!isNotApp">微信支付</div>
+          <div class="btn btn-pay" @click.stop.prevent="wepay">微信支付</div>
           <div class="btn btn-pay" @click.stop.prevent="submitzfb"  v-if="isNotApp">支付宝支付</div>
       </div>
       <div class="btn-wrapper" v-show="showBtn" v-else-if="obj.orderState === 20">
@@ -66,6 +66,19 @@
         <div class="btn btn-pay" @click.stop.prevent="wepay">立即下单</div>
       </div>
     </div>
+    <div class="dialog" v-if="showDialog" @touchmove.prevent>
+      <div class="dialog_box">
+        <div class="dialog-title">
+          请确认微信支付是否已完成
+        </div>
+        <div class="dialog-cont" @click="go_payDetails">
+          已完成支付
+        </div>
+        <div class="dialog-rests" @click="go_payDetails">
+          支付遇到问题,重新支付
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script>
@@ -87,6 +100,8 @@
         statusTitle: "",
         isNotApp:false,
         token:'',
+	      showDialog:false,
+	      orderSn:''
       }
     },
     filters:{
@@ -143,12 +158,26 @@
     methods:{
       /*微信支付*/
       wepay(){
-        this.axios.post(this.baseURL.mall + "/m/my/"+ (this.mallType.type === "2c" ? "getCodeByOrderListOrDetail" : "h52bWXPay") + this.Service.queryString({
+        this.axios.post(this.baseURL.mall + "/m/my/"+ (this.isNotApp ? 'h5_wxpay_order' : (this.mallType.type === "2c" ? "getCodeByOrderListOrDetail" : "h52bWXPay")) + this.Service.queryString({
           token: this.mallToken.getToken(),
           orderSn: this.obj.orderSn
         })).then(res =>{
           if(res.data.h.code === 200){
-            window.location.href = res.data.b;
+	          if(this.isNotApp){
+		          let data={};
+		          this.orderSn=res.data.b.orderSn;
+		          data.orderSn=res.data.b.orderSn;
+		          data.imgPrefix=this.imgPrefix;
+		          console.log(data);
+		          data=JSON.stringify(data);
+		          console.log(data);
+		          window.location.href = "epipe://?&mark=weChatPay&data="+data+"&url="+res.data.b.orderStr+ '&redirect_url='+location.href;
+		          setTimeout(()=>{
+			          this.showDialog = true;
+		          },3500);
+	          }else{
+		          window.location.href = res.data.b;
+	          }
           }else  if(res.data.h.code === 50 || res.data.h.code === 30){
 	          if(this.isApp.state){
 		          window.location.href = "epipe://?&mark=login";
@@ -183,6 +212,9 @@
 		      }
 	      })
       },
+	    go_payDetails(){
+		    this.$router.replace({path:'/orderdetails',query:{orderSn:this.orderSn,imgPrefix:this.imgPrefix}})
+	    },
       /*申请退款*/
       refund(){
         console.log(this.obj.orderId);
@@ -490,4 +522,80 @@
     white-space nowrap;
     margin-top 5px;
   }
+    .dialog{
+      position fixed;
+      width 100%;
+      height 100%;
+      top 0;
+      z-index 5;
+      font-size 0.18rem;
+      background-color rgba(0,0,0,0.5)
+  
+      &_box{
+        display flex;
+        flex-direction:column;
+        width 2.7rem;
+        height 1.5rem;
+        position absolute;
+        left 0;
+        right 0;
+        top 0;
+        bottom 0;
+        margin auto;
+        background #fff;
+        text-align center;
+        border-radius 0.08rem;
+    
+    
+        >div{
+          font-size 0.16rem;
+        }
+    
+        .dialog-title{
+          border-bottom 0.01rem solid #ccc;
+          color #999
+          line-height 0.45rem;
+        }
+    
+        .dialog-cont{
+          color #0fc37c
+          margin  0.21rem 0
+        }
+    
+      }
+  
+      &_btn{
+        display flex;
+        height 0.4rem;
+        line-height 0.4rem;
+    
+        a{
+          flex 1
+        }
+      }
+  
+      &_main{
+        height 1.1rem;
+        border-bottom 0.01rem solid #ebebeb
+    
+    
+        p{
+          padding 0 0.1rem;
+        }
+    
+        h4{
+          text-align left
+          text-indent 0.15rem;
+          margin 0.1rem 0;
+          margin-bottom 0.15rem;
+          font-size 0.16rem;
+          font-weight bold
+        }
+      }
+  
+      .continue{
+        border-right 0.01rem solid #ebebeb
+      }
+  
+    }
 </style>

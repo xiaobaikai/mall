@@ -79,9 +79,22 @@
       <div><span>优　　惠</span><span>￥{{priceInfo.discount}}</span></div>
       <div><span></span><span><i>付款金额：</i>￥{{priceInfo.goodsTotalPrice}}</span></div>
     </div>
-    <div class="wx-pay" @click="submitPayWx"  v-if="!isNotApp && cartList[0].list[0].priceNegotiable === 0"><div>微信支付</div></div>
+    <div class="wx-pay" @click="submitPayWx"  v-if="cartList[0].list[0].priceNegotiable === 0"><div>微信支付</div></div>
     <div class="wx-pay" @click="inquirySubmit"  v-if="cartList[0].list[0].priceNegotiable === 1"><div>提交询价单</div></div>
-    <div class="wx-pay" @click="submitPayZfb" v-if="isNotApp && cartList[0].list[0].priceNegotiable === 0"><div>支付宝支付</div></div>
+    <div class="wx-pay zfb-pay" @click="submitPayZfb" v-if="isNotApp && cartList[0].list[0].priceNegotiable === 0"><div>支付宝支付</div></div>
+    <div class="dialog" v-if="showDialog" @touchmove.prevent>
+      <div class="dialog_box">
+        <div class="dialog-title">
+          请确认微信支付是否已完成
+        </div>
+        <div class="dialog-cont" @click="go_payDetails">
+          已完成支付
+        </div>
+        <div class="dialog-rests" @click="go_payDetails">
+          支付遇到问题,重新支付
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script>
@@ -91,6 +104,9 @@
 	      formUrl:'',
 	      token:'',
 	      addressId:'',
+	      orderSn:'',
+	      showDialog:false,
+	      backDialog:false,
 	      imgPrefix:'',   //图片地址前缀
 	      cartList:'',    //结算订单列表
 	      addressList:'', //收件地址
@@ -176,7 +192,7 @@
         //alert(this.openInv);
         //console.log(this.addressList);
         if(this.addressList.length>0){
-	        this.axios.post(this.baseURL.mall + "/m/my/"+(this.mallType.type === "2c" ? "getCode" : "h52bWXPay")+this.Service.queryString({
+	        this.axios.post(this.baseURL.mall + "/m/my/"+(this.isNotApp ? 'h5_wxpay' : (this.mallType.type === "2c" ? "getCode" : "h52bWXPay"))+this.Service.queryString({
 		        token:this.mallToken.getToken(),
 		        cartIds:this.cartIds.join(','),
 		        addressId:this.addressList[0].addressId,
@@ -186,7 +202,21 @@
 		        console.log(res);
 		        if(res.data.h.code==200) {
 //            localStorage.removeItem('invoiceListArr');
-			        window.location.href = res.data.b;
+              if(this.isNotApp){
+	              let data={};
+	              this.orderSn=res.data.b.orderSn;
+	              data.orderSn=res.data.b.orderSn;
+	              data.imgPrefix=this.imgPrefix;
+	              console.log(data);
+	              data=JSON.stringify(data);
+	              console.log(data);
+	              window.location.href = "epipe://?&mark=weChatPay&data="+data+"&url="+res.data.b.orderStr+ '&redirect_url='+location.href;
+	              setTimeout(()=>{
+		              this.showDialog = true;
+	              },3500)
+              }else{
+	              window.location.href = res.data.b;
+              }
 		        }else if(res.data.h.code === 30 || res.data.h.code === 50){
 			        if(this.isApp.state){
 				        window.location.href = "epipe://?&mark=login";
@@ -199,6 +229,9 @@
 	        this.$toast('请选择收货地址');
         }
       },
+	    go_payDetails(){
+		    this.$router.replace({path:'/orderdetails',query:{orderSn:this.orderSn,imgPrefix:this.imgPrefix}})
+	    },
       queryInvoice(){
         this.axios.post(this.baseURL.mall + "/m/my/queryInvoice"+this.Service.queryString({
           token:this.mallToken.getToken()
@@ -562,6 +595,85 @@
           background #54b736;
           border-radius 4px;
       }
-     }
+    }
+    .zfb-pay{
+      padding-top 0;
+    }
+  }
+  .dialog{
+    position fixed;
+    width 100%;
+    height 100%;
+    top 0;
+    z-index 5;
+    font-size 0.18rem;
+    background-color rgba(0,0,0,0.5)
+  
+    &_box{
+      display flex;
+      flex-direction:column;
+      width 2.7rem;
+      height 1.5rem;
+      position absolute;
+      left 0;
+      right 0;
+      top 0;
+      bottom 0;
+      margin auto;
+      background #fff;
+      text-align center;
+      border-radius 0.08rem;
+    
+    
+      >div{
+        font-size 0.16rem;
+      }
+    
+      .dialog-title{
+        border-bottom 0.01rem solid #ccc;
+        color #999
+        line-height 0.45rem;
+      }
+    
+      .dialog-cont{
+        color #0fc37c
+        margin  0.21rem 0
+      }
+    
+    }
+  
+    &_btn{
+      display flex;
+      height 0.4rem;
+      line-height 0.4rem;
+    
+      a{
+        flex 1
+      }
+    }
+  
+    &_main{
+      height 1.1rem;
+      border-bottom 0.01rem solid #ebebeb
+    
+    
+      p{
+        padding 0 0.1rem;
+      }
+    
+      h4{
+        text-align left
+        text-indent 0.15rem;
+        margin 0.1rem 0;
+        margin-bottom 0.15rem;
+        font-size 0.16rem;
+        font-weight bold
+      }
+    }
+  
+    .continue{
+      border-right 0.01rem solid #ebebeb
+    }
+  
   }
 </style>
