@@ -155,7 +155,7 @@ const echartsLib = {
       ],
       series : [
         {
-          name : '产量',
+          name : param.legend?param.legend[0]:"产量",
           type : 'bar',
           symbol : 'circle',
           symbolSize :8,
@@ -291,8 +291,6 @@ const echartsLib = {
       series : _serias
     };
 
-
-    console.log(option)
     el.setOption(option);
   },
   /*对比图*/
@@ -370,7 +368,7 @@ const echartsLib = {
       ],
       series : [
         {
-          name :'本周',
+          name :param.legend[0],
           type : 'line',
           symbolSize :15,
           symbol : 'circle',
@@ -387,7 +385,7 @@ const echartsLib = {
           data:param.a
         },
         {
-          name :'上周',
+          name :param.legend[1],
           type : 'line',
           data:param.b,
           symbolSize : 15,
@@ -423,7 +421,7 @@ const echartsLib = {
           barWidth : 15
         },
         {
-          name :'用水量',
+          name :'用电量',
           type : 'bar',
           stack : '1',
           data :(function(){
@@ -489,10 +487,9 @@ const echartsLib = {
   },
   // 柱状折线趋势图
   barLine(el,param){
-      console.log(el,param)
     let _serias = [
       {
-        name: '良品数',
+        name:param.legend.data[0],
         type: 'bar',
         stack: 'one',
         itemStyle:{
@@ -503,18 +500,18 @@ const echartsLib = {
         data:param.series[0].data
     },
     {
-        name: '不良品数',
+        name:param.legend.data[1],
         type: 'bar',
         stack: 'one',
         itemStyle : {
           normal : {
-            color : '#9386e0',
+            color : '#ec4f56',
             barBorderRadius : [5000,5000,0,0]
           }
         },
         data:param.series[1].data
     },{
-      name: 'bar3',
+      name: param.legend.data[2],
       type: 'line',
       stack: 'two',
       yAxisIndex: 1,
@@ -533,12 +530,19 @@ const echartsLib = {
           fontSize: 16,
         },
       },
+      dataZoom: [
+        {
+          type: 'inside'
+        }
+      ],
       grid : {
         left : '15%',
         right:'15%',
+        top:'10%',
       },
       legend : {
         y:'bottom',
+        // bottom:25,
         data : param.legend.data,
         // bottom:10,
         // show:true,
@@ -548,6 +552,7 @@ const echartsLib = {
         trigger: 'axis'
       },
       xAxis : [{
+        name:'d',
         nameGap:0,
         type : 'category',
         data : param.xAxis[0].data,
@@ -591,7 +596,7 @@ const echartsLib = {
         },
           {
             type: 'value',
-            name: '良率',
+            name: param.legend.data[2]+'/%',
             min: 0,
             max: 100,
             axisLine : {
@@ -613,8 +618,6 @@ const echartsLib = {
     if(option.series[0].data.length<5){
       option.series[0].barWidth = 20
     }
-
-
     console.log(option)
     el.setOption(option);
   }

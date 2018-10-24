@@ -131,7 +131,7 @@
         }
       },
       goback(){
-        window.history.back();
+            window.location.href = "epipe://?&mark=history_back"
       },
       userInfo(index){
         window.location.href = "epipe://?&mark=userinfo&_id="+this.list[index].userId;
@@ -147,6 +147,7 @@
     },
     mounted(){
       this.date = this.$route.query.date;
+
       this.ms = parseInt(this.$route.query.ms);
       let date = new Date(this.ms).getFullYear()+"-"+(parseInt(new Date(this.ms).getMonth())+1)+"-"+new Date(this.ms).getDate();
       console.log(date);

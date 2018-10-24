@@ -85,14 +85,13 @@
   }
   .banner-wrapper{
     z-index: -1;
-    height: 1.23rem;
+    height: 0.5rem;
     padding: 0 0.15rem;
-    padding-top: 0.3rem;
+    padding-top: 0.4rem;
     background: #499844;
-    border-bottom-left-radius: 0.2rem;
-    border-bottom-right-radius: 0.2rem;
     color: white;
     line-height:1;
+    padding-bottom 0.2rem;
   }
   .banner-h1{
     font-size: 0.19rem;
@@ -188,7 +187,8 @@
       <div class="banner-h3">{{dateString}}</div>
     </div>
     <div class="content-wrapper">
-      <div class="tab_work_con broadcast">
+
+      <!-- <div class="tab_work_con broadcast">
         <div>
           <svg class="icon icon-broadcast" aria-hidden="false">
             <use xlink:href="#icon-Msg"></use>
@@ -202,8 +202,7 @@
             </div>
           </div>
         </div>
-      </div>
-
+      </div> -->
 
  		 <div class="tab_work_con">
         <ul class="tab_work_3con first_tab_work_3con">
@@ -232,20 +231,110 @@
             </div>
             <div style="font-size:0.14rem;margin-top: 0.05rem">我的申请</div>
           </li> 
-          <li @click="go_daily">
+          <!-- <li @click="go_daily">
             <div>
               <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
                 <use xlink:href="#icon-qiyeribao"></use>
               </svg>
             </div>
             <div>企业日报</div>
+          </li> -->
+            <li @click="go_inform">
+            <div>
+              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
+                <use xlink:href="#icon-Msg"></use>
+              </svg>
+            </div>
+            <div>公告</div>
+          </li>
+        </ul>
+      </div>
+      
+       <div class="tab_work_con">
+        <ul class="tab_work_2con">
+          <li></li>
+          <li>移动审批</li>
+        </ul>
+        <ul class="tab_work_3con">
+          <li @click="go_leave">
+            <div>
+              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
+                <use xlink:href="#icon-qingjia"></use>
+              </svg>
+            </div>
+            <div>请假</div>
+          </li>
+            <li @click="go_trip">
+            <div>
+              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
+                <use xlink:href="#icon-chucha"></use>
+              </svg>
+            </div>
+            <div style="font-size:0.14rem;margin-top: 0.05rem">出差</div>
+          </li>
+          <li @click="go_goOutWork">
+            <div>
+              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
+                <use xlink:href="#icon-gongchu"></use>
+              </svg>
+            </div>
+            <div>公出</div>
+          </li>
+
+          <li @click="go_LetterOfRequest">
+            <div>
+              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
+                <use xlink:href="#icon-qingshihan"></use>
+              </svg>
+            </div>
+            <div style="font-size:0.14rem;margin-top: 0.05rem">请示函</div>
+          </li>
+          <li @click="go_reimburse">
+            <div>
+              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
+                <use xlink:href="#icon-baoxiao"></use>
+              </svg>
+            </div>
+            <div style="font-size:0.14rem;margin-top: 0.05rem">报销</div>
+          </li>
+           <li @click="go_contract">
+            <div>
+              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
+                <use xlink:href="#icon-hetongshenpi"></use>
+              </svg>
+            </div>
+            <div style="font-size:0.14rem;margin-top: 0.05rem">合同</div>
+          </li>
+           <li @click="go_payApply">
+            <div>
+              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
+                <use xlink:href="#icon-fukuanshenqing"></use>
+              </svg>
+            </div>
+            <div style="font-size:0.14rem;margin-top: 0.05rem">付款</div>
+          </li>
+          <li @click="go_stamp">
+            <div>
+              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
+                <use xlink:href="#icon-yongyin"></use>
+              </svg>
+            </div>
+            <div style="font-size:0.14rem;margin-top: 0.05rem">用印</div>
+          </li>
+          <li @click="go_dimission">
+            <div>
+              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
+                <use xlink:href="#icon-lizhi"></use>
+              </svg>
+            </div>
+            <div style="font-size:0.14rem;margin-top: 0.05rem">离职</div>
           </li>
         </ul>
       </div>
       <div class="tab_work_con">
         <ul class="tab_work_2con">
           <li></li>
-          <li>企业管理</li>
+          <li>智能办公</li>
         </ul>
         <ul class="tab_work_3con">
           <li @click="go_record">
@@ -254,7 +343,7 @@
                 <use xlink:href="#icon-kaoqin"></use>
               </svg>
             </div>
-            <div>考勤</div>
+            <div>考勤打卡</div>
           </li>
           <li @click="go_outwork">
             <div>
@@ -262,39 +351,7 @@
                 <use xlink:href="#icon-waiqin"></use>
               </svg>
             </div>
-            <div>外勤</div>
-          </li>
-          <li @click="go_leave">
-            <div>
-              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
-                <use xlink:href="#icon-qingjia"></use>
-              </svg>
-            </div>
-            <div style="font-size:0.14rem;margin-top: 0.05rem">请假</div>
-          </li>
-          <li @click="go_Grouplist">
-            <div>
-              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
-                <use xlink:href="#icon-qunzu"></use>
-              </svg>
-            </div>
-            <div style="font-size:0.14rem;margin-top: 0.05rem">群组</div>
-          </li>
-          <li @click="go_LetterOfRequest">
-            <div>
-              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
-                <use xlink:href="#icon-qingshihan"></use>
-              </svg>
-            </div>
-            <div style="font-size:0.14rem;margin-top: 0.05rem">请示函</div>
-          </li> 
-          <li @click="go_contract">
-            <div>
-              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
-                <use xlink:href="#icon-hetongshenpi"></use>
-              </svg>
-            </div>
-            <div style="font-size:0.14rem;margin-top: 0.05rem">合同审批</div>
+            <div>公出签到</div>
           </li>
           <li @click="go_Maillist">
             <div>
@@ -303,40 +360,8 @@
               </svg>
             </div>
             <div style="font-size:0.14rem;margin-top: 0.05rem">通讯录</div>
-          </li>  
-        </ul>
-      </div>
-      <div class="tab_work_con">
-        <ul class="tab_work_2con">
-          <li></li>
-          <li>工作汇报</li>
-        </ul>
-        <ul class="tab_work_3con">
-          <li @click="go_daynews">
-            <div>
-              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
-                <use xlink:href="#icon-ribao"></use>
-              </svg>
-            </div>
-            <div style="font-size:0.14rem;margin-top: 0.05rem">日报</div>
           </li>
-          <li @click="go_weeknews">
-            <div>
-              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
-                <use xlink:href="#icon-zhoubao"></use>
-              </svg>
-            </div>
-            <div style="font-size:0.14rem;margin-top: 0.05rem">周报</div>
-          </li>
-          <li @click="go_monthnews">
-            <div>
-              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
-                <use xlink:href="#icon-yuebao"></use>
-              </svg>
-            </div>
-            <div style="font-size:0.14rem;margin-top: 0.05rem">月报</div>
-          </li>
-          <li @click="go_journal">
+          <li @click="go_workReport">
             <div>
               <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
                 <use xlink:href="#icon-gongzuohuibao"></use>
@@ -345,81 +370,164 @@
             <div style="font-size:0.14rem;margin-top: 0.05rem">工作汇报</div>
           </li>
         </ul>
-      </div>
-      <div class="tab_work_con" v-show="showMES">
-        <ul class="tab_work_2con">
-          <li></li>
-          <li>移动制造</li>
-        </ul>
         <ul class="tab_work_3con">
-          <li @click="go_output">
+          <!-- <li @click="go_Grouplist">
             <div>
               <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
-                <use xlink:href="#icon-shengchanguanli"></use>
+                <use xlink:href="#icon-qunzu"></use>
               </svg>
             </div>
-            <div style="font-size:0.14rem;margin-top: 0.05rem">生产管理</div>
-          </li>
-          <li @click="go_materierl">
-            <div>
-              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
-                <use xlink:href="#icon-wuliaoguanli"></use>
-              </svg>
-            </div>
-            <div style="font-size:0.14rem;margin-top: 0.05rem">物料管理</div>
-          </li>
-          <li @click="go_machine">
-            <div>
-              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
-                <use xlink:href="#icon-shebeiguanli"></use>
-              </svg>
-            </div>
-            <div style="font-size:0.14rem;margin-top: 0.05rem">设备管理</div>
-          </li>
-          <li @click="go_quality">
-            <div>
-              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
-                <use xlink:href="#icon-zhiliangguanli"></use>
-              </svg>
-            </div>
-            <div style="font-size:0.14rem;margin-top: 0.05rem">质量管理</div>
-          </li>
-          <li @click="go_energy">
-            <div>
-              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
-                <use xlink:href="#icon-nengyuanguanli"></use>
-              </svg>
-            </div>
-            <div style="font-size:0.14rem;margin-top: 0.05rem">电耗分析</div>
-          </li>
-          <!-- <li @click="go_energyMonitor">
-            <div>
-              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
-                <use xlink:href="#icon-nengyuanjiankong"></use>
-              </svg>
-            </div>
-            <div style="font-size:0.14rem;margin-top: 0.05rem">能源监控</div>
-          </li>
-          <li @click="go_trendMonitor">
-            <div>
-              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
-                <use xlink:href="#icon-qushijiankong"></use>
-              </svg>
-            </div>
-            <div style="font-size:0.14rem;margin-top: 0.05rem">趋势监控</div>
+            <div style="font-size:0.14rem;margin-top: 0.05rem">群组</div>
           </li> -->
         </ul>
       </div>
+     <div class="tab_work_con" v-show="showMES">
+        <ul class="tab_work_2con">
+          <li></li>
+          <li>三化云平台</li>
+        </ul>
+        <ul class="tab_work_3con">
+          <li @click="go_IoT">
+            <div>
+              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
+                <use xlink:href="#icon-wulianwangpingtai"></use>
+              </svg>
+            </div>
+            <div style="font-size:0.14rem;margin-top: 0.05rem">物联网平台</div>
+          </li>
+          <li @click="go_bigData">
+            <div>
+              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
+                <use xlink:href="#icon-dashujufenxi"></use>
+              </svg>
+            </div>
+            <div style="font-size:0.14rem;margin-top: 0.05rem">大数据分析</div>
+          </li>
+          <li @click="go_3DGIS">
+            <div>
+              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
+                <use xlink:href="#icon-DGis"></use>
+              </svg>
+            </div>
+            <div style="font-size:0.14rem;margin-top: 0.05rem">3D GIS</div>
+          </li>
+          <li @click="go_ConfigurationCenter">
+            <div>
+              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
+                <use xlink:href="#icon-peizhizhongxin"></use>
+              </svg>
+            </div>
+            <div style="font-size:0.14rem;margin-top: 0.05rem">配置中心</div>
+          </li>
+          <li @click="go_LogCenter">
+            <div>
+              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
+                <use xlink:href="#icon-rizhizhongxin"></use>
+              </svg>
+            </div>
+            <div style="font-size:0.14rem;margin-top: 0.05rem">日志中心</div>
+          </li>
+           <li @click="go_ContainerManagement">
+            <div>
+              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
+                <use xlink:href="#icon-moxing"></use>
+              </svg>
+            </div>
+            <div style="font-size:0.14rem;margin-top: 0.05rem">容器管理</div>
+          </li> 
+        
+        </ul>
+      </div>
+       <div class="tab_work_con" v-show="true">
+        <ul class="tab_work_2con">
+          <li></li>
+          <li>优制云</li>
+        </ul>
+        <ul class="tab_work_3con">
+          <li @click="go_mes" v-if="showMES">
+            <div>
+              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
+                <use xlink:href="#icon-zhinengzhizao"></use>
+              </svg>
+            </div>
+            <div style="font-size:0.14rem;margin-top: 0.05rem">智能制造</div>
+          </li>
+          <li @click="go_erp">
+            <div>
+              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
+                <use xlink:href="#icon-ERP"></use>
+              </svg>
+            </div>
+            <div style="font-size:0.14rem;margin-top: 0.05rem">云ERP</div>
+          </li>
+          <li @click="go_crm">
+            <div>
+              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
+                <use xlink:href="#icon-CRM"></use>
+              </svg>
+            </div>
+            <div style="font-size:0.14rem;margin-top: 0.05rem">云CRM</div>
+          </li>
+          <li @click="go_null">
+            <div>
+              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
+                <use xlink:href="#icon-PDM"></use>
+              </svg>
+            </div>
+            <div style="font-size:0.14rem;margin-top: 0.05rem">云PDM</div>
+          </li>
+          <li @click="go_null">
+            <div>
+              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
+                <use xlink:href="#icon-xietong"></use>
+              </svg>
+            </div>
+            <div style="font-size:0.14rem;margin-top: 0.05rem">云协同</div>
+          </li>
+           <li @click="go_null">
+            <div>
+              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
+                <use xlink:href="#icon-SCM"></use>
+              </svg>
+            </div>
+            <div style="font-size:0.14rem;margin-top: 0.05rem">云SCM</div>
+          </li> <li @click="go_null">
+            <div>
+              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
+                <use xlink:href="#icon-zhinengfuwu"></use>
+              </svg>
+            </div>
+            <div style="font-size:0.14rem;margin-top: 0.05rem">智能服务</div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="tab_work_con" v-if="payShow">
+        <ul class="tab_work_2con">
+          <li></li>
+          <li>其他</li>
+        </ul>
+        <ul class="tab_work_3con">
+          <li @click="go_pay">
+            <div>
+              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
+                <use xlink:href="#icon-ejiaofei1"></use>
+              </svg>
+            </div>
+            <div style="font-size:0.14rem;margin-top: 0.05rem">e缴费</div>
+          </li>
+        </ul>
+      </div>
+
     </div>
-  </section>
       
-    </div>
   </section>
 </template>
 <script>
   let date = new Date();
   let days = ["星期日","星期一","星期二","星期三","星期四","星期五","星期六"];
   function escape2Html(str){
+    if(str==''||!str) return ''
     var arrEntities={'lt':'<','gt':'>','nbsp':' ','amp':'&','quot':'"','ldquo':'"','rdquo':'"','mdash':'_'};
     return str.replace(/&(lt|gt|nbsp|amp|quot|ldquo|rdquo|mdash);/ig,function(all,t){
       return arrEntities[t]});
@@ -447,63 +555,38 @@
         interval: null,
         logo: require("../../assets/no_wifi.png"),
         showMES: false,
+        payShow:false,
       }
     },
     created(){
       if (window.localStorage.work_banner) {
         this.banner = JSON.parse(window.localStorage.work_banner)
       }
+
+      this.setToken(this.Service.getCookie('auth_token'))
     },
+    computed: mapState(["token"]),
     methods: {
+      ...mapMutations([
+        'setToken',
+      ]),
       go_record(){
-        TDAPP.onEvent('record','考勤')                
         window.location.href = "epipe://?&mark=record"
         window["epipe_login_callback"] = auth_token => {
           window.localStorage.setItem("auth_token", auth_token);
         }
+        TDGA.onEvent('record','考勤')                
       },
       go_outwork(){
-        TDAPP.onEvent('outwork','外勤')        
         window.location.href = "epipe://?&mark=outwork"
         window["epipe_login_callback"] = auth_token => {
           window.localStorage.setItem("auth_token", auth_token);
         }
+        TDGA.onEvent('outwork','外勤')        
       },
       go_Maillist(){
-        TDAPP.onEvent('Maillist','通讯录')        
         window.location.href = "epipe://?&mark=Maillist"
-      },
-      //日报
-      go_daynews(){
-        TDAPP.onEvent('daynews','日报')
-        window["epipe_login_callback"] = auth_token => {
-          window.localStorage.setItem("auth_token", auth_token);
-        }
-        window.location.href = "epipe://?&mark=daynews"
-      },
-      //周报
-      go_weeknews(){
-        TDAPP.onEvent('weeknews','周报') 
-        window["epipe_login_callback"] = auth_token => {
-          window.localStorage.setItem("auth_token", auth_token);
-        }
-        window.location.href = "epipe://?&mark=weeknews"
-      },
-      //月报
-      go_monthnews(){
-        TDAPP.onEvent('monthnews','月报')                        
-        window["epipe_login_callback"] = auth_token => {
-          window.localStorage.setItem("auth_token", auth_token);
-        }
-        window.location.href = "epipe://?&mark=monthnews"
-      },
-      //工作汇报
-      go_journal(){
-        TDAPP.onEvent('journal','工作汇报')                
-        window["epipe_login_callback"] = auth_token => {
-          window.localStorage.setItem("auth_token", auth_token);
-        }
-        window.location.href = "epipe://?&mark=journal"
+        TDGA.onEvent('Maillist','通讯录')        
       },
       go_newsdetail(item){
         if (item.url != "#") {
@@ -511,82 +594,156 @@
           window.location.href = "epipe://?&mark=newsdetail&title=" + title + "&url=" + item.url;
         }
       },
+      go_workReport(){ //工作汇报
+          window.location.href = "epipe://?&mark=workReport";
+          TDGA.onEvent('workReport','工作汇报')        
+      },
       //企业日报
       go_daily(){
-        TDAPP.onEvent('dailyreport','企业日报')        
         window.location.href = "epipe://?&mark=dailyreport";
+        TDGA.onEvent('dailyreport','企业日报')        
       },
       //已办事宜
       go_finishAffairs(){
-        TDAPP.onEvent('finishAffair','已办事宜')
         window.location.href = "epipe://?&mark=finishAffair";
+        TDGA.onEvent('finishAffair','已办事宜')
       },
       //待办事宜
       go_unfinishAffairs(){
-        TDAPP.onEvent('unfinishAffair','待办事宜')        
         window.location.href = "epipe://?&mark=unfinishAffair"
+        TDGA.onEvent('unfinishAffair','待办事宜')        
       },
       //我的申请
       go_myApply(){
-        TDAPP.onEvent('myApply','我的申请')                
         window.location.href = "epipe://?&mark=myApply"
+        TDGA.onEvent('myApply','我的申请')                
       },
       //请假
       go_leave(){
-        TDAPP.onEvent('leave','请假')                        
         window.location.href = "epipe://?&mark=leave"
+        TDGA.onEvent('leave','请假')                        
       },
        //请示函
       go_LetterOfRequest(){
-        TDAPP.onEvent('letter_of_request','请示函')                        
         window.location.href = "epipe://?&mark=letterOfRequest"
+        TDGA.onEvent('letter_of_request','请示函')                        
       },
+      go_null(){
+        window.location.href = "epipe://?&mark=dialog"
+      },  
       //合同审批
       go_contract(){
-        TDAPP.onEvent('contract','合同审批')
         window.location.href = "epipe://?&mark=contract"
+        TDGA.onEvent('contract','合同审批')
+      },
+      go_stamp(){
+        window.location.href = "epipe://?&mark=stamp"
+        TDGA.onEvent('stamp','用印')
+      },
+      go_reimburse(){
+        window.location.href = "epipe://?&mark=reimburse"
+        TDGA.onEvent('contract','报销')
+      },
+      go_trip(){ //出差
+          window.location.href = "epipe://?&mark=trip"
+         TDGA.onEvent('trip','出差')
+      },
+        go_tripDetails(){ //出差详情
+          window.location.href = "epipe://?&mark=tripDetails"
+         TDGA.onEvent('trip','出差')
+      },
+      //公出
+      go_goOutWork(){
+        window.location.href = "epipe://?&mark=goOutWork"
+        TDGA.onEvent('goOutWork','公出')
+      },
+      go_payApply(){
+        window.location.href = "epipe://?&mark=payApply"
+        TDGA.onEvent('goOutWork','付款')
+      },
+      go_dimission(){
+        window.location.href = "epipe://?&mark=dimission"
+        TDGA.onEvent('goOutWork','离职')
+      },
+      go_inform(){ //通知
+        window.location.href = "epipe://?&mark=message"
       },
       //跳转群组
       go_Grouplist(){
-        TDAPP.onEvent('group','群组')                                
         window.location.href = "epipe://?&mark=Grouplist"
+        TDGA.onEvent('group','群组')                                
+      },
+      go_mes(){
+           window.location.href = "epipe://?&mark=mes";
+        TDGA.onEvent('materialControl','移动制造')   
+      },
+       go_erp(){
+          window.location.href = "epipe://?&mark=erp&url="+'http://cerphhyg1001.epipe.cn/youguanapp?dbname=cerphhyg1001&token='+this.token
+          TDGA.onEvent('ERP','ERP')   
+      },
+      go_crm(){
+          window.location.href = "epipe://?&mark=crm&url="+"http://ccrmhhyg1001.epipe.cn/youguanapp?dbname=ccrmhhyg1001&token="+this.token
+
+          TDGA.onEvent('CRM','CRM')   
       },
       //物料管理
       go_materierl(){
-        TDAPP.onEvent('materialControl','物料管理')        
         window.location.href = "epipe://?&mark=materieldaily";
+        TDGA.onEvent('materialControl','物料管理')        
       },
       //设备管理
       go_machine(){
-        TDAPP.onEvent('equipmentControl ','设备管理')                        
-        
         window.location.href = "epipe://?&mark=warning";
+        TDGA.onEvent('equipmentControl ','设备管理')                        
       },
       //生产管理
       go_output(){
-        TDAPP.onEvent('productionControl ','生产管理')                        
-        
         window.location.href = "epipe://?&mark=outputdaily";
+        TDGA.onEvent('productionControl ','生产管理')                        
       },
       //质量管理
       go_quality(){
-        TDAPP.onEvent('qualityControl','质量管理')                                
         window.location.href = "epipe://?&mark=qualitydaily";
+        TDGA.onEvent('qualityControl','质量管理')                                
       },
       //能源管理
       go_energy(){
-        TDAPP.onEvent('energyControl','能源管理')                        
         window.location.href = "epipe://?&mark=power";
+        TDGA.onEvent('energyControl','能源管理')                        
       },
       //能源监控
       go_energyMonitor(){
-        TDAPP.onEvent('energymonitoring','能源监控')                
         window.location.href = "epipe://?&mark=energymonitoring";
+        TDGA.onEvent('energymonitoring','能源监控')
+      },
+      go_pay(){
+        window.location.href = "epipe://?&mark=pay";
+        TDGA.onEvent('pay','e缴费')                
       },
       //趋势监控
       go_trendMonitor(){
-        TDAPP.onEvent('trendmonitoring','趋势监控')    
         window.location.href = "epipe://?&mark=trendmonitoring";
+        TDGA.onEvent('trendmonitoring','趋势监控')    
+      },
+       //三化云平台
+      go_IoT(){ //物联网平台
+        // window.location.href = "epipe://?&mark=landscape&title=物联网平台&url=http://39.104.84.131/thingsSystemManager#/homeTenant";
+        window.location.href = "epipe://?&mark=landscape&title=物联网平台&url=http://39.104.84.131/autoLogin?username=TenantAdmin@bupt.edu.cn&password=password&module=thingsManager";
+      },
+      go_bigData(){ //大数据分析
+        window.location.href = "epipe://?&mark=landscape&title=大数据分析&url=http://39.104.84.131/autoLogin?username=TenantAdmin@bupt.edu.cn&password=password&module=bigdata";
+      },
+      go_3DGIS(){ //3dGIS
+        window.location.href = "epipe://?&mark=landscape&title=3D_GIS&url=http://39.104.84.131/autoLogin?username=TenantAdmin@bupt.edu.cn&password=password&module=gis";
+      },
+      go_ConfigurationCenter(){ //配置中心
+        window.location.href = "epipe://?&mark=landscape&title=配置中心&url=http://39.104.84.131/autoLogin?username=TenantAdmin@bupt.edu.cn&password=password&module=disconf";
+      },
+      go_LogCenter(){ //日志中心
+        window.location.href = "epipe://?&mark=landscape&title=日志中心&url=http://39.104.84.131/autoLogin?username=TenantAdmin@bupt.edu.cn&password=password&module=log";
+      },
+      go_ContainerManagement(){ //容器管理
+        window.location.href = "epipe://?&mark=landscape&title=容器管理&url=http://39.104.84.131/autoLogin?username=TenantAdmin@bupt.edu.cn&password=password&module=k8s";
       },
       //判断用户是否有组织
       organization(){
@@ -598,6 +755,9 @@
               this.$router.push({path:'/pending'});
             }else if(obj.type == 3){  //无组织，跳转到申请加入组织页面
               this.$router.push({path:'/Nologin'});
+            }
+            if(obj.menuType.indexOf('1')>-1){
+              this.payShow = true;
             }
             this.mask = false;  //有组织，展示工作台
        
@@ -613,10 +773,10 @@
       },
       /*获取用户信息*/
       getUserInfo(){
-        //const userToken = getCookie("auth_token") ? getCookie("auth_token") : "bc0b43b3-c9b2-49a5-b1c9-72c029580437";
+        // const userToken = getCookie("auth_token") ? getCookie("auth_token") : "9d760d72-f1dc-4f71-959c-e197ccf9a78e";
         const userToken = getCookie("auth_token");
         if(userToken){
-          this.axios.get('/user/info/by/token',{params: {token: userToken}}).then(res =>{
+          this.axios.get('/user/info/by/token',{params: {token:userToken}}).then(res =>{
             console.log("用户信息",res);
             if(res.data.h.code === 200 && res.data.b.centerGroupId){
               this.getFactory(res.data.b.centerGroupId);
@@ -649,26 +809,6 @@
         });
       },
       /*广播信息轮播*/
-      broadcast(){
-        let parentNode = this.$refs.broadcast;
-        let timer = null;
-        clearInterval(this.interval);
-        this.interval = setInterval(() =>{
-          parentNode.style.transition="-webkit-transform 500ms linear";
-          parentNode.style.transition="transform 500ms linear";
-          parentNode.style.WebkitTransform = "translateY(-0.4rem)";
-          parentNode.style.transform = "translateY(-0.4rem)";
-          clearTimeout(timer);
-          timer = setTimeout(() =>{
-            let childNode = parentNode.removeChild(parentNode.firstChild);
-            parentNode.appendChild(childNode);
-            parentNode.style.transition="-webkit-transform 0s ease-out";
-            parentNode.style.transition="transform 0s ease-out";
-            parentNode.style.WebkitTransform = "translateY(0)";
-            parentNode.style.transform = "translateY(0)";
-          },500);
-        },3000);
-      },
       /*工作台文字信息*/
       slogan(){
         this.axios.get(this.Service.slogan).then(res =>{
@@ -716,22 +856,19 @@
         let vm = this;
         vm.mesNum = 0;
         this.axios.get(this.Service.affairsList).then(function(res){
-              vm.mesNum = res.data.b[0].count;
+              vm.mesNum = res.data.b.data[0].count;
             });
 
         window["epipe_affairs_callback"] = () => {
             vm.getAffairs();
         }
-
       },
-
     },
  
     mounted(){
       this.organization();
       this.getUserInfo();
       this.slogan();
-      this.message();
       this.getAffairs();
     }
   }

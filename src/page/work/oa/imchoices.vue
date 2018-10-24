@@ -217,7 +217,7 @@
       </div>
       <div class="im_div">
         <ul class="im_div2">
-          <div v-for="(item,index) in datalist">
+          <div v-for="(item,index) in datalist" :key="index">
             <li @click="open_item(index)">
               <span>{{item.name}}</span>
               <div style="padding-right: 0.15rem;">
@@ -227,7 +227,7 @@
                 </svg>
               </div>
             </li>
-            <div v-show="item.open" v-for="(p,num) in item.offices" class="im_div4" style="padding:0">  
+            <div v-show="item.open" v-for="(p,num) in item.offices" class="im_div4" style="padding:0" :key="num">   
                 <li @click="open_child(index,num)" style="padding-left:0.3rem;">
                 <span>{{p.name}}&nbsp （{{p.personNO}}）</span>
                 <div style="padding-right: 0.15rem;">
@@ -278,7 +278,7 @@
         
       </div>
       <div style="padding-bottom: 0.84rem"></div>
-      <ul class="im_bottom">
+      <ul class="im_bottom" v-if="!iscareOf">
 
         <div v-if="chose_array.length>0 & type_num" @click="history_back" :style="{background: bgcolor}" class="bottom_button2">确定 <span
         >({{chose_array.length}})</span>
@@ -330,7 +330,7 @@
       </div>
       <div class="im_border"></div>
       <ul class="seach_item">
-        <li @click="chose_select(item,index)" v-for="(item,index) in seach_list_man">
+        <li @click="chose_select(item,index)" v-for="(item,index) in seach_list_man" :key="index">
           <svg v-if="item.mark_chose" style="font-size: 0.19rem;padding-right: 0.15rem" class="icon">
             <use xlink:href="#icon-chenggong"></use>
           </svg>
@@ -364,6 +364,8 @@
         name: '',
         seach_list_man: [], //被搜索到的人
         states : '',
+        peerData:[],//同行人员
+        iscareOf:false,
       }
     },
     components: {
@@ -404,8 +406,19 @@
       },
       chose_child(index,num,el,c){
           
-         if(this.$route.query.careOf){
-              this.$router.push({path:'/deliverExplain',query:{id:this.$route.query.id,userName:el.name,userId:el.userId,type:this.$route.query.type}})
+         if(this.iscareOf){
+           if(el.mark_chose){
+             this.$toast('该用户为审批人')
+             return;
+           }
+            this.$router.push({path:'/deliverExplain',query:{
+              id:this.$route.query.id,
+              userName:el.name,
+              userId:el.userId,
+              auditerIds:this.$route.query.auditerIds,
+              type:this.$route.query.type,
+              color:this.$route.query.bgcolor
+              }})
              return false;
          } 
 
@@ -445,13 +458,15 @@
 
                   if(flag){
                       el.auditUserId = el.userId;
-                      this.approver_array.push(el)
+                      if(this.$route.query.isOrder){
+                        this.approver_array.unshift(el)
+                      }else{
+                        this.approver_array.push(el)
+                      }
                       this.approver_man(this.approver_array)
                       window.history.back()
                   }
-            
             }else{
-              
                 for(let i =0;i<this.approver_array.length;i++){
                   if(this.approver_array[i].auditUserId === el.userId){
                       this.approver_array.splice(i,1)
@@ -490,7 +505,6 @@
                 }
             }
           }
-           
         }
       },
       open_all(){
@@ -500,25 +514,24 @@
         let that = this;
         let array = []
 
-        for (let i = 0; i < that.datalist.length; i++) {
-            for (let j = 0; j < that.datalist[i].offices.length; j++) {
-                for (let a = 0; a < that.datalist[i].offices[j].staff.length; a++) {
-                    if (this.datalist[i].offices[j].staff[a].userId != item.userId) {
-                        if (this.datalist[i].offices[j].staff[a].mark_chose == true) {
-                          if(that.type_num){
-                              this.datalist[i].offices[j].staff[a].receiverId = this.datalist[i].offices[j].staff[a].userId;
-                          }else{
-                              this.datalist[i].offices[j].staff[a].auditUserId = this.datalist[i].offices[j].staff[a].userId;
+          for (let i = 0; i < that.datalist.length; i++) {
+              for (let j = 0; j < that.datalist[i].offices.length; j++) {
+                  for (let a = 0; a < that.datalist[i].offices[j].staff.length; a++) {
+                      if (this.datalist[i].offices[j].staff[a].userId != item.userId) {
+                          if (this.datalist[i].offices[j].staff[a].mark_chose == true) {
+                            if(that.type_num){
+                                this.datalist[i].offices[j].staff[a].receiverId = this.datalist[i].offices[j].staff[a].userId;
+                            }else{
+                                this.datalist[i].offices[j].staff[a].auditUserId = this.datalist[i].offices[j].staff[a].userId;
+                            }
+                              array = array.concat(this.datalist[i].offices[j].staff[a])
                           }
-                            array = array.concat(this.datalist[i].offices[j].staff[a])
-                        }
-                    } else {
-                        this.datalist[i].offices[j].staff[a].mark_chose = false
-                    }
-                }
-            }
-      }
-        
+                      } else {
+                          this.datalist[i].offices[j].staff[a].mark_chose = false
+                      }
+                  }
+              }
+        }
 
         if(this.type_num){
           this.chose_array = array;
@@ -545,6 +558,19 @@
         window.history.back()
       },
       chose_select: function (item, index) { //搜索之后选中某个人
+
+        if(this.iscareOf){
+              this.$router.push({path:'/deliverExplain',
+              query:{id:this.$route.query.id,
+              userName:item.name,
+              auditerIds:this.$route.query.auditerIds,
+              userId:item.userId,
+              type:this.$route.query.type,
+              color:this.$route.query.color
+              }})
+             return false;
+         } 
+
         let that = this;
         if (!item.mark_chose) {
           that.seach_list_man[index].mark_chose = true
@@ -615,23 +641,25 @@
     },
     mounted(){
       
-      this.states = location.href.slice(location.href.indexOf('state=')+6)
-      this.states = this.states.slice(0,(this.states.indexOf('&')))
+      this.states = this.$route.query.state;
+      this.iscareOf = this.$route.query.careOf
         //以上代码判断是由什么入口进入该界面
       this.bgcolor = this.$route.query.bgcolor
-      if(this.$route.query.num&&!this.$route.query.careOf){ //判断是审批人还是抄送人
+      if(this.$route.query.num){ //判断是审批人还是抄送人
         //审批人
         this.type_num = 0;
         this.approver_array = this.approver_man_state
         this.approver_list_mark = this.approver_man_state
-      }else if(!this.$route.query.num&&!this.$route.query.careOf){
+      }else if(!this.$route.query.num&&!this.iscareOf){
         //抄送人
         this.chose_array = this.chosed_man_state
         this.chosed_list_mark = this.chosed_man_state
       }
 
       let that = this;
-      this.axios.get('http://192.168.3.166:8280/member/v2/organ/addressbook',{
+      // this.axios.get('https://apps.epipe.cn/member/v3/organ/addressbook',{
+      // this.axios.get('https://apps.epipe.cn/member/v3/organ/addressbook',{
+      this.axios.get('/organ/addressbook',{
         params:{
           showGroup : true,
         }

@@ -149,8 +149,7 @@
           <li style="background-color: #ffb055"></li>
           <li>早退</li>
         </ul>
-        <ul v-show="total_three" v-for="one in total_three.typeList" style="margin-top: 0.09rem"
-            class="total_con_lidiv">
+        <ul v-show="total_three" v-for="one in total_three.typeList" style="margin-top: 0.09rem" class="total_con_lidiv">
           <li></li>
           <li>{{one.signTime.substring(0, 10)}}（{{one.signWeek}}）{{one.signTime.substring(11)}}</li>
         </ul>

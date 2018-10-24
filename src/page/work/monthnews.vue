@@ -40,13 +40,15 @@
 </style>
 <template>
   <section class="padding_bottom_content">
-    <TopHead native="native" title="月报" bgcolor="#0fc37c"></TopHead>
+    <TopHead mark="mark" title="月报" bgcolor="#0fc37c"
+      v-on:history_back="history_back_click"
+    ></TopHead>
     <div style="margin-top: 0.44rem">
       <TimeTab time_type="month" font_color="#0fc37c" v-on:data_time="day_data_time"></TimeTab>
     </div>
     <div>
       <WorkInput
-        placeholder="请在此处输入您的工作总结~"
+        placeholder="请在此处输入您的工作总结,限定1000字"
         title="本月工作总结"
         color="#0fc37c"
         v-on:text_change="text_change"
@@ -56,7 +58,7 @@
         :work_text="journal_detail.workSummary?journal_detail.workSummary:''"
       ></WorkInput>
       <WorkInput
-        placeholder="请在此处输入您的下月工作计划~"
+        placeholder="请在此处输入您的下月工作计划,限定1000字"
         title="下月工作计划"
         color="#0fc37c"
         v-on:text_change="text_change"
@@ -108,6 +110,16 @@
         bgcolor="#0fc37c"
       ></WorkButton>
     </div>
+
+    <Dialog
+        lfText="保存"
+        rgText="不保存"
+        content="保存此次编辑?"
+        v-on:lfClick="lf_click"
+        v-on:rgClick="rg_click"
+        v-show="isShow"
+        >
+      </Dialog>
   </section>
 </template>
 <script>
@@ -129,30 +141,47 @@
         string_img = string_img + "|" + that.URL[i]
       }
       string_img = string_img.slice(1)
-      that.axios.post(that.Service.reportAdd + that.Service.queryString({
-          workSummary: that.work_value,
-          nextPlan: that.next_work_value,
-          remarks: that.mark_value,
-          reportType: 3,
-          id: that.journal_detail.id ? that.journal_detail.id : "",
-          reportTimeStr: that.reportTimeStr,
-          reportTime: that.reportTime,
-          receiveUserIds: string_id,//id串
-          imgUrl: string_img,//图片串
-          isDraft: index
-        })).then(function (data) {
-        console.log(data)
-        if (data.data.h.code == 200) {
-          that.$alert(text).then(
-            function () {
-              window.sessionStorage.mark_value = ""
-              window.sessionStorage.next_mark_value = ""
-              window.sessionStorage.work_value = ""
-              window.location.href = "epipe://?&mark=history_back"
-            }
-          )
-        }
-      })
+
+      that.axios({
+            method:"post",
+            url:that.Service.reportAdd,
+            headers:{
+                'Content-type': 'application/x-www-form-urlencoded'
+            },
+            data:{
+               workSummary: that.work_value,
+                nextPlan: that.next_work_value,
+                remarks: that.mark_value,
+                reportType: 3,
+                id: that.journal_detail.id ? that.journal_detail.id : "",
+                reportTimeStr: that.reportTimeStr,
+                reportTime: that.reportTime,
+                receiveUserIds: string_id,//id串
+                imgUrl: string_img,//图片串
+                isDraft: index
+            },
+            transformRequest: [function (data) {
+                let ret = ''
+                for (let it in data) {
+                ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+                }
+                return ret
+            }],
+        }).then((data)=>{
+              if (data.data.h.code == 200) {
+                that.$alert(text).then(
+                  function () {
+                    window.sessionStorage.mark_value = ""
+                    window.sessionStorage.next_mark_value = ""
+                    window.sessionStorage.work_value = ""
+                    localStorage.removeItem('monthnews')
+                    window.location.href = "epipe://?&mark=history_back"
+                  }
+                )
+              }else{
+                that.$toast(data.data.h.msg)
+              }
+        })
     }
   }
   let getdetail = (that) => {
@@ -162,7 +191,6 @@
         reportTime: that.reportTime
       }
     }).then(function (data) {
-      console.log(data.data.b)
       if (data.data.h.code == 200) {
         that.URL = []
         that.work_value = ''
@@ -174,6 +202,7 @@
         that.journal_detail = {}
         if (data.data.b == null) {
           that.has_journal = false
+          that.getItem()
         } else if (data.data.b) {
           that.URL = data.data.b.imgData
           if (data.data.b.isDraft == 1) {
@@ -202,6 +231,8 @@
   import WorkInput  from '../../components/worknews/work_input.vue'
   import WorkButton  from '../../components/worknews/work_button.vue'
   import CopeMan  from '../../components/worknews/copy_man.vue'
+  import Dialog  from '../../components/oa/dialog.vue'    //弹窗
+
   export default {
     data () {
       return {
@@ -214,7 +245,8 @@
         chosed_list: [], //抄送人
         chosed_list_two: [], //抄送人
         has_journal: true,
-        journal_detail: {}
+        journal_detail: {},
+        isShow:false,
       }
     },
     components: {
@@ -222,7 +254,8 @@
       WorkInput,
       WorkButton,
       CopeMan,
-      TopHead
+      TopHead,
+      Dialog
     },
     methods: {
       day_data_time: function (data, text) { //子组件接收时间数据
@@ -234,8 +267,6 @@
         getdetail(that)
       },
       text_change: function (data, title) { //实时监听工作内容输入
-        console.log(data)
-        console.log(title)
         if (title == "本月工作总结") {
           window.sessionStorage.work_value = data
           if (data.length >= 1000) {
@@ -255,7 +286,28 @@
           }
           this.mark_value = data.replace(/\n/g, '<br/>')
         }
-      },
+      },history_back_click(){
+            this.isShow=true;
+        },
+        lf_click(){
+            this.isShow=false;
+            localStorage.setItem('monthnews',JSON.stringify(this.$data))
+        },
+        rg_click(){
+            this.isShow=false;
+            localStorage.removeItem('monthnews')
+        },
+        getItem(){
+             if(localStorage.getItem('monthnews')){
+              let weekdata = JSON.parse(localStorage.getItem('monthnews'))
+                  for(let key in weekdata){
+                      this.$data[key] = weekdata[key]
+                  }
+                this.$data.journal_detail.workSummary = weekdata['work_value']
+                this.$data.journal_detail.remarks = weekdata['mark_value']
+                this.change_man(this.$data.chosed_list)
+            }
+        },
       get_camera: function () { //调用手机摄像头
         let that = this;
         if (that.URL.length >= 8) {
@@ -310,15 +362,15 @@
     },
     mounted(){
       let that = this;
-      this.axios.get(this.Service.reportReceiver).then(function (data) { //查询抄送人
-        if (data.data.h.code == 10) {
-          window.location.href = "epipe://?&mark=login_out"
-        } else if (data.data.h.code == 200) {
-          that.chosed_list = data.data.b.data
-          window.localStorage.chosed_list = JSON.stringify(that.chosed_list)
-          that.change_man(that.chosed_list)
-        }
-      })
+      // this.axios.get(this.Service.reportReceiver).then(function (data) { //查询抄送人
+      //   if (data.data.h.code == 10) {
+      //     window.location.href = "epipe://?&mark=login_out"
+      //   } else if (data.data.h.code == 200) {
+      //     that.chosed_list = data.data.b.data
+      //     window.localStorage.chosed_list = JSON.stringify(that.chosed_list)
+      //     that.change_man(that.chosed_list)
+      //   }
+      // })
       getdetail(that)
       window["epipe_removephoto_callback"] = index => { //原生的调用删除图片的方法
         that.URL.splice(parseInt(index), 1)

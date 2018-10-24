@@ -42,13 +42,13 @@
       </div>
     </div>
     <div class="content" v-show="showContent">
-      <div class="no-result" v-if="!result">
+      <div class="no-result" v-show="!result">
         <svg class="icon" aria-hidden="false" style="width:1.2rem;height:1.2rem;">
           <use xlink:href="#icon-chaxuntiaojian"></use>
         </svg>
         <p class="tips">点击条件筛选进行查询</p>
       </div>
-      <div class="result" v-else>
+      <div class="result" v-show="result">
 
       </div>
     </div>
@@ -93,21 +93,12 @@
           workshop: "",
           workshopId: "",
           unit: "",
-          shift:"",
-          shiftCode:"",
+          shift:"白班",
+          shiftCode:"01",
         },
       }
     },
     mounted:function(){
-       
-    
-        setTimeout(function(){
-             var target  = document.querySelector(".result");
-            let el = echarts.init(target);
-
-            el.clear();
-            that.echartsLib.barLine(el,{});
-        },200)
 
     },
     watch:{
@@ -143,7 +134,6 @@
       /*获取车间*/
       getWorkshop(){
         this.$mes.get("/common/workshop").then(res =>{
-          console.log("获取车间",res);
           if(res.h.code === 200){
             this.workshopList = res.b.list;
             this.workshopList.unshift({
@@ -181,13 +171,13 @@
             "workDate": selection.date,
             "shiftCode":selection.shiftCode,
           }).then(res =>{
-            console.log("电耗分析",res);
             if(res.h.code === 200){
               this.result = true;
-              console.log(this.selection.unit==='周分析')
               if(this.selection.unit === "日分析"){
                 if(!res.b.powerConsumptionDay.length){
+                  this.result = false;
                   this.$toast('你查询的条件暂无数据')
+                  return;
                 }
                 let timeList = [],
                 outputList = [];
@@ -206,30 +196,41 @@
                   this.echarts(params,1);
                 },0);
               }else if(this.selection.unit === "月分析"){
-                let a = [],b = [];
-                 res.b.powerConsumptionMonthCompare.forEach(function(item,index){
-                  a.push(item.data[0].outputQty);
+                  if(!res.b.powerConsumptionMonthCompare.length){
+                    this.result = false;
+                    this.$toast('你查询的条件暂无数据')
+                    return;
+                  }
+                let a = [],b = [],c=[];
+                 res.b.powerConsumptionMonthCompare[0].data.forEach(function(item,index){
+                  a.push(item.outputQty);
+                  c.push(item.workPeriod)
                 });
-                res.b.powerConsumptionMonthCompare.forEach(function(item,index){
-                  b.push(item.data[0].workPeriod);
+                res.b.powerConsumptionMonthCompare[0].data.forEach(function(item,index){
+                  b.push(item.outputQty);
                 });
                 let params = {
                   a: a,
                   b: b,
                   title: "月用电量对比",
                   legend: ['本月','上个月','用电量'],
-                  xAxis: [1,2,3,4,5,6,7,8,9,10,11,12]
+                  xAxis:c,
                 };
                 setTimeout(()=>{
                   this.echarts(params,2);
                 },0);
               }else{
+                 if(!res.b.powerConsumptionWeekCompare.length){
+                    this.result = false;
+                    this.$toast('你查询的条件暂无数据')
+                    return;
+                  }
                 let a = [],b = [];
-                res.b.powerConsumptionWeekCompare.forEach(function(item,index){
-                  a.push(item.data[0].outputQty);
+                res.b.powerConsumptionWeekCompare[0].data.forEach(function(item,index){
+                  a.push(item.outputQty);
                 });
-                res.b.powerConsumptionWeekCompare.forEach(function(item,index){
-                  b.push(item.data[0].workPeriod);
+                res.b.powerConsumptionWeekCompare[1].data.forEach(function(item,index){
+                  b.push(item.outputQty);
                 });
                 let params = {
                   a: a,
@@ -244,7 +245,7 @@
                 },0);
               }
             }else{
-              this.$toast("网络请求错误");
+              this.$toast(res.h.code+':'+res.h.msg);
             }
           });
         }
@@ -252,6 +253,7 @@
       /*绘图*/
       echarts(params,type){
         var target  = document.querySelector(".result");
+        console.log(target)
         if(type === 1){
           console.log(params)
           let el = echarts.init(target);
@@ -377,5 +379,10 @@
   }
   .tab-active{
     color: #ff8800;
+  }
+
+  .icon-container .icon{
+    width:1em;
+    height:1em;
   }
 </style>

@@ -16,6 +16,11 @@
                     <form action="#" @submit.prevent="searchClick()">
                         <input ref="input" v-model.trim="inputVal" @focus="isShowPrompt=true" type="search" autofocus placeholder="请输入关键字">
                     </form>
+                    <div class="microphone" @click.stop="voice">
+                        <svg style="height:0.16rem;width:0.16rem;margin-top:0.05rem;"  class="icon" aria-hidden="false">
+                            <use xlink:href="#icon-yuyin"></use>
+                        </svg>
+                    </div>
                 </div>
             </div>
             <div class="search_btn" @click="searchClick()">
@@ -27,12 +32,12 @@
             <div class="search_prompt search_hot">
                 <h3>热门搜索</h3>
                 <ul>
-                    <li v-if="index<3" v-for="(item,index) in words" @click="searchClick(item.keyWord)">{{item.keyWord}}</li>
+                    <li v-if="index<3" v-for="(item,index) in words" :key="index" @click="searchClick(item.keyWord)">{{item.keyWord}}</li>
                 </ul>
             </div>
             <div class="search_prompt search_history" v-if="historyData.length">
                 <h3>历史搜索</h3>
-                <div class="items" v-for="(item,index) in historyData">
+                <div class="items" v-for="(item,index) in historyData" :key="index">
                     <span @click="searchClick(item)">{{item}}</span>
                     <div class="items_close" @click="delHistory(index)">
                         <svg style="heigth:0.1rem;"  class="icon" aria-hidden="false">
@@ -45,27 +50,71 @@
         </div>
 
         <div class="search_res" v-if="!isShowPrompt">
-               <text-template v-for="item in searchData" :key="item.resId"  :item="item"></text-template>
-               <div class="no-more" v-if="!searchData.length">
-                    暂无结果
-                </div>
-               <infinite-loading type='0' v-if='searchData.length' spinner="bubbles" :on-infinite="onInfinite" ref="infiniteLoading">
-                    <span slot="no-more">
-                    暂无更多加载
-                    </span>
-                    <span slot="no-results">
-                    暂无结果
-                    </span>
+                <div class="search_main">
+                    
+                    <div class="search_item" v-if="searchData.news.length">
+                        <div class="search_item_head">
+                            <span>
+                                优管专题
+                            </span>
 
-                </infinite-loading>
+                            <span @click="go_more(1)">
+                                更多
+                                <svg style="heigth:0.1rem;color:#999s"  class="icon" aria-hidden="false">
+                                        <use xlink:href="#icon-right"></use>
+                                </svg>
+                            </span>
+                        </div>
+                        <div class="search_item_cont">
+                            <div v-for="item in searchData.news" :key="item.resId" @click="go_newsdetail(item)" v-html="item.resTitle"></div>
+                        </div>
+                    </div>
+
+                    <div class="search_item" v-if="searchData.bids.length">
+                        <div class="search_item_head">
+                            <span>
+                                招标
+                            </span>
+
+                            <span  @click="go_more(2)">
+                                更多
+                                <svg style="heigth:0.1rem;"  class="icon" aria-hidden="false">
+                                        <use xlink:href="#icon-right"></use>
+                                </svg>
+                            </span>
+                        </div>
+                        <div class="search_item_cont">
+                            <div v-for="item in searchData.bids" :key="item.resId" v-html="item.resTitle" @click="go_newsdetail(item)"></div>
+                        </div>
+                    </div>
+
+                    <div class="search_item" v-if="searchData.exhibitions.length">
+                        <div class="search_item_head">
+                            <span>
+                                展会
+                            </span>
+
+                            <span  @click="go_more(3)">
+                                更多
+                                <svg style="heigth:0.1rem;"  class="icon" aria-hidden="false">
+                                        <use xlink:href="#icon-right"></use>
+                                </svg>
+                            </span>
+                        </div>
+                        <div class="search_item_cont">
+                            <div v-for="item in searchData.exhibitions" :key="item.resId" @click="go_newsdetail(item)" v-html="item.resTitle"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="no-more" v-if="!searchData.news.length||!searchData.bids.length||!searchData.exhibitions.length">暂无查询内容</div>
+  
         </div>
     </section>
 </template>
 
 
 <script>
-import TextTemplate from '../../components/textTemplate.vue';
-import InfiniteLoading from 'vue-infinite-loading';
+
 export default {
     data(){
         return {
@@ -73,12 +122,12 @@ export default {
             isShowPrompt:true, //是否显示历史记录等提示
             historyData :[], //历史记录数组值
             words:[], //关键字
-            searchData : [],
+            searchData :{news:[],bids:[],exhibitions:[]},
         }
     },
 
     mounted(){
-        // this.getHistory()
+        this.getHistory()
         let that = this;
         this.axios.get('/content/select/keyWord').then(function(res){
             if(res.data.h.code==200){
@@ -87,27 +136,6 @@ export default {
         })
     },
     methods:{
-        onInfinite(){
-          
-            let that = this;
-
-            //首页头条
-            setTimeout(() => {
-                that.axios.get('/content/search?keyWord='+this.inputVal, {
-                    params: {
-                    pageSize: 10,
-                    lastId: that.searchData[(that.searchData.length) - 1].resId
-                    }
-                }).then(function (data) {
-                    if (data.data.b.length == 0) { 
-                        that.$refs.infiniteLoading.$emit('$InfiniteLoading:complete');
-                    } else if (data.data.b) {
-                        that.searchData = that.searchData.concat(data.data.b)
-                        that.$refs.infiniteLoading.$emit('$InfiniteLoading:loaded');
-                    }
-                })
-            }, 300);
-        },
         go_back(){
             window.location.href = "epipe://?&mark=history_back";
         },
@@ -136,6 +164,9 @@ export default {
             localStorage.setItem('homeSearch',this.historyData.join('|'))
 
         },
+        go_more(type){ //更多
+            this.$router.push({path:'/searchMore',query:{type:type,keyWord:this.inputVal,h5:true}})
+        },
         delHistory(index){//删除历史记录
             this.historyData.splice(index,1)
             localStorage.setItem('homeSearch',this.historyData.join('|'))
@@ -158,11 +189,19 @@ export default {
 
             this.isShowPrompt = false;
         },
-    },
-    components:{
-            TextTemplate,
-            InfiniteLoading,
+        go_newsdetail(item){
+              let title = this.Util.Title_format(item.resTitle)
+                let obj = {};
+                obj.title = title;
+                obj.imageUrl = item.converImgUrl;
+                obj.text = this.Util.Title_format(item.summary);
+                let data = JSON.stringify(obj)
+                window.location.href = "epipe://?&mark=newsdetail&title=" + title + "&_id=" + item.resId+'&data='+data;
+        },
+        voice(){
+            window.location.href = "epipe://?&mark=microphone"
         }
+    },
 
   
 }
@@ -193,14 +232,25 @@ export default {
             overflow hidden;
             margin 0 auto;
 
-            .search_icon{
+            .search_icon,.microphone{
                 position absolute;
                 width:0.15rem;
                 height 0.15rem;
-                background-image url(../../assets/search_icon.png)
+            }
+
+            .search_icon{
+                width:0.15rem;
+                height 0.15rem;
+                background url(../../assets/search_icon.png) no-repeat;
                 background-size 0.15rem 0.15rem;
                 top:0.08rem;
                 left:0.1rem;
+            }
+
+            .microphone{
+                width:0.2rem;
+                height:100%;
+                right:0.1rem;
             }
 
             input{
@@ -319,6 +369,49 @@ export default {
         heigh 0.2rem;
         line-height 0.2rem;
         padding 0.1rem 0;
+    }
+
+
+    .search_item{
+        padding:0 0.15rem;
+        background-color #fff;
+        margin-bottom 0.1rem;
+    }
+
+    .search_item_head{
+        height 0.4rem;
+        line-height 0.4rem;
+        font-size  0.14rem;
+        color:#666;
+        border-bottom:0.01rem solid #ddd;
+
+        span:nth-child(2){
+            float right;
+            color:#999;
+        }
+    }
+
+    .search_item_cont{
+
+        div{
+            height 0.4rem;
+            line-height 0.4rem;
+            color: #333;
+            font-size:0.16rem;
+            overflow hidden;
+            text-overflow:ellipsis;
+            white-space:nowrap;   
+            border-bottom:0.01rem solid #ddd;
+
+        }
+    }
+
+    .search_item_cont div:nth-last-child(1){
+        border none
+    }
+
+    .search_res{
+        margin-top 0.15rem;
     }
 
 </style>

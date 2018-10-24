@@ -26,7 +26,7 @@
         <li class="day-item">日</li>
       </ul>
       <div class="day-list">
-        <div class="list-item" v-for="(item,index) in days" @touchend="pickDate(index)">
+        <div class="list-item" v-for="(item,index) in days" @touchend="pickDate(index)" :key="index">
           <div :class="{active: (item === currentDate.day && dateObj.year === currentDate.year && dateObj.month === currentDate.month )}">{{item}}</div>
         </div>
       </div>

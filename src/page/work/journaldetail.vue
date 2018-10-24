@@ -130,7 +130,7 @@
         </div>
         <div v-if="img_list.length>0" class="img_title">图片</div>
         <ul class="img_ul"  style="background-color: #fff">
-          <li @click="go_imgdetail(index)" v-for="(itme,index) in img_list">
+          <li @click="go_imgdetail(index)" v-for="(itme,index) in img_list" :key="index">
             <img :src=itme|journal_img style="width: 100%;height: 100%"/>
           </li>
         </ul>

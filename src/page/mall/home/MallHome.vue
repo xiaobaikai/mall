@@ -121,8 +121,6 @@
       this.$nextTick(() =>{
         this.getScrollTop();
       });
-
-     
     }
   }
 </script>

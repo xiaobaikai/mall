@@ -13,8 +13,6 @@ import "./style/reset.styl";
 import "./style/style.styl";
 
 
-import fastclick from "fastclick";
-fastclick.attach(document.body);
 // 引入服务
 import Service from "./js/Service";
 Vue.prototype.Service = Service;
@@ -39,6 +37,9 @@ Vue.prototype.baseURL = baseURL;
 Vue.prototype.mallToken = mallToken;
 Vue.prototype.isApp = isApp;
 
+import FastClick from 'fastclick'
+FastClick.attach(document.body);
+
 //  提示框
 import {Alert, Confirm, Prompt, Toast} from "wc-messagebox";
 import "wc-messagebox/style.css";
@@ -48,10 +49,6 @@ Vue.use(Confirm);
 Vue.use(Toast);
 Vue.use(Alert);
 Vue.use(wcSwiper);
-
-import FastClick from 'fastclick';
-FastClick.attach(document.body)
-
 window.eventBus = new Vue();
 /* eslint-disable no-new */
 new Vue({

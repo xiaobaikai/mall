@@ -2,9 +2,9 @@
 import $ from "jquery";
 
 const dev = 'http://192.168.3.171:8080/mes-webapi/v1';  //测试
-const product = "http://cmesapi.epipe.cn/mes-webapi/v1";  //正式
-const baseURL = window.location.href.indexOf("app.epipe.cn")>0 ? product : dev;
-// const baseURL = product;
+const product = "https://cmesapi.epipe.cn/mes-webapi/v1";  //正式
+// const baseURL = window.location.href.indexOf("app.epipe.cn")>0 ? product : dev;
+const baseURL = product;
 function getCookie(name) {
   var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
   if (arr = document.cookie.match(reg))
@@ -13,7 +13,7 @@ function getCookie(name) {
     return null;
 }
 function getInitToken(){
-  return getCookie("auth_token")?getCookie("auth_token"):"272ab765-c00b-490c-b286-f7a0d3ea377e";
+  return getCookie("auth_token")?getCookie("auth_token"):"7ed1c569-916a-4ed8-b5d0-4c7bc9ee5b6c";
 }
 function getNewToken(){
   let new_token = "";

@@ -58,7 +58,6 @@
       onInfinite(){ //上拉加载更多
         let that = this;
         //首页头条
-      
         this.axios.get('content/getResExhibition', {
           params: {
               lastId:that.newsData[(that.newsData.length) - 1].id

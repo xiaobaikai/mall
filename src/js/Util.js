@@ -88,7 +88,7 @@ const Util = {
       // str = str+'&';
       let len = str.length;
       str = location.href.slice(location.href.indexOf(str)+len)
-      return str = str.slice(0,( str.indexOf('&')))
+      return str = decodeURI(str.slice(0,( str.indexOf('&'))))
 
   },
   
@@ -106,6 +106,32 @@ const Util = {
    }        
     return false;   
   },
+  appAndCopy:function(arr,type){ //同意或拒绝oa的时候 审批人
+    if(!type) type='userId'
+    let str = '';
+    for(let i=0;i<arr.length;i++){
+            let obj = arr[i]
+            str = str + "|" + obj[type]
+    }
+    return str.slice(1);
+},
+  axios:function(that,url,param,callBack){
+        this.axios({
+          method:"post",
+          url:url,
+          headers:{
+              'Content-type': 'application/x-www-form-urlencoded'
+          },
+          data:param,
+          transformRequest: [function (data) {
+            let ret = ''
+            for (let it in data) {
+            ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+            }
+            return ret
+        }],
+      })
+  }
 
 }
 module.exports = Util

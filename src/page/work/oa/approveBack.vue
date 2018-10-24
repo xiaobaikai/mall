@@ -1,15 +1,15 @@
 <template>
     <section>
         <TopHead
-        bgcolor='#fd545c'
+        :bgcolor=color
         title='退回'
         ></TopHead>
         <div class="main">
             <div class="content">
-                <textarea placeholder="请输入退回理由" v-model="textVal" maxlength="150"></textarea>
-                <p class="counts"><span>{{counts}} / 150</span></p>
+                <textarea placeholder="请输入退回理由" v-model="textVal" maxlength="500"></textarea>
+                <p class="counts"><span v-bind:style="{color:color}">{{counts}} / 500</span></p>
             </div>
-            <a class="btn" @click="affirm()">
+            <a :style="{color:color,borderColor:color}" class="btn" @click="affirm()">
                 确认退回
             </a>
         </div>
@@ -23,7 +23,8 @@ export default {
             return {
                 counts : 0,
                 textVal : '',
-                id : '',       
+                id : '',
+                color:'#fd545c'
             }
         },
         methods : {
@@ -34,37 +35,50 @@ export default {
                 }else{
                     
                     if(this.$route.query.type=='contract'){
-                            this.contractBack()
+                        this.goBack(2)
+                    }else if(this.$route.query.type=='outside'){
+                        this.goBack(3)
+                    }else if(this.$route.query.type=='letter'){
+                        this.goBack(1)
+                    }else if(this.$route.query.type=='leave'){
+                        this.goBack(0)
+                    }else if(this.$route.query.type=="trip"){
+                        this.goBack(4)
+                    }else if(this.$route.query.type=="stamp"){
+                        this.goBack(5)
+                    }else if(this.$route.query.type=="reimburse"){
+                        this.goBack(6)
+                    }else if(this.$route.query.type=="payApply"){
+                        this.goBack(7)
+                    }else if(this.$route.query.type=="dimission"){
+                        this.goBack(8)
                     }
                 }
             },
-
-            contractBack(){
+            goBack(type){
                 let that = this;
                 this.axios.post('/work/audit'+that.Service.queryString({
                     applyId:this.id,
                     type:5,
-                    applyType:2,
-                    reason:this.textVal,
+                    applyType:type,
+                    reason:encodeURI(this.textVal),
                 })).then(function(res){
                     if(res.data.h.code==200){
                         that.$toast('退回成功!')
                         window.location.href = "epipe://?&mark=workUpdate";
                         setTimeout(()=>{
-                            // window.location.href = "epipe://?&mark=contractDetails&_id="+that.id+'&data='+JSON.stringify({text:1});
                              window.location.href = "epipe://?&mark=goWork"
-                            
-                            // history.go(-3)
                         },200)      
                     }else{
                         that.$toast(res.data.h.msg)
                     }
                 })
-            },
+            }
 
         },
         mounted:function(){
             this.id = this.$route.query.id;
+            this.color = this.$route.query.color
         },
         components:{
             TopHead
@@ -114,22 +128,9 @@ export default {
         line-height 0.5rem;
         text-align center
         color #fd545c
-        font-size 0.18rem
+        font-size 0.18rem;
+        border 1px solid #fd545c;
     }
 
-    .btn:before{
-        content: " ";
-        position: absolute;
-        left: 0;
-        top: 0;
-        width 200%;
-        height: 200%;
-        border 1px solid #fd545c;
-        border-radius: 4px;
-        color: #D9D9D9;
-        -webkit-transform-origin: 0 0;
-        transform-origin: 0 0;
-        -webkit-transform: scale(0.5);
-        transform: scale(0.5);
-    }
+
 </style>

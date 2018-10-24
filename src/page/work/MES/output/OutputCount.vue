@@ -174,12 +174,19 @@
     methods:{
       /*切换条件*/
       tab(num){
+
+        if((num == 3||num==2)&& this.selection.workshop == '车间'){
+          this.$toast("请选择车间");
+          return;
+        }
+
+        if(num==3&&this.selection.workline=='产线'){
+          this.$toast('请选择产线')
+          return;
+        }
         this.mask = true;
         this.showContent = false;
         this.tabItem = num;
-        if(num === 2 && this.selection.workshop == '车间'){
-          this.$toast("请选择车间");
-        }
         if(num === 3){
           this.workdateSelect = true;
         }
@@ -191,7 +198,7 @@
         this.mask = false;
         this.showContent = true;
         this.tabItem = null;
-        this.getWorkline(this.workshop_id);
+        this.getWorkline(this.selection.workshop_id);
       },
       /*选择产线*/
       worklineSelect(index){
@@ -229,24 +236,28 @@
         let ms = Date.parse(dateString.substr(4,2)+"/"+dateString.substr(6,2)+"/"+dateString.substr(0,4));
 
           if(this.workdateType==1&&this.end_time.day){
-               console.log(this.end_time.year+'/'+this.end_time.month+'/'+this.end_time.day)
               let endTime = Date.parse(this.end_time.year+'/'+this.end_time.month+'/'+this.end_time.day)
-              console.log(new Date(ms),new Date(endTime))
-              console.log(ms)
               if(ms>=endTime){
                 this.$toast('开始时间不能小于等于结束时间')
                 return
+              }else if(endTime-ms>2678400000){
+                this.$toast('时间间隔不能超过一个月')
+                return
               }
           }else if(this.workdateType==2&&this.start_time.day){
-              console.log(this.end_time.year+'/'+this.end_time.month+'/'+this.end_time.day)
-              
               let startTime = Date.parse(this.start_time.year+'/'+this.start_time.month+'/'+this.start_time.day)
-              console.log( new Date(startTime),new Date(ms))
                 if(ms<=startTime){
                 this.$toast('结束时间不能小于等于开始时间')
                 return
+              }else if(ms-startTime>2678400000){
+                this.$toast('时间间隔不能超过一个月')
+                return;
               }
           }
+
+        if(this.end_time&&this.start_time){
+          console.log(this.end_time.year+'/'+this.end_time.month+'/'+this.end_time.day)
+        }
 
         this.ms = ms;
         this.dateObj = DateFormat(ms);
@@ -331,6 +342,12 @@
         }).then(res =>{
           console.log("产出统计",res);
           if(res.h.code === 200){
+
+            if(!res.b.length){
+              this.$toast('你查询的条件无数据')
+              this.result = false;
+              return false;
+            }
             this.result_length = res.b.length;
             this.result = true;
             this.objs = res.b;
@@ -345,13 +362,12 @@
 			          for(let i=0;i<res.b.length;i++){
 				          param.woFinishQty.push(res.b[i].woFinishQty);
 				          param.woQty.push(res.b[i].woQty);
-				          param.achievingRate.push(res.b[i].achievingRate);
+				          param.achievingRate.push((res.b[i].achievingRate*100).toFixed(2));
 				          param.workDate.push(res.b[i].workDate.slice(5));
 			          }
 			          //console.log("yield:"+param.yield);
 			          let params = this.setParams(param);
-                console.log("params:"+JSON.stringify(params));
-			          this.echarts(this.$refs.echarts[0],params);
+			          this.echarts(this.$refs.echarts[0],params);   
 		          },0);
             }
           }
@@ -444,7 +460,7 @@
 				    data:par.workDate
 			    }],
 			    legend:{
-				    data:['实际','计划']
+				    data:['实际','计划','达成率']
 			    },
 			    yAxis:[{
 				    type: 'value',
@@ -556,7 +572,8 @@
       /*绘图*/
       echarts(target,data){
         let el = echarts.init(target);
-        this.echartsLib.barLine(el,data);
+        console.log(data)
+        this.echartsLib.barLine(el,data);                 
       },
     /*时间反0*/
       timeF(str){
@@ -566,7 +583,6 @@
     },
     created(){
       if(sessionStorage.getItem("ms")){
-        console.log(sessionStorage.getItem("ms"))
         let ms = parseInt(sessionStorage.getItem("ms"));
         this.dateObj = DateFormat(ms);
         this.ms = ms;
@@ -609,6 +625,11 @@
     height: 0.45rem;
     background: white;
     box-shadow 0 0 20px rgba(49,98,44,0.15);
+  }
+
+  .workline{
+      overflow: auto;
+     height: 2.8rem;
   }
   .selection{
     flex: 1;
@@ -696,6 +717,7 @@
   .result{
     box-shadow: rgba(15, 194, 124, 0.15) 0px 0px 20px;
     margin-bottom 0.15rem;
+    padding-bottom:0.2rem;
     background: white;
   }
   .my-selections{

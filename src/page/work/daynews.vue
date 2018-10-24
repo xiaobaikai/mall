@@ -40,7 +40,9 @@
 </style>
 <template>
   <section class="padding_bottom_content">
-    <TopHead native="native" title="日报"></TopHead>
+    <TopHead mark="mark" title="日报"
+      v-on:history_back="history_back_click"
+    ></TopHead>
     <div style="margin-top: 0.44rem">
       <TimeTab time_type="day" font_color="#609ef7" v-on:data_time="day_data_time"></TimeTab>
     </div>
@@ -53,7 +55,7 @@
         color="#609ef7"
         :work_value="journal_detail.workSummary?journal_detail.workSummary:''"
         :work_text="journal_detail.workSummary?journal_detail.workSummary:''"
-        placeholder="请在此处输入您的工作总结~"
+        placeholder="请在此处输入您的工作总结,限定1000字"
       ></WorkInput>
       <ul v-if="!has_journal" class="day_chose_img" @click="get_camera">
         <li class="day_chose_span">选择图片</li>
@@ -100,6 +102,16 @@
         bgcolor="#609ef7"
       ></WorkButton>
     </div>
+
+    <Dialog
+        lfText="保存"
+        rgText="不保存"
+        content="保存此次编辑?"
+        v-on:lfClick="lf_click"
+        v-on:rgClick="rg_click"
+        v-show="isShow"
+        >
+      </Dialog>
   </section>
 </template>
 <script>
@@ -122,33 +134,52 @@
         string_img = string_img + "|" + that.URL[i]
       }
       string_img = string_img.slice(1)
-      that.axios.post(that.Service.reportAdd + that.Service.queryString({
-          workSummary: that.work_value,
-          remarks: that.mark_value,
-          reportType: 1,
-          id: that.journal_detail.id ? that.journal_detail.id : "",
-          reportTimeStr: that.reportTimeStr,
-          reportTime: that.reportTime,
-          receiveUserIds: string_id,//id串
-          imgUrl: string_img,//图片串
-          isDraft: index
-        })).then(function (data) {
-        if (data.data.h.code == 200) {
-          that.$alert(text).then(
-            function () {
-              window.sessionStorage.mark_value = ""
-              window.sessionStorage.work_value = ""
-              window.location.href = "epipe://?&mark=history_back"
-            }
-          )
-        }
-      })
+
+      that.axios({
+            method:"post",
+            url:that.Service.reportAdd,
+            headers:{
+                'Content-type': 'application/x-www-form-urlencoded'
+            },
+            data:{
+              workSummary: that.work_value,
+              remarks: that.mark_value,
+              reportType: 1,
+              id: that.journal_detail.id ? that.journal_detail.id : "",
+              reportTimeStr: that.reportTimeStr,
+              reportTime: that.reportTime,
+              receiveUserIds: string_id,//id串
+              imgUrl: string_img,//图片串
+              isDraft: index
+            },
+            transformRequest: [function (data) {
+                let ret = ''
+                for (let it in data) {
+                ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+                }
+                return ret
+            }],
+        }).then((data)=>{
+            if (data.data.h.code == 200) {
+                that.$alert(text).then(
+                  function () {
+                    window.sessionStorage.mark_value = ""
+                    window.sessionStorage.work_value = ""
+                    localStorage.removeItem('daynews')
+                    window.location.href = "epipe://?&mark=history_back"
+                  }
+                )
+              }else{
+                that.$toast(data.data.h.msg)
+              }
+        })
     }
   }
   /*
    * 获取某一天日记的 方法
    * */
   let getdetail = (that) => {
+
     that.axios.get(that.Service.reportQuery, {
       params: {
         reportType: 1,
@@ -166,6 +197,7 @@
         that.journal_detail = {}
         if (data.data.b == null) {
           that.has_journal = false
+          that.getItem();
         } else if (data.data.b) {
           that.URL = data.data.b.imgData
           if (data.data.b.isDraft == 1) {
@@ -192,6 +224,8 @@
   import WorkInput  from '../../components/worknews/work_input.vue'  //输入框
   import WorkButton  from '../../components/worknews/work_button.vue'   //提交按钮
   import CopeMan  from '../../components/worknews/copy_man.vue'    //抄送人
+  import Dialog  from '../../components/oa/dialog.vue'    //弹窗
+
   export default {
     data () {
       return {
@@ -203,7 +237,8 @@
         chosed_list: [], //抄送人
         chosed_list_two: [], //抄送人
         has_journal: true, //是否有日志
-        journal_detail: {}
+        journal_detail: {},
+        isShow:false,
       }
     },
     components: {
@@ -211,7 +246,8 @@
       WorkInput,
       WorkButton,
       CopeMan,
-      TopHead
+      TopHead,
+      Dialog
     },
     methods: {
       /*
@@ -238,6 +274,28 @@
           this.mark_value = data.replace(/\n/g, '<br/>')
         }
       },
+       history_back_click(){
+            this.isShow=true;
+        },
+        lf_click(){
+            this.isShow=false;
+            localStorage.setItem('daynews',JSON.stringify(this.$data))
+        },
+        rg_click(){
+            this.isShow=false;
+            localStorage.removeItem('daynews')
+        },
+        getItem(){
+             if(localStorage.getItem('daynews')){
+              let weekdata = JSON.parse(localStorage.getItem('daynews'))
+                  for(let key in weekdata){
+                      this.$data[key] = weekdata[key]
+                  }
+                this.$data.journal_detail.workSummary = weekdata['work_value']
+                this.$data.journal_detail.remarks = weekdata['mark_value']
+                this.change_man(this.$data.chosed_list)
+            }
+        },
       get_camera: function () { //调用手机摄像头
         let that = this;
         if (that.URL.length >= 8) {
@@ -289,15 +347,15 @@
     },
     mounted(){
       let that = this;
-      this.axios.get(this.Service.reportReceiver).then(function (data) { //查询抄送人
-        if (data.data.h.code == 10) {
-          window.location.href = "epipe://?&mark=login_out"
-        } else if (data.data.h.code == 200) {
-          that.chosed_list = data.data.b.data
-          window.localStorage.chosed_list = JSON.stringify(that.chosed_list)
-          that.change_man(that.chosed_list)
-        }
-      })
+      // this.axios.get(this.Service.reportReceiver).then(function (data) { //查询抄送人
+      //   if (data.data.h.code == 10) {
+      //     window.location.href = "epipe://?&mark=login_out"
+      //   } else if (data.data.h.code == 200) {
+      //     that.chosed_list = data.data.b.data
+      //     window.localStorage.chosed_list = JSON.stringify(that.chosed_list)
+      //     that.change_man(that.chosed_list)
+      //   }
+      // })
       getdetail(that)
       window["epipe_removephoto_callback"] = index => {//原生的调用删除图片的方法
         that.URL.splice(parseInt(index), 1)

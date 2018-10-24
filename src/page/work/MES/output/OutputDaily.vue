@@ -350,7 +350,7 @@ const SelectionBar = () => import("../../../../components/MES/SelectionBar.vue")
     right 0;
     top: 1.7rem;
     width 3.45rem;
-    max-height 4.3rem;
+    max-height 4rem;
     margin 0 auto;
   }
   .result{

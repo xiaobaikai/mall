@@ -84,9 +84,9 @@
         <p class="tips">点击条件筛选进行查询</p>
       </div>
       <div class="result-wrapper" v-else>
-        <div class="result" v-for="(item,index) in result_length" :id="index">
+        <div class="result" v-for="(item,index) in 1" :id="index">
           <div class="my-selections">
-            <p>产品: {{objs[index].partName}}</p>
+            <p>产品: {{selection.product}}</p>
             <p>车间: {{objs[index].workshopName}}</p>
             <p>产线: {{objs[index].lineName}}</p>
             <p>时间: {{start_time.year}}.{{start_time.month}}.{{start_time.day}}-{{end_time.year}}.{{end_time.month}}.{{end_time.day}}</p>
@@ -273,19 +273,22 @@
         this.ms = ms;
 
         if(this.workdateType==1&&this.end_time.day){
-          console.log(this.end_time.year+'/'+this.end_time.month+'/'+this.end_time.day)
               let endTime = Date.parse(this.end_time.year+'/'+this.end_time.month+'/'+this.end_time.day)
               if(ms>=endTime){
                 this.$toast('开始时间不能小于等于结束时间')
                 return
+              }else if(endTime-ms>2678400000){
+                this.$toast('时间间隔不能超过一个月')
+                return
               }
           }else if(this.workdateType==2&&this.start_time.day){
-          console.log(this.end_time.year+'/'+this.end_time.month+'/'+this.end_time.day)
-            
               let startTime = Date.parse(this.start_time.year+'/'+this.start_time.month+'/'+this.start_time.day)
                 if(ms<=startTime){
                 this.$toast('结束时间不能小于等于开始时间')
                 return
+              }else if(ms-startTime>2678400000){
+                this.$toast('时间间隔不能超过一个月')
+                return;
               }
           }
 
@@ -378,22 +381,24 @@
             this.result_length = res.b.list.length;
             if(!this.result_length){
               this.$toast('你筛选的条件无数据')
+              this.result = false;
               return;
             }
             this.objs = res.b.list;
             this.result = true;
+             let params ={passQty:[],failQty:[],yield:[],dates:[]};
             setTimeout(()=>{
                for(let i =0;i<this.objs.length;i++){
-               let params ={passQty:[],failQty:[],yield:[],dates:[]};
-                 
                 params.passQty.push(this.objs[i].passQty)
                 params.failQty.push(this.objs[i].failQty)
                 params.yield.push(this.objs[i].yield.slice(0,-1))
                 params.dates.push(this.objs[i].workDate.slice(5))
 
-                 let param = this.setParams(params);
-                this.echarts(this.$refs.echarts[i],param);
             }
+          
+              let param = this.setParams(params);
+                console.log(param)
+                 this.echarts(this.$refs.echarts[0],param);
             //   for(let i=0;i<this.objs.length;i++){
                 // let param = this.setParams(params);
                 // this.echarts(this.$refs.echarts[0],param);
@@ -413,7 +418,7 @@
             data:par.dates
           }],
           legend:{
-            data:['良品数','不良品数']
+            data:['良品数','不良品数','良率']
           },
           yAxis:[{
             type: 'value',
@@ -525,6 +530,7 @@
       /*绘图*/
       echarts(target,data){
         let el = echarts.init(target);
+        console.log(data)
         this.echartsLib.barLine(el,data);
       },
       timeF(str){
@@ -598,6 +604,8 @@
     background: white;
     border-top: 1px solid #ccc;
     box-shadow 0 5px 15px rgba(15,195,124,0.15);
+    max-height: 3rem;
+    overflow: auto;
   }
   .selection-item{
     height: 0.44rem;
@@ -635,7 +643,7 @@
   }
   .content-bg{
     /*background: white;*/
-    padding: 0.2rem 0;
+    // padding: 0.2rem 0;
   }
   .workdate-type{
     height: 2.8rem;
@@ -654,14 +662,14 @@
   }
 
   .result-wrapper{
-    z-index 5;
+    z-index -1;
     overflow-y auto;
     position fixed;
     left 0;
     right 0;
     top: 1.2rem;
     width 3.45rem;
-    max-height 4.8rem;
+    max-height 4.2rem;
     margin 0 auto;
   }
   .result{
@@ -743,5 +751,10 @@
   }
   .tab-active{
     color: #609EF7;
+  }
+
+  .icon-container .icon{
+    width:1em;
+    height:1em;
   }
 </style>

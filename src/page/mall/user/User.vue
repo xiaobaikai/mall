@@ -146,7 +146,7 @@
           if(res.data.h.code === 200){
             this.userInfo = res.data.b;
           }
-          if(res.data.h.code === 50 || res.data.h.code === 30){
+             if(res.data.h.code === 50 || res.data.h.code === 30){
             if(this.isApp.state){
               window.location.href = "epipe://?&mark=login";
             }else{

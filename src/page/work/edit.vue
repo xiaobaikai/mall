@@ -102,18 +102,18 @@
         </svg>
       </div>
     </div>
-      <div class="edit-content" v-else>
-        <div class="edit-item">
-          <input type="tel" maxlength="24" :value="init_value" ref="input" v-if="is_phone" autofocus="autofocus">
-          <template v-else>
-            <input type="email" :value="init_value" ref="input" v-if="is_email" autofocus="autofocus">
-            <input type="text" maxlength="20" :value="init_value" ref="input" v-else autofocus="autofocus">
-          </template>
-          <svg class="icon icon-close" aria-hidden="false" @click="clearInput()">
-            <use xlink:href="#icon-close"></use>
-          </svg>
-        </div>
+    <div class="edit-content" v-else>
+      <div class="edit-item">
+        <input type="tel" maxlength="24" :value="init_value" ref="input" v-if="is_phone" autofocus="autofocus">
+        <template v-else>
+          <input type="email" :value="init_value" ref="input" v-if="is_email" autofocus="autofocus">
+          <input type="text" maxlength="20" :value="init_value" ref="input" v-else autofocus="autofocus">
+        </template>
+        <svg class="icon icon-close" aria-hidden="false" @click="clearInput()">
+          <use xlink:href="#icon-close"></use>
+        </svg>
       </div>
+    </div>
   </div>
 </template>
 
@@ -138,6 +138,7 @@
         text: "",
         init_value: "",
         loading: false,
+        emailSave:true,
       }
     },
     mounted(){
@@ -210,6 +211,7 @@
             break;
           case "邮箱":
             if(this.isEmail(this.$refs.input.value)){
+              
               if(this.$refs.input.value != this.$store.state.application.email){
                 this.changeStatus(true);
               }
@@ -280,7 +282,7 @@
             }
             break;
           case "邮箱":
-            if(vm.$refs.input.value != vm.init_value) {
+            if(vm.$refs.input.value != vm.init_value&&this.emailSave) {
               eventBus.$emit('getTarget', {
                 title: "邮箱",
                 txt: vm.$refs.input.value || vm.init_value,
@@ -325,7 +327,9 @@
       },
       //返回
       goback(){
-        window.history.back(-1);
+            this.emailSave = false;
+            window.history.back(-1);
+        
       },
       //邮箱验证
       isEmail(str){

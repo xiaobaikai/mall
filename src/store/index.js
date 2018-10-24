@@ -12,14 +12,29 @@ const state = {
   create:{},
   affairsNum :0,
   outputdaily:{},  //产出日报
+  peer_man_state:[[]],
+  token:'',
+  reimburse:[{typeName:'请选择类型',type:-1}],
 }
 
 const mutations = {
+  setToken(state,val){  //设置token
+    state.token = val
+  },
+  remburseData(state,obj){
+    state.reimburse[obj.index] = obj.value; 
+  },
   change_man(state,array){  //抄送人替换
     state.chosed_man_state=array;
   },
   approver_man(state,array){  //审批人替换
     state.approver_man_state=array;
+  },
+  peerData_man(state,datas){ //同行人员数组赋值
+    state.peer_man_state[datas.index] = datas.array;
+  },
+  peerArrs_man(state,array){ //同行人员
+    state.peer_man_state = array
   },
   edit_name(state,val){  //申请人姓名
     state.application.name = val;

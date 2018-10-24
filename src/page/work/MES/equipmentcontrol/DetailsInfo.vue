@@ -77,6 +77,7 @@
         let target =  document.querySelector(".echarts");
         let el = echarts.init(target);
         el.clear();
+        console.log(data)
         this.echartsLib.lines(el,data);
       }
     }
