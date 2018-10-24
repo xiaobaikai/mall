@@ -37,7 +37,7 @@
         </swiper>
         <img src="../../../assets/default-banner.png" alt="" v-else>
       </div>
-      <div class="store-coupon">
+      <div class="store-coupon" v-if="storeCoupons.length>0">
         <div class="coupon-div">
           <div class="one-coupon" v-for="(item,index) in storeCoupons" :key="index">
             <div>
@@ -62,7 +62,12 @@
             </div>
             <div class="item-title">{{obj.goodsName}}</div>
             <div class="item-sub">
-              <div class="item-price">￥{{obj.goodsStorePrice}}
+              <div class="item-price" v-if="obj.priceNegotiable == 0">￥{{obj.goodsStorePrice}}
+                <div class="promotion-flag" v-if="obj.promotionType === 'YH'">券</div>
+                <div class="promotion-flag" v-if="obj.promotionType === 'ZK'">折</div>
+                <div class="promotion-flag" v-if="obj.promotionType === 'TG'">团</div>
+              </div>
+              <div class="item-price" v-if="obj.priceNegotiable == 1">待询价
                 <div class="promotion-flag" v-if="obj.promotionType === 'YH'">券</div>
                 <div class="promotion-flag" v-if="obj.promotionType === 'ZK'">折</div>
                 <div class="promotion-flag" v-if="obj.promotionType === 'TG'">团</div>
@@ -91,14 +96,23 @@
           <div class="goods-details">
             <div class="goods-desc">{{item.goodsName}}</div>
             <div class="goods-opr">
-              <div class="price">￥{{item.goodsStorePrice}}
+              <div class="price" v-if="item.priceNegotiable== 0">￥{{item.goodsStorePrice}}
+                <div class="promotion-flag" v-if="item.promotionType === 'YH'">券</div>
+                <div class="promotion-flag" v-if="item.promotionType === 'ZK'">折</div>
+                <div class="promotion-flag" v-if="item.promotionType === 'TG'">团</div>
+              </div>
+              <div class="price" v-if="item.priceNegotiable== 1">待询价
                 <div class="promotion-flag" v-if="item.promotionType === 'YH'">券</div>
                 <div class="promotion-flag" v-if="item.promotionType === 'ZK'">折</div>
                 <div class="promotion-flag" v-if="item.promotionType === 'TG'">团</div>
               </div>
               <div class="buy">
-                <i class="iconfont icon-xiaogouwucheicon" @click.prevent="addToCart(index)"></i>
-                <span class="btn-buy"  @click.prevent="buyNow(index)">立即购买</span>
+                <!--<i class="iconfont icon-xiaogouwucheicon" @click.prevent="addToCart(index)"></i>-->
+                <!--<span class="btn-buy"  @click.prevent="buyNow(index)">立即购买</span>-->
+                <i class="iconfont icon-xiaogouwucheicon" @click.prevent="addToCart(index,'addCartItems')" v-if="item.priceNegotiable === 0"></i>
+                <i class="iconfont icon-xunjiadan-weixuanzhong" @click.prevent="addToCart(index,'addInquiry')" v-if="item.priceNegotiable === 1"></i>
+                <span class="btn-buy"  @click.prevent="buyNow(index,'buy_now')" v-if="item.priceNegotiable === 0">立即购买</span>
+                <span class="btn-buy"  @click.prevent="buyNow(index,'inquiryNow')" v-if="item.priceNegotiable === 1">立即询价</span>
               </div>
             </div>
           </div>
@@ -192,9 +206,9 @@
 		      }
 	      })
       },
-			addToCart(index){
+			addToCart(index,type){
 				console.log(index);
-				this.axios.post(this.baseURL.mall + "/m/cart/addCartItems"+this.Service.queryString({
+				this.axios.post(this.baseURL.mall + "/m/cart/"+type+this.Service.queryString({
 					token:this.mallToken.getToken(),
 					goodsId:this.resultList[index].goodsId,
 					count:1,
@@ -207,16 +221,16 @@
 						if(this.isApp.state){
 							window.location.href = "epipe://?&mark=login";
 						}else{
-							this.$router.replace("/accountlogin");
+							this.$router.replace("/verificationlogin?loginUrl="+encodeURIComponent(window.location.href)+"?key="+this.searchKey);
 						}
 					}else{
 						this.$toast(res.data.h.msg);
 					}
 				})
 			},
-			buyNow(index){
+			buyNow(index,type){
 				console.log(index);
-				this.axios.post(this.baseURL.mall + "/m/cart/buy_now"+this.Service.queryString({
+				this.axios.post(this.baseURL.mall + "/m/cart/"+type+this.Service.queryString({
 					token:this.mallToken.getToken(),
 					goodsId:this.resultList[index].goodsId,
 					count:1,
@@ -232,13 +246,60 @@
 						if(this.isApp.state){
 							window.location.href = "epipe://?&mark=login";
 						}else{
-							this.$router.replace("/accountlogin");
+							this.$router.replace("/verificationlogin?loginUrl="+encodeURIComponent(window.location.href)+"?key="+this.searchKey);
 						}
 					}else{
 						this.$toast(res.data.h.msg);
 					}
 				})
 			},
+//			addToCart(index){
+//				console.log(index);
+//				this.axios.post(this.baseURL.mall + "/m/cart/addCartItems"+this.Service.queryString({
+//					token:this.mallToken.getToken(),
+//					goodsId:this.resultList[index].goodsId,
+//					count:1,
+//					specId:this.resultList[index].specId
+//				})).then(res=>{
+//					console.log(res);
+//					if(res.data.h.code==200){
+//						this.$toast(res.data.b.msg);
+//					}else  if(res.data.h.code === 50 || res.data.h.code === 30){
+//						if(this.isApp.state){
+//							window.location.href = "epipe://?&mark=login";
+//						}else{
+//							this.$router.replace("/accountlogin");
+//						}
+//					}else{
+//						this.$toast(res.data.h.msg);
+//					}
+//				})
+//			},
+//			buyNow(index){
+//				console.log(index);
+//				this.axios.post(this.baseURL.mall + "/m/cart/buy_now"+this.Service.queryString({
+//					token:this.mallToken.getToken(),
+//					goodsId:this.resultList[index].goodsId,
+//					count:1,
+//					specId:this.resultList[index].specId
+//				})).then(res=>{
+//					console.log(res);
+//					if(res.data.h.code==200){
+//						localStorage.setItem("settleOrder",JSON.stringify(res.data.b));
+//						if(localStorage.getItem("settleOrder")){
+//							this.$router.push({path:'/ConfirmOrder'});
+//						}
+//					}else  if(res.data.h.code === 50 || res.data.h.code === 30){
+//						if(this.isApp.state){
+//							window.location.href = "epipe://?&mark=login";
+//						}else{
+//							this.$router.replace("/accountlogin");
+//						}
+//					}else{
+//						this.$toast(res.data.h.msg);
+//					}
+//				})
+//			},
 			getFloorData(){
 				this.axios.post(this.baseURL.mall+"/m/store/storeFloors"+this.Service.queryString({
 					storeId: this.$route.query.storeId
@@ -690,8 +751,10 @@
   .buy{
     font-size: 0;
   }
-  .icon-xiaogouwucheicon{
+  .icon-xiaogouwucheicon,.icon-xunjiadan-weixuanzhong{
     margin-right: 0.2rem;
+    font-size .18rem;
+    color #999;
   }
   .btn-buy{
     display inline-block;

@@ -27,12 +27,13 @@
               <p class="p2" v-html="item.specInfo"></p>
             </div>
             <div class="price-num">
-              <div class="price">
+              <div class="price" v-if="item.priceNegotiable === 0">
                 <span>￥</span><span>{{item.goodsPrice}}</span>
                 <div class="promotion-flag" v-if="item.promotionType === 'YH'">券</div>
                 <div class="promotion-flag" v-if="item.promotionType === 'ZK'">折</div>
                 <div class="promotion-flag" v-if="item.promotionType === 'TG'">团</div>
               </div>
+              <div class="price" v-if="item.priceNegotiable === 1"><span>待询价</span></div>
               <div class="num">
                 <span>x</span><span>{{item.goodsNum}}</span>
               </div>
@@ -41,40 +42,59 @@
         </div>
       </div>
     </div>
-    <div class="invoice-info">
+    <div class="invoice-info invoice-info-first" v-if="cartList[0].list[0].priceNegotiable === 0">
       <div>配送服务</div>
       <div>快递运输</div>
     </div>
-    <div class="invoice-info">
+    <div class="invoice-info invoice-info-first">
       <a href="#/Invoice">
         <div>发票信息</div>
         <div>{{invoiceType}}<i class="iconfont icon-jinru"></i></div>
       </a>
     </div>
-    <div class="invoice-info">
+    <div class="invoice-info" v-if="cartList[0].list[0].priceNegotiable === 1">
+      <div>运输方式</div>
+      <div>{{importWay}}</div>
+    </div>
+    <div class="invoice-info import-way-div" v-if="cartList[0].list[0].priceNegotiable === 1">
+      <div class="import-way"><i class="iconfont" :class="buyerReceive ? 'icon-xuanzhong1 select-d74a45' : 'icon-weixuan select-ccc' "  @click="chioceImportWay(1)"></i><span>买家自提</span></div>
+      <div><input type="text" placeholder="请选择提货日期" v-model="calendarTime.selectedDateBuy" @click="dateSelect(1)" readonly ></div>
+    </div>
+    <div class="invoice-info import-way-div import-way-div-last" v-if="cartList[0].list[0].priceNegotiable === 1">
+      <div class="import-way"><i class="iconfont" :class="sellerSend ? 'icon-xuanzhong1 select-d74a45' : 'icon-weixuan select-ccc' "  @click="chioceImportWay(2)"></i><span>卖家发货</span></div>
+      <div><input type="text" placeholder="请选择您希望送达的日期" v-model="calendarTime.selectedDateSell" @click="dateSelect(2)" readonly></div>
+    </div>
+    <calendar v-model="calendarTime.calendarShow" @change="dateChange" :min-date="calendarTime.minDate"></calendar>
+    <div class="invoice-info" v-if="cartList[0].list[0].priceNegotiable === 0">
       <div>折扣优惠</div>
       <div>￥{{priceInfo.promoAmount}}<i class="iconfont icon-jinru" v-if="priceInfo.promoAmount !== 0"></i></div>
     </div>
-    <div class="invoice-info coupon-price">
+    <div class="invoice-info coupon-price invoice-info-first" v-if="cartList[0].list[0].priceNegotiable === 0">
       <div>优惠券</div>
       <div>￥{{priceInfo.couponAmount}}<i class="iconfont icon-jinru" v-if="priceInfo.couponAmount !== 0"></i></div>
     </div>
-    <div class="total-price">
+    <div class="total-price" v-if="cartList[0].list[0].priceNegotiable === 0">
       <div><span>商品金额</span><span>￥{{priceInfo.goodsAmount}}</span></div>
       <div><span>运　　费</span><span>￥0.00</span></div>
       <div><span>优　　惠</span><span>￥{{priceInfo.discount}}</span></div>
       <div><span></span><span><i>付款金额：</i>￥{{priceInfo.goodsTotalPrice}}</span></div>
     </div>
-    <div class="wx-pay" @click="submitPayWx"  v-if="!isNotApp"><div>微信支付</div></div>
-    <div class="wx-pay" @click="submitPayZfb" v-if="isNotApp"><div>支付宝支付</div></div>
-    <!--<form  :action="formUrl" method="post" v-if="isNotApp">-->
-      <!--<input type="hidden" v-model="token" name="token">-->
-      <!--<input type="hidden" v-model="cartIds" name="cartIds">-->
-      <!--<input type="hidden" v-model="addressId" name="addressId">-->
-      <!--<input type="hidden" v-model="openInv" name="openInv">-->
-      <!--<input type="hidden" v-model="invoiceId" name="invoiceId">-->
-      <!--<div class="wx-pay"><input type="submit" value="支付宝支付"></div>-->
-    <!--</form>-->
+    <div class="wx-pay" @click="submitPayWx"  v-if="cartList[0].list[0].priceNegotiable === 0"><div>微信支付</div></div>
+    <div class="wx-pay" @click="inquirySubmit"  v-if="cartList[0].list[0].priceNegotiable === 1"><div>提交询价单</div></div>
+    <div class="wx-pay zfb-pay" @click="submitPayZfb" v-if="isNotApp && cartList[0].list[0].priceNegotiable === 0"><div>支付宝支付</div></div>
+    <div class="dialog" v-if="showDialog" @touchmove.prevent>
+      <div class="dialog_box">
+        <div class="dialog-title">
+          请确认微信支付是否已完成
+        </div>
+        <div class="dialog-cont" @click="go_payDetails">
+          已完成支付
+        </div>
+        <div class="dialog-rests" @click="go_payDetails">
+          支付遇到问题,重新支付
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script>
@@ -84,6 +104,9 @@
 	      formUrl:'',
 	      token:'',
 	      addressId:'',
+	      orderSn:'',
+	      showDialog:false,
+	      backDialog:false,
 	      imgPrefix:'',   //图片地址前缀
 	      cartList:'',    //结算订单列表
 	      addressList:'', //收件地址
@@ -92,13 +115,22 @@
 	      cartIds:[],
 	      openInv:0,
 	      invoiceId:'',
-	      isNotApp:false
+	      isNotApp:false,
+	      importWay:'',
+	      buyerReceive: false,
+        sellerSend: false,
+	      pickUpTime:'',
+	      calendarTime: {
+		      calendarShow: false,
+		      minDate: new Date(),
+		      selectedDateBuy: '',
+		      selectedDateSell: ''
+	      },
       }
     },
     methods:{
       getSettlement(){
         let settleOrder=JSON.parse(localStorage.getItem("settleOrder"));
-        console.log(settleOrder);
         this.imgPrefix=settleOrder.imgPrefix;
         this.cartList=settleOrder.cartVoList;
         for(let i=0;i<this.cartList.length;i++){
@@ -107,10 +139,11 @@
           }
         }
         this.priceInfo=settleOrder.map;
+        console.log(this.cartList);
         this.axios.post(this.baseURL.mall + "/m/my/queryUserAddress"+this.Service.queryString({
           token:this.mallToken.getToken(),
         })).then(res=>{
-          console.log(res);
+          //console.log(res);
           if(res.data.h.code==200){
             this.addressList=res.data.b;
             //this.addressId=this.addressList[0].addressId;
@@ -159,7 +192,7 @@
         //alert(this.openInv);
         //console.log(this.addressList);
         if(this.addressList.length>0){
-	        this.axios.post(this.baseURL.mall + "/m/my/getCode"+this.Service.queryString({
+	        this.axios.post(this.baseURL.mall + "/m/my/"+(this.isNotApp ? 'h5_wxpay' : (this.mallType.type === "2c" ? "getCode" : "h52bWXPay"))+this.Service.queryString({
 		        token:this.mallToken.getToken(),
 		        cartIds:this.cartIds.join(','),
 		        addressId:this.addressList[0].addressId,
@@ -169,7 +202,21 @@
 		        console.log(res);
 		        if(res.data.h.code==200) {
 //            localStorage.removeItem('invoiceListArr');
-			        window.location.href = res.data.b;
+              if(this.isNotApp){
+	              let data={};
+	              this.orderSn=res.data.b.orderSn;
+	              data.orderSn=res.data.b.orderSn;
+	              data.imgPrefix=this.imgPrefix;
+	              console.log(data);
+	              data=JSON.stringify(data);
+	              console.log(data);
+	              window.location.href = "epipe://?&mark=weChatPay&data="+data+"&url="+res.data.b.orderStr+ '&redirect_url='+location.href;
+	              setTimeout(()=>{
+		              this.showDialog = true;
+	              },3500)
+              }else{
+	              window.location.href = res.data.b;
+              }
 		        }else if(res.data.h.code === 30 || res.data.h.code === 50){
 			        if(this.isApp.state){
 				        window.location.href = "epipe://?&mark=login";
@@ -182,6 +229,9 @@
 	        this.$toast('请选择收货地址');
         }
       },
+	    go_payDetails(){
+		    this.$router.replace({path:'/orderdetails',query:{orderSn:this.orderSn,imgPrefix:this.imgPrefix}})
+	    },
       queryInvoice(){
         this.axios.post(this.baseURL.mall + "/m/my/queryInvoice"+this.Service.queryString({
           token:this.mallToken.getToken()
@@ -212,6 +262,69 @@
             }
           }
         })
+      },
+	    dateSelect(type){
+      	if( this.buyerReceive == false && type == 1){
+		      this.$toast('请先选中对应的运输方式');
+      		return false;
+        }
+		    if( this.sellerSend == false && type == 2){
+			    this.$toast('请先选中对应的运输方式');
+			    return false;
+		    }
+      	this.calendarTime.calendarShow = true;
+      },
+      dateChange(date, formatDate) {
+	    	if(this.buyerReceive == true){
+			    this.calendarTime.selectedDateBuy = formatDate;
+        }else if(this.sellerSend == true){
+			    this.calendarTime.selectedDateSell = formatDate;
+        }
+        this.pickUpTime = formatDate;
+      },
+	    chioceImportWay(type){
+	    	if(type == 1 && this.buyerReceive == false){
+	    		this.buyerReceive = true;
+	    		this.sellerSend = false;
+	    		this.importWay = '买家自提';
+			    this.calendarTime.selectedDateSell = '';
+        }else if(type == 2 && this.sellerSend == false){
+			    this.buyerReceive = false;
+			    this.sellerSend = true;
+			    this.importWay = '卖家发货';
+			    this.calendarTime.selectedDateBuy = '';
+        }
+      },
+	    inquirySubmit(){
+	    	if(!this.buyerReceive && !this.sellerSend){
+	    		this.$toast('请选择运输方式');
+	    		return false;
+        }
+        if(this.pickUpTime == ''){
+	        this.$toast('请选择对应日期');
+	        return false;
+        }
+        if(this.sellerSend && this.addressList.length == 0){
+        	this.$toast('请选择收货地址');
+        	return false;
+        }
+		    this.axios.post(this.baseURL.mall + "/m/cart/submitInquiry"+this.Service.queryString({
+			    token:this.mallToken.getToken(),
+			    cartIds:this.cartIds.join(','),
+			    addressId:this.addressList.length>0 ? this.addressList[0].addressId : '',
+			    openInv:this.openInv,
+			    invoiceId:this.invoiceId,
+			    transportWay: this.buyerReceive ? 1 : 2,
+			    pickUpTime: this.pickUpTime
+		    })).then(res=>{
+			    console.log('询价单',res);
+			    if(res.data.h.code == 200){
+			    	this.$toast('提交询价单成功');
+				    this.$router.push({path:'/MyInquiryOrder'});
+          }else{
+			    	this.$toast(res.data.b.msg);
+          }
+		    })
       }
     },
     created(){
@@ -227,11 +340,11 @@
   }
 </script>
 <style lang="stylus" scoped>
-    input{
-        -webkit-appearance: none;
-        outline none;
-        background transparent;
-    }
+  input{
+    -webkit-appearance: none;
+    outline none;
+    background transparent;
+  }
   .confirm-order{
     overflow hidden;
     -webkit-overflow-scrolling:tocuh;
@@ -391,6 +504,34 @@
           font-size .12rem;
           color #ccc;
         }
+        .select-ccc{
+          color #ccc;
+        }
+        .select-d74a45{
+          color #d74a45;
+        }
+        input{
+          height .3rem;
+          padding-left .1rem;
+          width 2.2rem;
+          color #333;
+          background #f2f2f5 ;
+          &::-webkit-input-placeholder{
+            color #ccc;
+          }
+        }
+      }
+      .import-way{
+        font-size .14rem!important;
+        line-height .45rem;
+        i{
+          font-size .18rem;
+          margin-right .1rem;
+          vertical-align middle;
+        }
+        span{
+          vertical-align middle;
+        }
       }
       div:first-child{
         float left;
@@ -403,9 +544,14 @@
         color #333;
       }
     }
-    .invoice-info:last-child{
+    .invoice-info-first{
+      border-bottom none;
+    }
+    .import-way-div{
       margin-top 0;
-      border none;
+    }
+    .import-way-div-last{
+      border-bottom none;
     }
     .coupon-price{
       margin-top 0;
@@ -449,6 +595,85 @@
           background #54b736;
           border-radius 4px;
       }
-     }
+    }
+    .zfb-pay{
+      padding-top 0;
+    }
+  }
+  .dialog{
+    position fixed;
+    width 100%;
+    height 100%;
+    top 0;
+    z-index 5;
+    font-size 0.18rem;
+    background-color rgba(0,0,0,0.5)
+  
+    &_box{
+      display flex;
+      flex-direction:column;
+      width 2.7rem;
+      height 1.5rem;
+      position absolute;
+      left 0;
+      right 0;
+      top 0;
+      bottom 0;
+      margin auto;
+      background #fff;
+      text-align center;
+      border-radius 0.08rem;
+    
+    
+      >div{
+        font-size 0.16rem;
+      }
+    
+      .dialog-title{
+        border-bottom 0.01rem solid #ccc;
+        color #999
+        line-height 0.45rem;
+      }
+    
+      .dialog-cont{
+        color #0fc37c
+        margin  0.21rem 0
+      }
+    
+    }
+  
+    &_btn{
+      display flex;
+      height 0.4rem;
+      line-height 0.4rem;
+    
+      a{
+        flex 1
+      }
+    }
+  
+    &_main{
+      height 1.1rem;
+      border-bottom 0.01rem solid #ebebeb
+    
+    
+      p{
+        padding 0 0.1rem;
+      }
+    
+      h4{
+        text-align left
+        text-indent 0.15rem;
+        margin 0.1rem 0;
+        margin-bottom 0.15rem;
+        font-size 0.16rem;
+        font-weight bold
+      }
+    }
+  
+    .continue{
+      border-right 0.01rem solid #ebebeb
+    }
+  
   }
 </style>

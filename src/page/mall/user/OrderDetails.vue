@@ -19,15 +19,8 @@
       <!--</div>-->
       <div class="btn-wrapper" v-if="objData.orderState === 10">
         <div class="btn btn-cancel" @click="handleCancel">取消订单</div>
-        <div class="btn btn-pay" @click="wepay" v-if="!isNotApp">微信支付</div>
+        <div class="btn btn-pay" @click="wepay">微信支付</div>
         <div class="btn btn-pay" @click="submitzfb" v-if="isNotApp">支付宝支付</div>
-        <!--<div class="btn btn-pay"  v-if="isNotApp">-->
-          <!--<form  :action="formUrl" method="post">-->
-            <!--<input type="hidden" v-model="token" name="token">-->
-            <!--<input type="hidden" v-model="orderSn" name="orderSn">-->
-            <!--<input type="submit" value="支付宝支付" style="background: none;font-size: 16px;color: #fff;">-->
-          <!--</form>-->
-        <!--</div>-->
       </div>
       <div class="btn-wrapper" v-else-if="objData.orderState === 20">
         <div class="btn btn-refund" @click="refund" v-if="!objData.returnGoodsState && !objData.returnRefundState">申请退款</div>
@@ -51,10 +44,11 @@
           <span class="line-content line-price">￥{{objData.orderAmount}}</span>
         </p>
         <p class="line">
-          <span class="line-title">收货地址:</span>
+          <span class="line-title" v-if="!objData.transportWay || objData.transportWay == 2">收货地址:</span>
+          <span class="line-title" v-if="objData.transportWay && objData.transportWay == 1">提货地址:</span>
           <span class="line-content" v-if="objData.address">{{objData.address.areaInfo | filterStr}}{{objData.address.address}}</span>
         </p>
-        <p class="line">
+        <p class="line" v-if="!objData.transportWay || objData.transportWay == 2">
           <span class="line-title">收货人:</span>
           <span class="line-content" v-if="objData.address">{{objData.address.trueName}}&emsp;{{objData.address.mobPhone | filterPhone}}</span>
         </p>
@@ -137,6 +131,19 @@
       </div>
       <div class="price-sub"><span class="sub-title">实付金额:</span><span class="price-amount">￥{{objData.orderAmount}}</span></div>
     </section>
+    <div class="dialog" v-if="showDialog" @touchmove.prevent>
+      <div class="dialog_box">
+        <div class="dialog-title">
+          请确认微信支付是否已完成
+        </div>
+        <div class="dialog-cont" @click="go_payDetails">
+          已完成支付
+        </div>
+        <div class="dialog-rests" @click="go_payDetails">
+          支付遇到问题,重新支付
+        </div>
+      </div>
+    </div>
     <footer-tab :category="3"></footer-tab>
   </div>
 </template>
@@ -159,11 +166,14 @@
         invoice: {},
         statusTitle: "",
         isNotApp:false,
-        formUrl:''
+        formUrl:'',
+	      showDialog:false
       }
     },
     created(){
       document.title="订单详情";
+      //this.orderSn = this.$route.query.orderSn;
+      //this.$alert(window.location.href);
       this.getData();
       if(this.isApp.state){
         this.isNotApp=true;
@@ -213,20 +223,20 @@
             this.invoice = res.data.b.order.invoice.split("&nbsp;&nbsp;");
             if(res.data.b.orderInvoice){
               this.orderInvoice = res.data.b.orderInvoice;
-            }
-            if(this.objData.returnRefundState){
-              switch (this.objData.returnRefundState){
-                case 1:
-                  this.statusTitle = "申请退款中";
-                  break;
-                case 2:
-                  this.statusTitle = "审核通过";
-                  break;
-                case 3:
-                  this.statusTitle = "审核不通过";
-                  break;
-                case 4:
-                  this.statusTitle = "退款完成";
+              }
+	            if(this.objData.returnRefundState){
+		            switch (this.objData.returnRefundState){
+			            case 1:
+				            this.statusTitle = "申请退款中";
+				            break;
+			            case 2:
+				            this.statusTitle = "审核通过";
+				            break;
+			            case 3:
+				            this.statusTitle = "审核不通过";
+				            break;
+			            case 4:
+				            this.statusTitle = "退款完成";
                   break;
               }
             }else{
@@ -272,12 +282,25 @@
       },
       /*微信支付*/
       wepay(){
-        this.axios.post(this.baseURL.mall + "/m/my/getCodeByOrderListOrDetail" + this.Service.queryString({
+        this.axios.post(this.baseURL.mall + "/m/my/"+ (this.isNotApp ? 'h5_wxpay_order' : (this.mallType.type === "2c" ? "getCodeByOrderListOrDetail" : "h52bWXPay")) + this.Service.queryString({
           token: this.token,
           orderSn: this.orderSn
         })).then(res =>{
           if(res.data.h.code === 200){
-            window.location.href = res.data.b;
+	          if(this.isNotApp){
+		          let data={};
+		          data.orderSn=res.data.b.orderSn;
+		          data.imgPrefix=this.imgPrefix;
+		          console.log(data);
+		          data=JSON.stringify(data);
+		          console.log(data);
+		          window.location.href = "epipe://?&mark=weChatPay&data="+data+"&url="+res.data.b.orderStr+ '&redirect_url='+location.href;
+		          setTimeout(()=>{
+			          this.showDialog = true;
+		          },3500);
+	          }else{
+		          window.location.href = res.data.b;
+	          }
           }else{
             this.$alert(res.data.h.msg);
           }
@@ -299,6 +322,10 @@
 				    window.location.href = "epipe://?&mark=aliPay&data="+data+"&url="+res.data.b.orderStr;
 			    }
 		    })
+	    },
+	    go_payDetails(){
+		    this.showDialog = false;
+		    this.getData();
 	    },
       /*申请退货*/
       goodsReturn(){
@@ -494,5 +521,81 @@
     font-size 15px;
     font-weight bold;
     color: #333;
+  }
+  .dialog{
+    position fixed;
+    width 100%;
+    height 100%;
+    top 0;
+    z-index 5;
+    font-size 0.18rem;
+    background-color rgba(0,0,0,0.5)
+  
+    &_box{
+      display flex;
+      flex-direction:column;
+      width 2.7rem;
+      height 1.5rem;
+      position absolute;
+      left 0;
+      right 0;
+      top 0;
+      bottom 0;
+      margin auto;
+      background #fff;
+      text-align center;
+      border-radius 0.08rem;
+    
+    
+      >div{
+        font-size 0.16rem;
+      }
+    
+      .dialog-title{
+        border-bottom 0.01rem solid #ccc;
+        color #999
+        line-height 0.45rem;
+      }
+    
+      .dialog-cont{
+        color #0fc37c
+        margin  0.21rem 0
+      }
+    
+    }
+  
+    &_btn{
+      display flex;
+      height 0.4rem;
+      line-height 0.4rem;
+    
+      a{
+        flex 1
+      }
+    }
+  
+    &_main{
+      height 1.1rem;
+      border-bottom 0.01rem solid #ebebeb
+    
+    
+      p{
+        padding 0 0.1rem;
+      }
+    
+      h4{
+        text-align left
+        text-indent 0.15rem;
+        margin 0.1rem 0;
+        margin-bottom 0.15rem;
+        font-size 0.16rem;
+        font-weight bold
+      }
+    }
+  
+    .continue{
+      border-right 0.01rem solid #ebebeb
+    }
+  
   }
 </style>

@@ -17,7 +17,8 @@
         </div>
         <div class="goods-des">
           <p>{{item.goodsName}}</p>
-          <div class="goods-price"><span>￥</span><span>{{goodsStorePrice}}</span><span class="origina-priece" v-if="item.promotionType === 'TG'">市场价￥{{item.goodsOriginalPrice}}</span></div>
+          <div class="goods-price"  v-if="item.priceNegotiable === 0"><span>￥</span><span>{{goodsStorePrice}}</span><span class="origina-priece" v-if="item.promotionType === 'TG'">市场价￥{{item.goodsOriginalPrice}}</span></div>
+          <div class="goods-price"  v-if="item.priceNegotiable === 1"><span>待询价</span></div>
           <div class="promotion-detail" v-if="item.promotionType === 'YH'">
             <div class="promotion-tit">领券</div>
             <div class="promotion-con" @click="showPromotionInfo('YH')"><span v-for="(coupon,index) in item.promotionList" :key="index" v-if="index < 2">{{coupon.couponDesc}}</span></div>
@@ -117,15 +118,23 @@
             <p><i class="iconfont" :class="collectNum==0 ? 'icon-shoucang-weixuan color999' : 'icon-shoucang-xuanzhong colorff8800'"></i></p>
             <p>收藏</p>
           </div>
-          <div>
+          <div v-if="priceNegotiable === 0">
             <a href="#/ShopList">
               <p><i class="iconfont icon-gouwucheicon color999"></i></p>
               <p>购物车</p>
             </a>
           </div>
+          <div v-if="priceNegotiable === 1">
+            <a href="#/InquiryList">
+              <p><i class="iconfont icon-xunjiadan-weixuanzhong color999"></i></p>
+              <p>待询价</p>
+            </a>
+          </div>
         </li>
-        <li @click="addToCart">加入购物车</li>
-        <li @click="buyNow">立即购买</li>
+        <li v-if="priceNegotiable === 0 " @click="addToCartInquiry('addCartItems')">加入购物车</li>
+        <li v-if="priceNegotiable === 0 " @click="buyInquiryNow('buy_now')" >立即购买</li>
+        <li v-if="priceNegotiable === 1 " @click="addToCartInquiry('addInquiry')">加入待询价</li>
+        <li v-if="priceNegotiable === 1 " @click="buyInquiryNow('inquiryNow')">立即询价</li>
       </ul>
     </div>
     <div class="promotion-popup" v-if="promotionShowState && promotionType === 'YH'" @touchmove.prevent>
@@ -212,7 +221,8 @@
         collectNum:0,
         promotionShowState:false,
 	      promotionType:'',
-        promotionList:[]
+        promotionList:[],
+	      priceNegotiable:''
       }
     },
     components: {
@@ -347,15 +357,15 @@
           }
         })
       },
-      //加入购物车
-      addToCart(){
+      //加入购物车(加入待询价)
+	    addToCartInquiry(url){
         if(this.specList.length>0){
           if(this.specId==''){
             this.$toast('请选择规格');
             return false;
           }
         }
-        this.axios.post(this.baseURL.mall + "/m/cart/addCartItems"+this.Service.queryString({
+        this.axios.post(this.baseURL.mall + "/m/cart/"+url+this.Service.queryString({
           token:this.mallToken.getToken(),
           goodsId:this.goodsId,
           count:this.buyValue,
@@ -375,15 +385,15 @@
           }
         })
       },
-      //立即购买
-      buyNow(){
+      //立即购买(立即询价)
+	    buyInquiryNow(url){
         if(this.specList.length>0){
           if(this.specId==''){
             this.$toast('请选择规格');
             return false;
           }
         }
-        this.axios.post(this.baseURL.mall + "/m/cart/buy_now"+this.Service.queryString({
+        this.axios.post(this.baseURL.mall + "/m/cart/"+url+this.Service.queryString({
           token:this.mallToken.getToken(),
           goodsId:this.goodsId,
           count:this.buyValue,
@@ -428,6 +438,7 @@
             this.goodsStorePrice=goodsData.goods[0].goodsStorePrice;
             this.promotionType=goodsData.goods[0].promotionType;
             this.goodsList=goodsData.goods;
+            this.priceNegotiable=goodsData.goods[0].priceNegotiable;
             this.storeId=goodsData.goods[0].storeId;
             if(goodsData.goodsSpecObj){
               this.goodsSpecObj=goodsData.goodsSpecObj;
