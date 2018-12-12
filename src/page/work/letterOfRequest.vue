@@ -1,7 +1,7 @@
 <template>
     <section>
         <TopHead
-        :native= native
+        mark= 'mark'
         bgcolor = '#ff8800'
         title="请示函" 
         v-on:history_back="history_back_click"
@@ -14,53 +14,32 @@
 
             <div class="styles">
                 <p class="title">请示函内容</p>
-                <textarea v-model="content" name="" id="" cols="30" rows="10" placeholder="请输入请示函内容">
+                <textarea v-model="content" name="" id="" maxlength="1000" cols="30" rows="10" placeholder="请输入请示函内容,限定1000字">
 
                 </textarea>
-            </div>
-
-            <div class="styles">
-                <p class="title">附件</p>
-                <div style="padding-bottom:0.15rem">
-                    <ul class="accessory">
-                        <li  v-for="(item,index) in accessory">
-                            <img @click="go_fildDetails(item.url)" v-if="item.isImg"  :src="item.url"/>
-                            <img @click="go_fildDetails(item.url)" v-if="!item.isImg" src="../../assets/wenjian.png"/>
-                            <div @click="go_fildDetails(item.url)"  class="accessory-cont">
-                                <p >{{item.fileName}}</p>
-                                <span>{{item.fileSize | fileSize}}kb</span>
-                            </div>
-                            <div @click="deleteFile(index)" class="accessory-delete">
-                                <svg style="font-size: 0.15rem" class="icon" aria-hidden="false">
-                                    <use xlink:href="#icon-shanchu"></use>
-                                </svg>
-                            </div>
-                        </li>
-                    </ul>
-                    
-                    <div v-if="accessory.length<5"  @click="addAccessory()" class="add-btn">
-                        <svg style="font-size: 0.33rem" class="icon" aria-hidden="false">
-                            <use xlink:href="#icon-tianjiarenyuan"></use>
-                        </svg>
-                        <div>
-                            <p>仅支持图片、文档(.doc/.docx/.exls/.exl/.ppt/.txt)</p>
-                        </div>
-                    </div>
+                <div class="record_box">
+                        <span>{{textNum}}/1000</span>
                 </div>
             </div>
+
+            <Accessory
+                :accessory ='accessory'
+            >
+            </Accessory>
             
             <ApproverMan 
                 :has_journal="!has_journal"
-                color="#609ef7"
+                color="#ff8800"
                 :data_list=approver_list
                 v-on:remove_item="remove_item"
                 :special_class='1'
                 :isGroup = true
+                type = 3
             ></ApproverMan>
 
             <CopeMan 
                 :has_journal="!has_journal"
-                color="#609ef7"
+                color="#ff8800"
                 :data_list=chosed_list
                 v-on:remove_item="remove_item"
                 :special_class='1'
@@ -79,6 +58,16 @@
                 
             ></WorkButton>
 
+             <Dialog
+                lfText="保存"
+                rgText="不保存"
+                content="保存此次编辑?"
+                v-on:lfClick="lf_click"
+                v-on:rgClick="rg_click"
+                v-show="isShow"
+                >
+            </Dialog>
+
     </section>
 </template>
 
@@ -87,7 +76,10 @@
 let save_leave = (index,text,that) =>{
     if(that.theme== ''){
         that.$toast('主题不能为空')
-    }else if(that.content==''){
+    }else if(that.theme.length<6||that.theme.length>30){
+        that.$toast('主题内容需6~30字之间')
+    }
+    else if(that.content==''){
         that.$toast('请示函内容不能为空')
     }else if(that.approver_list.length == 0){
         that.$toast('请选择审批人')
@@ -131,29 +123,48 @@ let save_leave = (index,text,that) =>{
         fileSizeStr = fileSizeStr.slice(1)
         fileNameStr = fileNameStr.slice(1)
 
-        // let string_img = "" //附件
-        // for (let i = 0; i < that.accessory.length; i++) {
-        //     string_img = string_img + "|" + that.accessory[i]
-        // }
-        // console.log(that.chosed_list.that.approver_list)
-        // console.log(chosed_id,approver_id)
-        // string_img = string_img.slice(1)
-        that.axios.post('/work/letter/save' + that.Service.queryString({
-          Id :that.id, // id
-          theme:that.theme,//主题
-          content:that.content, //请示函内容
-          Url : urlStr, //附件
-          fileName:fileNameStr, 
-          fileSize:fileSizeStr,
-          auditUserIds: approver_id, //审批人
-          receiverIds: chosed_id, //抄送人
-          draftFlag : index, //草稿还是发送
-        })).then(function (res){
-            if(res.data.h.code==1503||res.data.h.code==1500||res.data.h.code==1502||res.data.h.code==1501){
+        that.axios({
+                method:"post",
+                url:"/work/letter/save",
+                headers:{
+                    'Content-type': 'application/x-www-form-urlencoded'
+                },
+                data:{
+                    Id :that.id, // id
+                    theme:that.theme,//主题
+                    content:encodeURI(that.content), //请示函内容
+                    Url : urlStr, //附件
+                    fileName:fileNameStr, 
+                    fileSize:fileSizeStr,
+                    auditUserIds: approver_id, //审批人
+                    receiverIds: chosed_id, //抄送人
+                    draftFlag : index, //草稿还是发送
+                    },
+                    transformRequest: [function (data) {
+                        let ret = ''
+                        for (let it in data) {
+                        ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+                        }
+                        return ret
+                    }],
+                }).then((res)=>{                    
+
+        // that.axios.post('/work/letter/save' + that.Service.queryString({
+        //   Id :that.id, // id
+        //   theme:that.theme,//主题
+        // //   content:encodeURI(that.content), //请示函内容
+        //   content:encodeURI(that.content), //请示函内容
+        //   Url : urlStr, //附件
+        //   fileName:fileNameStr, 
+        //   fileSize:fileSizeStr,
+        //   auditUserIds: approver_id, //审批人
+        //   receiverIds: chosed_id, //抄送人
+        //   draftFlag : index, //草稿还是发送
+        // })).then(function (res){
+            if(res.data.h.code!=200){
                 that.$toast(res.data.h.msg)
             }else if(res.data.h.code == 200){
                 if(index){
-
                     that.$toast('已保存至草稿箱!')
                     setTimeout(()=>{
                         window.location.href = "epipe://?&mark=history_back";
@@ -165,6 +176,9 @@ let save_leave = (index,text,that) =>{
                         // that.$router.push({path:'/leOfReDetails',query:{letterId:res.data.b,isH5:true}})
                         window.location.href = "epipe://?&mark=submitLetter&_id="+res.data.b;
                     },500)
+
+                    localStorage.removeItem('letter')
+                
                 }
             }
       })
@@ -172,14 +186,16 @@ let save_leave = (index,text,that) =>{
 }
 
 import {mapState, mapMutations} from 'vuex';
+import Accessory  from '../../components/worknews/accessory_select.vue'    //附件
 import WorkButton  from '../../components/worknews/work_button.vue'   //提交按钮
 import CopeMan  from '../../components/worknews/copy_man.vue'    //抄送人
 import ApproverMan  from '../../components/worknews/approver_man.vue'    //审批人
 import TopHead  from '../../components/topheader.vue'  //header导航栏
+import Dialog  from '../../components/oa/dialog.vue'    //弹窗
+
 export default {
         data(){
             return{
-                dataObj:[],
                 id:'',
                 theme: '', //主题
                 content:'',//内容
@@ -187,7 +203,9 @@ export default {
                 approver_list : [], //审批人
                 accessory :[],
                 isDraftFlag:0, //判断是不是草稿
-                native:'native',
+                isShow:false,
+                textNum : 0,  //请假输入字数
+                oldData:null,
                 
             }
         },
@@ -195,19 +213,64 @@ export default {
             WorkButton,
             CopeMan,
             ApproverMan,
-            TopHead
+            TopHead,
+            Accessory,
+            Dialog
         },
         methods:{
         ...mapMutations(['change_man','approver_man']),
         save_btn(){ //保存草稿
-            this.check()?save_leave(1, "存入草稿成功", this):'';
+            save_leave(1, "存入草稿成功", this)
         },
         submit_btn(){ //提交
-            this.check()?save_leave(0, "提交成功", this):'';
+            save_leave(0, "提交成功", this)
+        },
+        history_back_click(){
+            if(!this.isUpdate()){
+                 window.location.href = "epipe://?&mark=history_back"
+            }else{
+                this.isShow = true;
+            }
+        },
+        lf_click(){
+            this.isShow=false;
+            if(this.$route.query.letterId&&!this.$route.query.resubmit){
+                 save_leave(1, "存入草稿成功", this)
+            }else{
+                localStorage.setItem('letter',JSON.stringify(this.$data))
+            }
+            window.location.href = "epipe://?&mark=history_back"
+        },
+        rg_click(){
+            this.isShow=false;
+            localStorage.removeItem('letter')
+            window.location.href = "epipe://?&mark=history_back"
+        },
+        isUpdate(){
+            let data = this.$data;
+            for(let key in data){
+               if(key=='approver_list'||key=='chosed_list'||key=='accessory'){
+                    if(data[key].length!=this.oldData[key].length){
+                        return true
+                    }
+                    for(let i=0;i<data[key].length;i++){
+
+                        if(key!='accessory'&&data[key][i].auditUserId!=this.oldData[key][i].auditUserId){
+                            return true
+                        }else if(key=='accessory'&&data[key][i].url!=this.oldData[key][i].url){
+                            return true
+                        }
+                    }
+                }else if(key!='oldData'&&key!='approver_list'&&key!='chosed_list'&&key!='accessory'){
+                    if(data[key]!=this.oldData[key]){
+                        return true;
+                    }
+                }
+            }
+            return false
         },
         addAccessory:function(){
             let that = this;
-            
             window["epipe_camera_callback"] = (url,fileSize,fileName) => {
                     var obj = {
                             url,
@@ -222,7 +285,6 @@ export default {
             
         },
         deleteFile:function(index){  //删除附件
-
             this.accessory.splice(index,1)
         },
         go_fildDetails: function (url) { //查看图片详情
@@ -238,19 +300,6 @@ export default {
             if(this.content.length>1000){
                 this.$toast('请示函内容不能超过1000字')
                 return false
-            }
-            if(this.newCopy){
-                for(let i=0;i<this.newCopy.length;i++){
-
-                    for(let j=0;j<this.dataObj.receivers.length;j++){
-
-                        if(this.newCopy[i].userId==this.dataObj.receivers.receiverId){
-
-                            this.$toast('你添加的抄送人重复')
-                            return false;
-                        }
-                    }
-                }
             }
             return true
         },
@@ -279,7 +328,7 @@ export default {
 
             },
         accessoryFor:function(data){
-              if(!data.accessory.length) return false;
+              if(!data.accessory) return false;
                var urlArr = data.accessory.url.split('|')
                var fileSizeArr = data.accessory.fileSize.split('|')
                var fileNameArr = data.accessory.fileName.split('|')
@@ -292,21 +341,40 @@ export default {
                 }
 
             },
-            history_back_click:function(){
-                window.location.href = "epipe://?&mark=history_back&url=myApply"
+        },
+        watch:{
+            content : function(){
+                if(this.content.length>1000){
+                    this.$toast("最多输入1000字~")
+                    return
+                }
+                this.textNum = this.content.length
             }
         },
         filters:{
           fileSize:function(value){
-              return parseInt(value)%1024
+              value = value - 0
+            var num =  parseInt(value)/1024/1024
+
+            return num.toFixed(2)
           }  
         },
         activated(){
             this.approver_list = this.approver_man_state
             this.chosed_list = this.chosed_man_state
          },
+        created(){
+             if(localStorage.getItem('letter')){
+                let letterdata = JSON.parse(localStorage.getItem('letter'))
+                for(let key in letterdata){
+                    this.$data[key] = letterdata[key]
+                }
+                this.approver_man(this.$data.approver_list)
+                this.change_man(this.$data.chosed_list)
+            }
+            this.oldData = JSON.parse(JSON.stringify(this.$data))
+        },
         mounted(){
-
                 window["epipe_camera_callback"] = (url,fileSize,fileName) => {
                     var obj = {
                             url,
@@ -318,48 +386,27 @@ export default {
 
                 }
 
-                this.dataObj=[];
-                this.id='';
-                this.theme = ''; //主题
-                this.content='';//内容
-                this.chosed_list=[]; //抄送人
-                this.approver_list=[]; //审批人
-                this.accessory=[];
-                this.isDraftFlag=0;
-                this.dataObj = [];
-                this.approver_man_state = []
-                this.chosed_man_state = []
             let that = this;
             if(this.$route.query.letterId){
                   this.axios.get('/work/letter/info?letterId='+this.$route.query.letterId).then(function(res){
                        let data = res.data.b.data[0];
-                       that.id = data.letterId;
-                       that.isDraftFlag = 1;
-                       that.native = 'mark';
+                       if(!that.$route.query.resubmit){
+                            that.id = data.letterId;
+                        }
+                        that.isDraftFlag = 1;
                         that.accessoryFor(data)
                         that.theme = data.theme;
                         that.content = data.content;
                         that.theme = data.theme;
+                        that.textNum = data.content.length;
                         that.chosed_list = data.receivers;
                         that.change_man(that.chosed_list);
                         that.approver_list = data.auditers;
                         that.approver_man(that.approver_list);
+                        that.oldData = JSON.parse(JSON.stringify(that.$data))
                     })
                     return
             }
-
-            this.axios.get(this.Service.reportReceiver).then(function (data) { //查询抄送人
-                if (data.data.h.code == 10) {
-                    window.location.href = "epipe://?&mark=login_out"
-                } else if (data.data.h.code == 200) {
-                    that.chosed_list = data.data.b.data
-                    that.chosed_list.forEach(function(item){
-                        item.receiverId = item.userId;
-                    })
-                    window.localStorage.chosed_list = JSON.stringify(that.chosed_list)
-                    that.change_man(that.chosed_list)
-                }
-            })
         },
         computed: mapState(["chosed_man_state","approver_man_state"])
         
@@ -468,6 +515,18 @@ export default {
             vertical-align: middle; 
             word-wrap: break-word;
             word-break: break-all;
+        }
+    }
+
+     .record_box{
+        overflow hidden;
+        margin-bottom 0.08rem;
+        font-size 0.12rem;
+
+
+        span{
+            float right;
+            color: rgb(96, 158, 247);
         }
     }
 

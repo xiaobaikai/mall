@@ -1,7 +1,7 @@
 <template>
     <section>
         <TopHead
-        :native= native
+        mark='mark'
         bgcolor = '#fd545c'
         title="合同审批" 
         v-on:history_back="history_back_click"
@@ -10,88 +10,66 @@
             <div class="styles input_group">
                 <div class="bor_bottom">
                     <span class="title">合同名称</span>
-                    <input  v-model="contractName" />
+                    <input placeholder="请输入合同名称"  v-model="contractName" />
                 </div>
                 <div>
                     <span class="title">合同编号</span>
-                    <input  v-model="contractNoInput" />
+                    <input placeholder="请输入合同编号"  v-model="contractNoInput" />
                 </div>
             </div>
             <div class="styles input_group">
                 <div class="bor_bottom">
                     <span class="title">送审单位</span>
-                    <input style="color:#666" v-model="applyCompanyName" disabled/>
+                    <input style="color:#666;width:2.1rem;" v-model="applyCompanyName" disabled/>
                 </div>
                 <div class="bor_bottom">
                     <span class="title">项目责任人</span>
-                    <input  v-model="userName" disabled/>
+                    <input  placeholder="请输入项目负责人" v-model="userName" disabled/>
                 </div>
                 <div class="bor_bottom">
                     <span class="title">使用单位</span>
-                    <input  v-model="receiveCompanyName" />
+                    <input placeholder="请输入使用单位"  v-model="receiveCompanyName" />
                 </div>
                 <div>
                     <span class="title">使用单位责任人</span>
-                    <input  v-model="receiveName" />
+                    <input placeholder="请输入单位负责人"  v-model="receiveName" />
                 </div>
             </div>
 
             <div class="styles input_group">
                 <div>
                     <span class="title">合同标的</span>
-                    <input v-model="contractObj"/>
+                    <input placeholder="请输入合同标的" v-model="contractObj"/>
                 </div>
             </div>
 
             <div class="styles" style="padding:0 0.15rem;">
                 <p class="title">合同要点说明</p>
-                <textarea v-model.trim="contractDesc" name="" id="" cols="30" rows="10" placeholder="请输入要点内容">
+                <textarea v-model.trim="contractDesc" name="" maxlength="1000" id="" cols="30" rows="10" placeholder="请输入合同要点内容,限定1000字">
 
                 </textarea>
-            </div>
-
-            <div class="styles" style="padding:0 0.15rem;">
-                <p class="title">附件</p>
-                <div style="padding-bottom:0.15rem">
-                    <ul class="accessory">
-                        <li  v-for="(item,index) in accessory">
-                            <img @click="go_fildDetails(item.url)" v-if="item.isImg"  :src="item.url"/>
-                            <img @click="go_fildDetails(item.url)" v-if="!item.isImg" src="../../../assets/wenjian.png"/>
-                            <div @click="go_fildDetails(item.url)"  class="accessory-cont">
-                                <p >{{item.fileName}}</p>
-                                <span>{{item.fileSize | fileSize}}kb</span>
-                            </div>
-                            <div @click="deleteFile(index)" class="accessory-delete">
-                                <svg style="font-size: 0.15rem" class="icon" aria-hidden="false">
-                                    <use xlink:href="#icon-shanchu"></use>
-                                </svg>
-                            </div>
-                        </li>
-                    </ul>
-                    
-                    <div v-if="accessory.length<5"  @click="addAccessory()" class="add-btn">
-                        <svg style="font-size: 0.33rem" class="icon" aria-hidden="false">
-                            <use xlink:href="#icon-tianjiarenyuan"></use>
-                        </svg>
-                        <div>
-                            <p>仅支持图片、文档(.doc/.docx/.exls/.exl/.ppt/.txt)</p>
-                        </div>
-                    </div>
+                <div class="record_box">
+                        <span>{{textNum}}/1000</span>
                 </div>
             </div>
+            <Accessory
+                :accessory ='accessory'
+            >
+            </Accessory>
             
             <ApproverMan 
                 :has_journal="!has_journal"
-                color="#609ef7"
+                color="#fd545c"
                 :data_list=approver_list
                 v-on:remove_item="remove_item"
                 :special_class='1'
                 :isGroup = true
+                type = 2
             ></ApproverMan>
 
             <CopeMan 
                 :has_journal="!has_journal"
-                color="#609ef7"
+                color="#fd545c"
                 :data_list=chosed_list
                 v-on:remove_item="remove_item"
                 :special_class='1'
@@ -107,8 +85,17 @@
                 right_title="提交"
                 noSvg = true
                 bgcolor="#fd545c"
-                
             ></WorkButton>
+        
+         <Dialog
+            lfText="保存"
+            rgText="不保存"
+            content="保存此次编辑?"
+            v-on:lfClick="lf_click"
+            v-on:rgClick="rg_click"
+            v-show="isShow"
+            >
+        </Dialog>
 
     </section>
 </template>
@@ -165,7 +152,6 @@ let save_leave = (index,text,that) =>{
                 approver_id = approver_id + "|" + that.approver_list[i].auditUserId
             }
         }
-
         approver_id = approver_id.slice(1)
 
         let urlStr = '',fileSizeStr = '',fileNameStr = '';
@@ -179,57 +165,71 @@ let save_leave = (index,text,that) =>{
         urlStr = urlStr.slice(1)
         fileSizeStr = fileSizeStr.slice(1)
         fileNameStr = fileNameStr.slice(1)
-        that.axios.post('/work/contract/save' + that.Service.queryString({
-          Id :that.id, // id
-          contractName:that.contractName,//合同名称
-          contractNoInput:that.contractNoInput, //合同编号
-          applyCompany:that.applyCompanyName,//送审单位名称
-          applyUserName:that.userName, //项目责任人
-          receiveCompany:that.receiveCompanyName, //使用单位名称
-          reveiveUserName:that.receiveName, //使用单位负责人
-          contractDesc:that.contractDesc, //合同要点说明
-          contractObj:that.contractObj, //合同标的
-          url : urlStr, //附件
-          fileName:fileNameStr, 
-          fileSize:fileSizeStr,
-          auditUserIds: approver_id, //审批人
-          receiverIds: chosed_id, //抄送人
-          draftFlag : index, //草稿还是发送
-        })).then(function (res){
-            if(res.data.h.code!=200){
+        that.axios({
+                method:"post",
+                url:"/work/contract/save",
+                headers:{
+                    'Content-type': 'application/x-www-form-urlencoded'
+                },
+                data:{
+                    Id :that.id, // id
+                    contractName:that.contractName,//合同名称
+                    contractNoInput:that.contractNoInput, //合同编号
+                    applyCompany:that.applyCompanyName,//送审单位名称
+                    applyUserName:that.userName, //项目责任人
+                    receiveCompany:that.receiveCompanyName, //使用单位名称
+                    reveiveUserName:that.receiveName, //使用单位负责人
+                    contractDesc:that.contractDesc, //合同要点说明
+                    contractObj:that.contractObj, //合同标的
+                    url : urlStr, //附件
+                    fileName:fileNameStr, 
+                    fileSize:fileSizeStr,
+                    auditUserIds: approver_id, //审批人
+                    receiverIds: chosed_id, //抄送人
+                    draftFlag : index, //草稿还是发送
+                },
+                transformRequest: [function (data) {
+                    let ret = ''
+                    for (let it in data) {
+                    ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+                    }
+                    return ret
+                }],
+            }).then((res)=>{
+                 if(res.data.h.code!=200){
                 that.$toast(res.data.h.msg)
-            }else if(res.data.h.code == 200){
-                if(index){
+                    }else if(res.data.h.code == 200){
+                    if(index){
 
-                    that.$toast('已保存至草稿箱!')
-                    setTimeout(()=>{
-                        window.location.href = "epipe://?&mark=history_back";
-                    },700)
-                }else{
-                    that.$toast('提交成功！')
-                    window.location.href = "epipe://?&mark=workUpdate";
-                    setTimeout(()=>{
-                        // that.$router.push({path:'/leOfReDetails',query:{contractId:res.data.b,isH5:true}})
-                        // window.location.href = "epipe://?&mark=submitLetter&_id="+res.data.b;
-                        console.log(res.data.b)
-                        window.location.href = "epipe://?&mark=submitContract&_id="+res.data.b.contractId;
-                        
-                    },500)
+                        that.$toast('已保存至草稿箱!')
+                        setTimeout(()=>{
+                            window.location.href = "epipe://?&mark=history_back";
+                        },700)
+                    }else{
+                        that.$toast('提交成功！')
+                        window.location.href = "epipe://?&mark=workUpdate";
+                        setTimeout(()=>{
+                            console.log(res.data.b)
+                            window.location.href = "epipe://?&mark=submitContract&_id="+res.data.b.contractId;
+                        },500)
+                    }
+                    localStorage.removeItem('contract')
                 }
-            }
-      })
+            })
     }
 }
 
 import {mapState, mapMutations} from 'vuex';
+import Accessory  from '../../../components/worknews/accessory_select.vue'    //附件
 import WorkButton  from '../../../components/worknews/work_button.vue'   //提交按钮
 import CopeMan  from '../../../components/worknews/copy_man.vue'    //抄送人
 import ApproverMan  from '../../../components/worknews/approver_man.vue'    //审批人
 import TopHead  from '../../../components/topheader.vue'  //header导航栏
+import Dialog  from '../../../components/oa/dialog.vue'    //弹窗
+
 export default {
         data(){
             return{
-                dataObj:[],
                 id:'',
                 contractName:'', //合同名称
                 contractNoInput:'', //合同编号
@@ -243,64 +243,82 @@ export default {
                 approver_list : [], //审批人
                 accessory :[],
                 isDraftFlag:0, //判断是不是草稿
-                native:'native',
-                
+                isShow:false,
+                textNum:0,
+                oldData:null,
             }
         },
         components: {
             WorkButton,
             CopeMan,
             ApproverMan,
-            TopHead
+            TopHead,
+            Accessory,
+            Dialog
         },
         methods:{
         ...mapMutations(['change_man','approver_man']),
         save_btn(){ //保存草稿
-            this.check()?save_leave(1, "存入草稿成功", this):'';
+            save_leave(1, "存入草稿成功", this)
         },
         submit_btn(){ //提交
-            this.check()?save_leave(0, "提交成功", this):'';
+            save_leave(0, "提交成功", this)
+        },
+         history_back_click(){
+            if(!this.isUpdate()){
+                 window.location.href = "epipe://?&mark=history_back"
+            }else{
+                this.isShow = true;
+            }
+        },
+        lf_click(){
+            this.isShow=false;
+            if(this.$route.query.contractId&&!this.$route.query.resubmit){
+                 save_leave(1, "存入草稿成功", this)
+            }else{
+                localStorage.setItem('contract',JSON.stringify(this.$data))
+            }
+            window.location.href = "epipe://?&mark=history_back"
+        },
+        rg_click(){
+            this.isShow=false;
+            localStorage.removeItem('contract')
+            window.location.href = "epipe://?&mark=history_back"
+        },
+        isUpdate(){
+            let data = this.$data;
+            for(let key in data){
+               if(key=='approver_list'||key=='chosed_list'||key=='accessory'){
+                    if(data[key].length!=this.oldData[key].length){
+                        return true
+                    }
+                    for(let i=0;i<data[key].length;i++){
+
+                        if(key!='accessory'&&data[key][i].auditUserId!=this.oldData[key][i].auditUserId){
+                            return true
+                        }else if(key=='accessory'&&data[key][i].url!=this.oldData[key][i].url){
+                            return true
+                        }
+                    }
+                }else if(key!='oldData'&&key!='approver_list'&&key!='chosed_list'&&key!='accessory'){
+                    if(data[key]!=this.oldData[key]){
+                            return true;
+                    }
+                }
+            }
+            return false
         },
         addAccessory:function(){
             let that = this;
-            
-            window["epipe_camera_callback"] = (url,fileSize,fileName) => {
-                    var obj = {
-                            url,
-                            fileSize,
-                            fileName
-                    }
-                    that.isImg(url)?obj.isImg=true:obj.isImg=false;
-                    that.accessory.push(obj)
-
-            }
             window.location.href = "epipe://?&mark=addAccessory"
-            
         },
         deleteFile:function(index){  //删除附件
-
             this.accessory.splice(index,1)
         },
         go_fildDetails: function (url) { //查看图片详情
                 let that = this;
                 let obj = {index_num: 0, data:[url],type:0}
                 window.location.href = "epipe://?&mark=imgdetail&url=" + JSON.stringify(obj);
-        },
-        check:function(){
-            if(this.newCopy){
-                for(let i=0;i<this.newCopy.length;i++){
-
-                    for(let j=0;j<this.dataObj.receivers.length;j++){
-
-                        if(this.newCopy[i].userId==this.dataObj.receivers.receiverId){
-
-                            this.$toast('你添加的抄送人重复')
-                            return false;
-                        }
-                    }
-                }
-            }
-            return true
         },
         remove_item: function (itme, index,typess) {   //删除
             if(typess){
@@ -336,15 +354,34 @@ export default {
                         fileName:fileNameArr[i]
                     })
                 }
-
             },
-            history_back_click:function(){
-                window.location.href = "epipe://?&mark=history_back&url=myApply"
+        },
+         watch:{
+            contractDesc : function(){
+                this.textNum = this.contractDesc.length
             }
+        },
+        created(){
+             if(localStorage.getItem('contract')){
+                let contractdata = JSON.parse(localStorage.getItem('contract'))
+                for(let key in contractdata){
+                    this.$data[key] = contractdata[key]
+                }
+                this.approver_man(this.$data.approver_list)
+                this.change_man(this.$data.chosed_list)
+            }
+             this.oldData = JSON.parse(JSON.stringify(this.$data))
+
         },
         filters:{
           fileSize:function(value){
-              return parseInt(value)%1024
+              value = value-0
+            if(value<5500){
+                value = value/1024
+                return value.toFixed(2)+'kb';
+            }
+            value = value/1024/1024
+            return value.toFixed(2)+'mb';
           }  
         },
         activated(){
@@ -353,42 +390,31 @@ export default {
          },
         mounted(){
 
-                window["epipe_camera_callback"] = (url,fileSize,fileName) => {
-                    var obj = {
-                            url,
-                            fileSize,
-                            fileName
-                    }
-                    that.isImg(url)?obj.isImg=true:obj.isImg=false;
-                    that.accessory.push(obj)
+            window["epipe_camera_callback"] = (url,fileSize,fileName) => {
+                var obj = {
+                        url,
+                        fileSize,
+                        fileName
                 }
+                that.isImg(url)?obj.isImg=true:obj.isImg=false;
+                that.accessory.push(obj)
+            }
 
-                this.dataObj=[];
-                this.id='';
-                this.theme = ''; //主题
-                this.content='';//内容
-                this.chosed_list=[]; //抄送人
-                this.approver_list=[]; //审批人
-                
-                this.accessory=[];
-                this.isDraftFlag=0;
-                this.dataObj = [];
-                this.approver_man_state = []
-                this.chosed_man_state = []
             let that = this;
 
             this.axios.get('/user/info').then(function(res){
                 that.applyCompanyName = res.data.b.organName
                 that.userName = res.data.b.name
+                that.oldData = JSON.parse(JSON.stringify(that.$data))
             })
 
             if(this.$route.query.contractId){
                   this.axios.post('/work/contract/info?contractId='+this.$route.query.contractId).then(function(res){
-                    //   console.log(res.data.b.data)
                        let data = res.data.b.data[0];
-                       that.id = data.contractId;
-                       that.isDraftFlag = 1;
-                       that.native = 'mark';
+                       if(!that.$route.query.resubmit){
+                            that.id = data.contractId;
+                        }
+                        that.isDraftFlag = 1;
                         that.accessoryFor(data)
                         that.contractName = data.contractName;
                         that.contractNoInput = data.contractNoInput;
@@ -400,25 +426,14 @@ export default {
                         that.contractObj = data.contractObj;
                         that.contractDesc = data.contractDesc;
                         that.chosed_list = data.receivers;
+                        that.textNum = data.contractDesc.length
                         that.change_man(that.chosed_list);
                         that.approver_list = data.auditers;
                         that.approver_man(that.approver_list);
+                        that.oldData = JSON.parse(JSON.stringify(that.$data))
                     })
                     return
             }
-
-            this.axios.get(this.Service.reportReceiver).then(function (data) { //查询抄送人
-                if (data.data.h.code == 10) {
-                    window.location.href = "epipe://?&mark=login_out"
-                } else if (data.data.h.code == 200) {
-                    that.chosed_list = data.data.b.data
-                    that.chosed_list.forEach(function(item){
-                        item.receiverId = item.userId;
-                    })
-                    window.localStorage.chosed_list = JSON.stringify(that.chosed_list)
-                    that.change_man(that.chosed_list)
-                }
-            })
         },
         computed: mapState(["chosed_man_state","approver_man_state"])
         
@@ -442,7 +457,7 @@ export default {
              input{
                  box-sizing border-box
                  float right;
-                 width 2.1rem;
+                 width 2rem;
                  height 0.44rem;
                  border none;
                  outline none;
@@ -561,6 +576,18 @@ export default {
         height:0.01rem;
         width:100%;
         background-color:#f5f5f5;
+    }
+
+    .record_box{
+        overflow hidden;
+        margin-bottom 0.08rem;
+        font-size 0.12rem;
+
+
+        span{
+            float right;
+            color: rgb(96, 158, 247);
+        }
     }
 
 </style>

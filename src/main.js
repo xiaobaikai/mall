@@ -13,8 +13,6 @@ import "./style/reset.styl";
 import "./style/style.styl";
 
 
-import fastclick from "fastclick";
-fastclick.attach(document.body);
 // 引入服务
 import Service from "./js/Service";
 Vue.prototype.Service = Service;
@@ -40,6 +38,9 @@ Vue.prototype.mallToken = mallToken;
 Vue.prototype.isApp = isApp;
 Vue.prototype.mallType = mallType;
 
+import FastClick from 'fastclick'
+FastClick.attach(document.body);
+
 //  提示框
 import {Alert, Confirm, Prompt, Toast} from "wc-messagebox";
 import "wc-messagebox/style.css";
@@ -49,6 +50,8 @@ Vue.use(Confirm);
 Vue.use(Toast);
 Vue.use(Alert);
 Vue.use(wcSwiper);
+<<<<<<< HEAD
+=======
 
 //日历插件
 import Calendar from 'vue-mobile-calendar'
@@ -57,6 +60,7 @@ Vue.use(Calendar);
 import FastClick from 'fastclick';
 FastClick.attach(document.body)
 
+>>>>>>> e30acc74468b3c3bbbe04e3c42a2fa0fa6fcc083
 window.eventBus = new Vue();
 /* eslint-disable no-new */
 new Vue({

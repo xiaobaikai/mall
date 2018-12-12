@@ -276,7 +276,7 @@
           <img :src=item.profileImg|man_photo_format v-show="item.profileImg"/>
           <div class="name">{{item.name}}</div>
         </li>
-        <li @click="reduce(item)" v-if="!type_num"  v-for="item in approver_array" class="approver">
+        <li @click="reduce(item)" v-if="!type_num"  v-for="item in approver_array" :key="item.userId" class="approver">
           <div style="height: 0.15rem">
             <svg style="font-size: 0.15rem;position: relative;top: 0.08rem;left: 0.135rem" class="icon">
               <use xlink:href="#icon-shanchu"></use>

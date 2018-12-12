@@ -2,24 +2,24 @@
 <template>
     <section>
         <TopHead
-        bgcolor='#0fc37c'
+        :bgcolor='color'
         :title='"转交给"+name'
         ></TopHead>
         <div class="main">
             <div class="content">
-                <textarea placeholder="请输入转交备注" v-model="textVal" maxlength="60"></textarea>
-                <p class="counts"><span>{{counts}} / 60</span></p>
+                <textarea placeholder="请输入转交备注" v-model="textVal" maxlength="500"></textarea>
+                <p class="counts"><span>{{counts}} / 500</span></p>
             </div>
             <div class="content">
                 <p class="title" style="margin-bottom:0.1rem;">附件</p>
                 <div>
                     <ul class="accessory">
-                        <li  v-for="(item,index) in accessory">
+                        <li  v-for="(item,index) in accessory" :key="index">
                             <img @click=" (item.url)" v-if="item.isImg"  :src="item.url"/>
                             <img @click="go_fildDetails(item.url)" v-if="!item.isImg" src="../../../assets/wenjian.png"/>
                             <div @click="go_fildDetails(item.url)"  class="accessory-cont">
                                 <p >{{item.fileName}}</p>
-                                <span>{{item.fileSize | fileSize}}kb</span>
+                                <span>{{item.fileSize | fileSize}}</span>
                             </div>
                             <div @click="deleteFile(index)" class="accessory-delete">
                                 <svg style="font-size: 0.15rem" class="icon" aria-hidden="false">
@@ -52,13 +52,13 @@ import TopHead  from '../../../components/topheader.vue'  //header导航栏
 export default {
     data(){
         return{
-
             name:'张三',
             counts : 0,
             textVal : '',
             id : '',  
             accessory:[], 
             accessoryData:{}, //格式化后附件数据
+            color:'#fd545c'
         }
     },
      methods : {
@@ -66,59 +66,46 @@ export default {
                 this.accessoryData = this.accessoryFor();
                 
                 if(this.$route.query.type=='contract'){
-                    this.contract()
-                }else{
-                    this.letter()
+                    this.submits(2,'contractDetails')
+                }else if(this.$route.query.type=="outside"){
+                    this.submits(3,'goOutWorkDetails')
+                }else if(this.$route.query.type=="letter"){
+                    this.submits(1,'leOfReDetails')
+                }else if(this.$route.query.type=="leave"){
+                    this.submits(0,'leaveDetails')
+                }else if(this.$route.query.type=="trip"){
+                    this.submits(4,'tripDetails')
+                }else if(this.$route.query.type=="stamp"){
+                    this.submits(5,'stampDetails')
+                }else if(this.$route.query.type=="reimburse"){
+                    this.submits(6,'reimburseDetails')
+                }else if(this.$route.query.type=="payApply"){
+                    this.submits(7,'payApplyDetails')
+                }else if(this.$route.query.type=="dimission"){
+                    this.submits(8,'dimissionDetails')
                 }
             },
-            //请示函转交
-            letter(){
-                let that = this;
-                 this.axios.post('/work/letter/result'+that.Service.queryString({
-                    letterId:this.id,
+            submits:function(apType,details){
+                 let that = this;
+                 this.axios.post('/work/audit'+that.Service.queryString({
+                    applyId:this.id,
                     type:4,
+                    applyType:apType,
                     url:this.accessoryData.url,
                     fileSize:this.accessoryData.fileSize,
                     fileName:this.accessoryData.fileName,
-                    reason:this.textVal,
-                    connectUserId:this.$route.query.userId,
-
+                    reason:encodeURI(this.textVal),
+                    auditerIds:this.$route.query.userId+'|'+this.$route.query.auditerIds,
                 })).then(function(res){
-                    window.location.href = "epipe://?&mark=workUpdate";
                     if(res.data.h.code==200){
                         that.$toast('转交成功!')
                         window.location.href = "epipe://?&mark=workUpdate";
                         setTimeout(()=>{
-                            window.location.href = "epipe://?&mark=leOfReDetails&_id="+that.id+'&data='+JSON.stringify({text:1});
-                        },200)      
+                            window.location.href = "epipe://?&mark="+details+"&_id="+that.id+'&data='+JSON.stringify({text:1});
+                        },500)      
                     }else{
                         that.$toast(res.data.h.msg)
                     }
-                })
-            },
-            //合同转交
-            contract(){
-                let that = this;
-                this.axios.post('/work/audit'+that.Service.queryString({
-                    applyId:this.id,
-                    type:4,
-                    applyType:2,
-                    urls:this.accessoryData.url,
-                    fileSizes:this.accessoryData.fileSize,
-                    fileNames:this.accessoryData.fileName,
-                    reason:this.textVal,
-                    connectUserId:this.$route.query.userId,
-           
-                })).then(function(res){
-                            if(res.data.h.code==200){
-                                that.$toast('转交成功!')
-                                window.location.href = "epipe://?&mark=workUpdate";
-                                setTimeout(()=>{
-                                    window.location.href = "epipe://?&mark=contractDetails&_id="+that.id+'&data='+JSON.stringify({text:1});
-                                },200)      
-                            }else{
-                                that.$toast(res.data.h.msg)
-                            }
                 })
             },
             isImg:function(str){
@@ -180,9 +167,21 @@ export default {
             }
             
         },
+        filters:{
+            fileSize:function(value){
+                    value = value-0
+                    if(value<5500){
+                        value = value/1024
+                        return value.toFixed(2)+'kb';
+                    }
+                    value = value/1024/1024
+                    return value.toFixed(2)+'mb';
+            }
+        },
         mounted:function(){
             this.id = this.$route.query.id;
             this.name = this.$route.query.userName;
+            this.color = this.$route.query.color;
         },
         components:{
             TopHead

@@ -3,8 +3,8 @@
   <div>
     <section class="home">
   
-      <div class="header">
-            <div class="search-main">
+      <!-- <div class="header"> -->
+            <!-- <div class="search-main">
                 <div class="search"  @click="go_search()">
                     <div class="search_icon">
                         
@@ -13,20 +13,26 @@
                     <input ref="input"  type="text"  placeholder="请输入关键字">
                 </div>
             </div>
-
-        </div>
+           -->
+        <!-- </div> -->
       <div class="banner-wrapper">
-        <carousel-3d :autoplay="true" :autoplayTimeout="5000" :autoplayHoverPause="true" :width="config.width" :height="config.height" :border="0" :perspective="0">
+        <!-- <carousel-3d :autoplay="true" dir="ltr" :autoplayTimeout="5000" :autoplayHoverPause="true" :width="config.width" :height="config.height" :border="0" :perspective="0">
           <slide v-for="(banner,index) in banners" :key="index" :index="index">
             <img @click="go_newsdetail(banner)" :src=banner.imgUrl>
           </slide>
-        </carousel-3d>
+        </carousel-3d> -->
+        
+    <wc-swiper :duration="900" :interval="3000" @transitionend="fn">
+        <wc-slide v-for="(banner,index) in banners" :key="index" :index="index" >
+            <img @click="go_newsdetail(banner)" :src=banner.imgUrl>
+        </wc-slide>
+    </wc-swiper>
       </div>
       <ul class="home_nav_top">
         <li @click="go_mall">
           <div style="background: -webkit-linear-gradient(top, #fd535b 0%,#fc757e 100%);">
             <svg style="width: 0.22rem;height: 0.22rem" class="icon" aria-hidden="false">
-              <use xlink:href="#icon-shangcheng"></use>
+              <use xlink:href="#icon-youguanyouxuan"></use>
             </svg>
           </div>
           <div>优管优选</div>
@@ -101,7 +107,7 @@
                     <span>{{item.resCreateDate.slice(0,10)}}</span>
                     <span class="spanRight">
                         <svg style="width: 0.2rem;height: 0.14rem" class="icon" aria-hidden="false">
-                            <use xlink:href="#icon-yuedu"></use>
+                          + <use xlink:href="#icon-yuedu"></use>
                         </svg>{{item.clicks}}
                     </span>
                 </div>
@@ -166,37 +172,33 @@
         }, 200);
       },
       go_tender(){  //首页跳招投标
-      TDAPP.onEvent('tender','招投标')    
         window.location.href = "epipe://?&mark=tender"
+         TDGA.onEvent('tender','招投标')    
       },
       go_dissertation(){  //首页跳优管专题
-      TDAPP.onEvent('dissertation','优管专题')    
         window.location.href = "epipe://?&mark=dissertation"
+       TDGA.onEvent('dissertation','优管专题')    
       },
       go_mall(){  //首页跳商城
-      TDAPP.onEvent('mall','商城')    
         window.location.href = "epipe://?&mark=mallhome"
+        TDGA.onEvent('mall','商城')    
       },
       go_newsdetail(item){
-
-        item.url+='?isActivety=1'
-
         if(item.title=='优商城'){
             window.location.href = "epipe://?&mark=mallhome"
           return
-        }else if(item.url.indexOf("isActivity=1")){
+        }else if(item.url.indexOf("isActivity=1")>-1){
             window.location.href = "epipe://?&mark=mallhome&title=" + item.title + "&url=" + item.url;
             return
         }
-
         if (item.h5Uri != "" && item.h5Uri) {
           let title = Util.Title_format(item.title) 
           window.location.href = "epipe://?&mark=newsdetail&title=" + title+'&data='+ data + "&url=" + item.h5Uri;
         } else if (item.url) {
             if (item.coverImgUrl != "#") {
-              let title = Util.Title_format(item.title)
+              console.log(item.coverImgUrl!='#')
               let obj = {};
-              obj.title = title;
+              obj.title = Util.Title_format(item.title);
               obj.imageUrl = item.imgUrl;
               obj.text = '';
               obj.collectState = item.collectState;
@@ -205,7 +207,6 @@
               window.location.href = "epipe://?&mark=newsdetail&title=" + obj.title + "&url=" + item.url;
             }
           } else {
-                   
             let title = Util.Title_format(item.title)
             window.location.href = "epipe://?&mark=newsdetail&title=" + title + "&_id=" + item.id;
           }
@@ -278,6 +279,16 @@
   @import "../../style/variable.styl";
   .wc-swiper-container {
     height auto
+  }
+
+  .wc-slide{
+    height:auto;
+    min-height:1.74rem;
+    }
+
+  .wc-slide img{
+    width:100%;
+    height:100%
   }
 
   .wc-pagination .wc-dot-active {

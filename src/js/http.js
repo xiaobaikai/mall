@@ -1,16 +1,17 @@
 /**
- * Created by ZWH on 2017/9/4.
+ * Created by JJH on 2017/9/27.
  */
 import axios from "axios";
 /*配置axios的默认*/
 axios.defaults.withCredentials = true;
 axios.defaults.timeout = 5000;
 
-const dev = 'http://192.168.3.166:8280/member/v1'; //测试
+const dev = 'http://192.168.3.166:8280/member/v3'; //测试
+// const dev = 'http://192.168.3.180:8280/member/v1'; // 闵文杰
 // const dev = 'http://192.168.3.241:8882/member/v1'; //自动化测试
-// const dev = 'http://192.168.3.29:8280/member/v1';//彭文浩本地
-const product = "http://app.epipe.cn:18080/member/v1"; //正式
-axios.defaults.baseURL = window.location.href.indexOf("app.epipe.cn")>0 ? product : dev;
+const product = 'https://apps.epipe.cn/member/v1';//正式环境
+// const product = "http://21874u8g05.iask.in:19054/member/v1"; //正式
+axios.defaults.baseURL = window.location.href.indexOf("apps.epipe.cn")>0 ? product : dev;
 //  axios.defaults.baseURL = product;
 
 function getCookie(name) {
@@ -20,6 +21,8 @@ function getCookie(name) {
   else
     return null;
 };
+
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;'
 
 if (getCookie("auth_token")) {
   window.localStorage.setItem("auth_token",getCookie("auth_token"));
@@ -34,8 +37,8 @@ axios.interceptors.request.use(
       window.localStorage.setItem("auth_token",getCookie("auth_token"));
     }else{
       if(!config.headers.auth_token){
-        // config.headers.auth_token = window.localStorage.auth_token;
-         config.headers.auth_token = "7f813ed6-d79b-4688-961d-9c3a331f4f45";
+          config.headers.auth_token = window.localStorage.auth_token;
+          //  config.headers.auth_token = "b5d23ab2-63d5-4903-ab4f-ed2733b7f4e5";
       }
     }
     return config;

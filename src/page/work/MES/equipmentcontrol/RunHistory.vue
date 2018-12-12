@@ -34,7 +34,7 @@
     </div>
     <div class="content">
       <div class="result" v-if="machineList.length>0">
-        <router-link :to="{path: '/machinelist',query:{id: item.machineId,name:item.machineName,workdate:selection.date}}" class="result-item" v-for="(item,index) in machineList" :key="index">
+        <router-link :to="{path: '/machinelist',query:{id: item.machineId,workshopId:selection.workshopId,worklineId:selection.worklineId,name:item.machineName,workdate:selection.date}}" class="result-item" v-for="(item,index) in machineList" :key="index">
           <svg class="icon-machine" aria-hidden="false">
             <use xlink:href="#icon-shebei"></use>
           </svg>
@@ -261,7 +261,7 @@
     text-overflow ellipsis;
     font-size 0.16rem;
     color: #333;
-    line-height: 1;
+    // line-height: 1;
   }
   footer{
     position: fixed;

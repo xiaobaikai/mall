@@ -1,18 +1,26 @@
 <template>
   <section id="mapcontent">
+    <TopHead
+      native='native'
+      bgcolor = '#f80'
+      :title = title
+      :is_relative_approva = relativeInfo
+      v-on:history_back="history_back_click"
+      v-on:show_edit = "relativeApprova"
+    ></TopHead>
     <div id="allmap">
     </div>
     <div class="text_map">
-      <span>{{detail.signDate?detail.signDate.substring(5,7):''}}月{{detail.signDate?detail.signDate.substring(8,10):''}}日</span>
+      <span>{{detail.signDate?detail.signDate.substring(5,7):''}}月{{detail.signDate?detail.signDate.substring(8,10):''}}日</span> {{detail.signDate?detail.signDate.substring(10):''}}
       <ul>
-        <li style="font-weight: bold">{{detail.signDate?detail.signDate.substring(10):''}}</li>
+        <li style="font-weight: bold;width:0.8rem" >签到地点:</li>
         <li>
           {{detail.destName}}
         </li>
       </ul>
-      <div class="text_map_div-1">
-        <li><span>外勤任务</span></li>
-        <li><span>类型：</span>{{detail.taskType==2?"拜访客户":"参加活动"}}</li>
+      <div class="text_map_div-1" v-if="!relativeInfo.isShow">
+        <li><span>公出事由: </span>{{detail.reason}}</li>
+        <li><span>类型：</span>{{detail.taskType | typeFor}}</li>
         <li><span>开始时间：</span>{{detail.beginTime}}</li>
         <li><span>结束时间：</span>{{detail.endTime}}</li>
         <li><span>目的地：</span>{{detail.destination}}</li>
@@ -22,35 +30,56 @@
 </template>
 
 <script>
+  import TopHead  from '../../components/topheader.vue'  //header导航栏
   export default {
     data () {
       return {
-        detail: ''
+        title: '签到详情',
+        detail: '',
+        relativeInfo: {"isShow":false,"title":"关联审批"},
+        id: '',
+        color:'#fd545c'
       }
     },
-    components: {}, mounted() {
-      let that = this
-      let id = this.$route.query.id
+    components:{ TopHead },
+    mounted() {
+      let that = this;
+      if(this.$route.query.id){
+        that.id = this.$route.query.id;
+      }
+//      that.id = "1fe111ac8ffc11e8a8074ccc6ac12eca";
+
       /*
-      * 取到经纬度和相关信息 渲染百度地图
-      * */
-      this.axios.get(this.Service.outSignInfo, {params: {id:id}}).then(function (data) {
-        console.log(data)
+       * 取到经纬度和相关信息 渲染百度地图   this.Service.outSignInfo
+       * */
+      this.axios.get('/outsign/record/info', {params: {id: that.id}}).then(function (data) {
         if (data.data.h.code == 200) {
-          that.detail = data.data.b
+          that.detail = data.data.b;
+          that.address(data.data.b.lon, data.data.b.lat);
+          that.relativeInfo.isShow = !that.detail.related;
+        }
+      });
+    },
+    methods: {
+      address:function(lon,lat){
           document.body.style.height="100%"
           document.getElementById("app").style.height="100%"
           // 百度地图API功能
           var map = new BMap.Map("allmap");
-          var point = new BMap.Point(data.data.b.lon, data.data.b.lat);
+          var point = new BMap.Point(lon,lat);
           var marker = new BMap.Marker(point);  // 创建标注
           map.addOverlay(marker);              // 将标注添加到地图中
           map.centerAndZoom(point, 15);
-        }
-
-      })
+      },
+      relativeApprova(){
+        window.location.href = "epipe://?&mark=relativeapprove&_id=" + this.id;
+      }
     },
-    methods: {}
+    filters:{
+        typeFor:function(value){
+            return value==1?'拜访客户':value==2?'学习培训':'工作交流'
+        }
+    }
   }
 </script>
 

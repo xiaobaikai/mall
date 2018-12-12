@@ -11,88 +11,281 @@
         </div>
         
         <div class="affairs_content" >
-            <div v-for="(item,index) in leaveData">
-                <div v-if="item.extend[0].value == 1"   class="affairs_item myaffairs_shadow">
+            <div v-for="(item,index) in leaveData" :key="index">
+                <div v-if="item.typecode == 1" @click="leaveDetail(item.applyId,item.fianlStatus)"   class="affairs_item myaffairs_shadow">
                     <div class="affirs_child">
                         <div class="affairs_title">
-                            <img :src="item.extend[4].value" @click="go_user(item.userId)"/>
+                            <img :src="item.profileImg" @click="go_user(item.userId)"/>
                             <h2 >我的请假审批</h2>
-                            <time >{{item.extend[10].value | timeFormat}}</time>
+                            <time >{{item.applyTime | timeFormat}}</time>
                         </div>
                         <div class="affairs_infor">
-                            <p>请假类型:<span style="color:#609ef6" v-text='item.extend[5].value'></span></p>
-                            <p>开始时间:<span>{{item.extend[8].value | slice}}</span></p>
-                            <p>结束时间:<span>{{item.extend[9].value |slice}}</span></p>
+                            <p>请假类型:<span style="color:#609ef6" v-text='item.leaveType'></span></p>
+                            <p>开始时间:<span>{{item.beginTime | slice}}</span></p>
+                            <p>结束时间:<span>{{item.endTime |slice}}</span></p>
                         </div>
                     </div>
 
-                    <div @click="leaveDetail(item.extend[1].value,item.extend[3].value)"   class="skip" >
+                    <div    class="skip" >
                         查看详情
                     </div>
                 </div>
 
-                <div v-if="item.extend[0].value == 2"  class="affairs_item myaffairs_shadow">
+                <div v-else-if="item.typecode == 2" @click="letterDetail(item.applyId,item.fianlStatus)"  class="affairs_item myaffairs_shadow">
                     <div class="affirs_child">
                         <div class="affairs_title">
-                            <img :src="item.extend[4].value" @click="go_user(item.userId)"/>
+                            <img :src="item.profileImg" @click="go_user(item.userId)"/>
                             <h2 >我的请示函</h2>
-                            <time >{{item.extend[10].value | timeFormat}}</time>
+                            <time >{{item.applyTime | timeFormat}}</time>
                         </div>
                         <div class="affairs_infor">
                         <div class="request_infor lineHeight">
                             <span>主&emsp;&emsp;题 :</span>
-                            <p class="line1">{{item.extend[12].value}}</p>
+                            <p class="line1">{{item.theme}}</p>
                         </div>
                             <div class="request_infor margin10">
                                 <span>请示内容 :</span>
-                                <p class="line2" style="line-height:0.2rem;">{{item.extend[13].value}}</p>
+                                <p class="line2" style="line-height:0.2rem;" v-html="item.content"></p>
                             </div>
                         </div>
                     </div>
                 
 
-                    <div @click="letterDetail(item.extend[1].value,item.extend[3].value)"   class="skip" >
+                    <div    class="skip" >
                             查看详情
                     </div>
 
                 </div>
 
-                <div v-if="item.extend[0].value == 3"  class="affairs_item myaffairs_shadow">
+                <div v-else-if="item.typecode == 3" @click="contractDetail(item.applyId,item.fianlStatus)"   class="affairs_item myaffairs_shadow">
                     <div class="affirs_child">
                         <div class="affairs_title">
-                            <img :src="item.extend[4].value" @click="go_user(item.userId)"/>
+                            <img :src="item.profileImg" @click="go_user(item.userId)"/>
                             <h2 >我的合同审批</h2>
-                            <time >{{item.extend[10].value | timeFormat}}</time>
+                            <time >{{item.applyTime | timeFormat}}</time>
                         </div>
                         <div class="affairs_infor">
                         <div class="request_infor lineHeight">
                             <span class="lesp">合同名称 :</span>
-                            <p class="line1">{{item.extend[12].value}}</p>
+                            <p class="line1">{{item.theme}}</p>
                         </div>
                             <div class="request_infor margin10">
                                 <span>项目责任人 :</span>
-                                <p class="line2" style="line-height:0.2rem;">{{item.extend[13].value}}</p>
+                                <p class="line2" style="line-height:0.2rem;">{{item.title}}</p>
                             </div>
                         </div>
                     </div>
                 
 
-                    <div @click="contractDetail(item.extend[1].value,item.extend[6].value)"   class="skip" >
+                    <div  class="skip" >
                             查看详情
                     </div>
-
                 </div>
+
+                <div v-else-if="item.typecode == 4"  @click="goOutWorkDetails(item.applyId,item.fianlStatus)"  class="affairs_item myaffairs_shadow"   :key="item.id">
+                    <div class="affirs_child">
+                        <div>
+                            <div class="affairs_title">
+                                <img :src="item.profileImg"/>
+                                <h2>{{item.title}}的公出审批</h2>
+                                <time >{{item.applyTime | timeFormat}}</time>
+                            </div>
+                            <div class="affairs_infor">
+                                <div class="request_infor lineHeight">
+                                    <span >公出事由 :</span>
+                                    <p class="line1" v-html="item.outsideReason"></p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span >公出类型 :</span>
+                                    <p class="line1"> {{item.outsideType}}</p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span >公出地点 :</span>
+                                    <p class="line1"> {{item.outsideAddress}}</p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span >开始时间 :</span>
+                                    <p class="line1"> {{item.beginTime | slice}}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div  class="skip" tag="div">
+                            查看详情
+                        </div>
+
+                    </div>
+                 </div>
+                <div v-else-if="item.typecode == 5" @click="tripDetails(item.applyId,item.fianlStatus)"   class="affairs_item" >
+                    <div class="affirs_child">
+                            <div>
+                                <div class="affairs_title">
+                                    <img :src="item.profileImg"/>
+                                    <h2>{{item.title}}的出差审批</h2>
+                                    <time >{{item.applyTime | timeFormat}}</time>
+                                </div>
+                                <div class="affairs_infor">
+                                    <div class="request_infor lineHeight">
+                                        <span >标&emsp;&emsp;题:</span>
+                                        <p class="line1"> {{item.theme}}</p>
+                                    </div>
+                                    <div class="request_infor lineHeight">
+                                        <span >出差地点 :</span>
+                                        <p class="line1"> {{item.outsideAddress}}</p>
+                                    </div>
+                                    <div class="request_infor lineHeight">
+                                        <span >开始时间 :</span>
+                                        <p class="line1"> {{item.beginTime |slice}}</p>
+                                    </div>
+                                    <div class="request_infor lineHeight">
+                                        <span >结束时间 :</span>
+                                        <p class="line1"> {{item.endTime |slice}}</p>
+                                    </div>
+                                    <div class="request_infor margin10">
+                                        <span>出差事由 :</span>
+                                        <p class="line2" style="line-height:0.2rem;" v-html="item.content"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div  class="skip" tag="div">
+                                查看详情
+                            </div>
+                    </div>
+                </div>
+                <div v-else-if="item.typecode == 6" @click="stampDetails(item.applyId,item.fianlStatus)"   class="affairs_item" >
+                    <div class="affirs_child">
+                            <div>
+                                <div class="affairs_title">
+                                    <img :src="item.profileImg"/>
+                                    <h2>{{item.title}}的用印审批</h2>
+                                    <time >{{item.applyTime | timeFormat}}</time>
+                                </div>
+                                <div class="affairs_infor">
+                                    <div class="request_infor lineHeight">
+                                        <span >文件名称:</span>
+                                        <p class="line1"> {{item.sealFileName}}</p>
+                                    </div>
+                                    <div class="request_infor lineHeight">
+                                        <span >文件类别 :</span>
+                                        <p class="line1"> {{item.fileCategory}}</p>
+                                    </div>
+                                    <div class="request_infor lineHeight">
+                                        <span>文件数量 :</span>
+                                        <p class="line1"> {{item.fileQuantity}}</p>
+                                    </div>
+                                    <div class="request_infor lineHeight">
+                                        <span >印章名称 :</span>
+                                        <p class="line1"> {{item.sealName}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div  class="skip" tag="div">
+                                查看详情
+                            </div>
+                    </div>
+                </div>
+                <div v-else-if="item.typecode == 7" @click="reimburseDetails(item.applyId,item.fianlStatus)"  class="affairs_item" >
+                    <div class="affirs_child">
+                            <div>
+                                <div class="affairs_title">
+                                    <img :src="item.profileImg"/>
+                                    <h2>{{item.title}}的报销审批</h2>
+                                    <time >{{item.applyTime | timeFormat}}</time>
+                                </div>
+                                <div class="affairs_infor">
+                                    <div class="request_infor lineHeight">
+                                        <span >报销金额 :</span>
+                                        <p class="line1"> {{item.reimburseAmount}} 元</p>
+                                    </div>
+                                    <div class="request_infor lineHeight">
+                                        <span >日&emsp;&emsp;期 :</span>
+                                        <p class="line1"> {{item.reimburseDate | slice}}</p>
+                                    </div>
+                                    <div class="request_infor lineHeight">
+                                        <span>报销类别 :</span>
+                                        <p class="line1"> {{item.reimburseType}}</p>
+                                    </div>
+                                    <div class="request_infor lineHeight">
+                                        <span >费用明细 :</span>
+                                        <p class="line1"> {{item.reimburseDesc}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div  class="skip" tag="div">
+                                查看详情
+                            </div>
+                    </div>
+                </div>
+                <div v-else-if="item.typecode == 8" @click="payApplyDetails(item.applyId,item.title)"   class="affairs_item" >
+                <div class="affirs_child">
+                        <div>
+                            <div class="affairs_title">
+                                <img :src="item.profileImg"/>
+                                <h2>{{item.title}}的付款申请</h2>
+                                <time >{{item.applyTime | timeFormat}}</time>
+                            </div>
+                            <div class="affairs_infor">
+                                <div class="request_infor lineHeight">
+                                    <span >付款金额 : </span>
+                                    <p class="line1">{{item.payAmount}} 元</p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span>付款方式 :</span>
+                                    <p class="line1"> {{item.payType}}</p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span >付款日期 :</span>
+                                    <p class="line1">{{item.payDate |slice }} </p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span>收款人全称 :</span>
+                                    <p class="line1">{{item.receiverName}}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div  class="skip" tag="div">
+                            查看详情
+                        </div>
+                </div>
+                
             </div>
-        </div>
+            <div v-else-if="item.typecode == 9" @click="dimissionDetails(item.applyId,item.title)"   class="affairs_item" >
+                <div class="affirs_child">
+                        <div>
+                            <div class="affairs_title">
+                                <img :src="item.profileImg"/>
+                                <h2>{{item.title}}的离职申请</h2>
+                                <time >{{item.applyTime | timeFormat}}</time>
+                            </div>
+                            <div class="affairs_infor">
+                                <div class="request_infor lineHeight">
+                                    <span >职&emsp;&emsp;务 : </span>
+                                    <p class="line1">{{item.position}} </p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span>入职日期 :</span>
+                                    <p class="line1"> {{item.hireDate |slice}}</p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span >合同到期日 :</span>
+                                    <p class="line1">{{item.contractEndDate |slice }} </p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span>最后工作日 :</span>
+                                    <p class="line1">{{item.dimissionDate |slice }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div  class="skip" tag="div">
+                            查看详情
+                        </div>
+                </div>
+            </div>  
 
-        
+            </div>
 
-        <div class="footLine marginBot" v-if="leaveData.length>2">
-            <span>我是有底线的</span>
-        </div>
+            <div>
 
-        <div class="footLine" v-if="!leaveData.length">
-            <span>暂无内容</span>
+            </div>
         </div>
 
         <div class="footer">
@@ -110,18 +303,31 @@
                 <span>草稿箱</span>                
             </router-link>
         </div>
+
+         <infinite-loading  spinner="bubbles" :on-infinite="onInfinite" ref="infiniteLoading">
+            <span slot="no-more" class="no-more">
+            暂无更多加载
+            </span>
+            <span slot="no-results" class="no-results">
+            暂无结果
+            </span>
+        </infinite-loading>
     </div>
+
 </template>
 <script>
-
+    import InfiniteLoading from 'vue-infinite-loading';
     export default{
         data(){
             return{
-
                 leaveData : [], //
+                pageNo:1,
+
             }   
         },
-    
+         components: {
+            InfiniteLoading
+        },
         methods : {
             goback(){
                 window.location.href = "epipe://?&mark=history_back"
@@ -140,11 +346,18 @@
                 window.location.href = "epipe://?&mark=userinfo&_id="+id;
             },
          
-            leaveDetail(id,name){
-                console.log(id,name)
+            leaveDetail(id,type){
+                if(type==4){
+                    window.location.href = "epipe://?&mark=leave&_id="+id;
+                    return 
+                }
                 window.location.href = "epipe://?&mark=leaveDetails&_id="+id+'&data='+JSON.stringify({text:0});
             },
-            letterDetail(id,name){
+            letterDetail(id,type){
+                if(type==4){
+                    window.location.href = "epipe://?&mark=letterOfRequest&_id="+id;
+                    return 
+                }
                 window.location.href = "epipe://?&mark=leOfReDetails&_id="+id+'&data='+JSON.stringify({text:0});
             },
             contractDetail(id,type){
@@ -153,14 +366,97 @@
                     return 
                 }
                 window.location.href = "epipe://?&mark=contractDetails&_id="+id+'&data='+JSON.stringify({text:0});
-            }
+            },
+               goOutWorkDetails(id,type){
+                if(type==4){
+                 window.location.href = "epipe://?&mark=goOutWork&_id="+id;
+                    return 
+                }
+                window.location.href = "epipe://?&mark=goOutWorkDetails&_id="+id+'&data='+JSON.stringify({text:0});
+            },
+            tripDetails(id,type){
+                 if(type==4){
+                    window.location.href = "epipe://?&mark=trip&_id="+id;
+                    return 
+                }
+                window.location.href = "epipe://?&mark=tripDetails&_id="+id+'&data='+JSON.stringify({text:0});
+            },
+            stampDetails(id,type){
+                if(type==4){
+                    window.location.href = "epipe://?&mark=stamp&_id="+id;
+                    return
+                }
+                window.location.href = "epipe://?&mark=stampDetails&_id="+id+'&data='+JSON.stringify({text:0});
+            },
+            reimburseDetails(id,type){
+                if(type==4){
+                    window.location.href = "epipe://?&mark=reimburse&_id="+id;
+                    return
+                }
+                window.location.href = "epipe://?&mark=reimburseDetails&_id="+id+'&data='+JSON.stringify({text:0});
+            },
+             payApplyDetails(id,type){
+                if(type==4){
+                    window.location.href = "epipe://?&mark=payApply&_id="+id;
+                    return
+                }
+                window.location.href = "epipe://?&mark=payApplyDetails&_id="+id+'&data='+JSON.stringify({text:0});
+            },
+             dimissionDetails(id,type){
+                if(type==4){
+                    window.location.href = "epipe://?&mark=dimission&_id="+id;
+                    return
+                }
+                window.location.href = "epipe://?&mark=dimissionDetails&_id="+id+'&data='+JSON.stringify({text:0});
+            },
+            onInfinite(){
+                let that = this;
+                //供需
+                this.axios.get('/work/my/apply/list',{
+                    params:{
+                        pageNo:this.pageNo+1,
+                    }
+                }).then(function(res){
+                        setTimeout(() => {
+                                if (res.data.b.data.length == 0) {
+                                    that.$refs.infiniteLoading.$emit('$InfiniteLoading:complete');
+                                } else if (res.data.b.data) {
+                                        let data = [];
+                                        for(let i= 0;i<res.data.b.data.length;i++){
+                                            let obj = {};
+                                            for(let j = 0;j<res.data.b.data[i].extend.length;j++){
+                                                obj[res.data.b.data[i].extend[j].key] = res.data.b.data[i].extend[j].value
+                                            }
+                                            data.push(obj)
+                                        }
+
+                                    that.leaveData = that.leaveData.concat(data)
+                                    that.pageNo++;
+                                    that.$refs.infiniteLoading.$emit('$InfiniteLoading:loaded');
+                                }
+                        }, 200);
+
+
+                    }).catch(function (error) {
+                        console.log(error);
+                    });
+                    
+                }
         },
         mounted:function(){
+              let that = this;
+               this.axios.get('/work/my/apply/list').then((res)=>{
+                        let data = [];
+                        for(let i= 0;i<res.data.b.data.length;i++){
+                            let obj = {};
+                            for(let j = 0;j<res.data.b.data[i].extend.length;j++){
+                                obj[res.data.b.data[i].extend[j].key] = res.data.b.data[i].extend[j].value
+                            }
+                            data.push(obj)
+                        }
+                        that.leaveData = data;
+                    })
 
-                 let that = this;
-                 this.axios.get('/work/my/apply/list').then(function(res){
-                        that.leaveData = res.data.b.data;
-                 })
         },
         filters : {
             timeFormat : function(value) {
@@ -212,6 +508,7 @@
 
     .affairs_box{
         overflow hidden;
+        margin-bottom 0.5rem;
     }
 
     .header{
@@ -471,4 +768,10 @@
         margin-bottom 0.1rem;
     }
 
+     .no-results,.no-more{
+        display:block;
+        margin:0.10rem 0;
+        line-height:0.44rem;
+        margin-bottom 0.15rem;
+    }
 </style>

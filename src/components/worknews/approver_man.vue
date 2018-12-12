@@ -73,6 +73,98 @@
         margin-top:0.2rem;
       }
   }
+   .guide{
+      position fixed;
+      top:0;
+      left:0;
+      width 100%;
+      height 100%;
+      background-color rgba(0,0,0,0.3)
+      z-index 3;
+    }
+
+    .guide_content{
+          position absolute;
+          top:0;
+          bottom:0;
+          left:0;
+          right:0;
+          margin auto;
+          height 3rem;
+          width 91%;
+          background-color #fff;
+          z-index 10
+    }
+
+    .guide_item{
+      position relative;
+      width 33.33%;
+      text-align center;
+
+      span{
+        font-size 0.12rem;
+        color #999;
+      }
+    }
+
+    .guide_item:nth-child(1),.guide_item:nth-child(2),.guide_item:nth-child(3){
+        float left;
+      padding-bottom 0.35rem;
+
+
+        .guide_arrows{
+          position absolute;
+          right -6px;
+          top 0.1rem;
+        }
+    }
+
+    .guide_item:nth-child(3) .guide_arrows{
+        transform rotate(90deg)
+        position absolute;
+        width 0.2rem;
+        height 0.12rem;
+        bottom -0.5rem;
+        left 0;
+        right 0;
+        margin auto ;
+    }
+
+    .guide_item:nth-child(4),.guide_item:nth-child(5),.guide_item:nth-child(6){
+        float right;
+
+        .guide_arrows{
+          position absolute;
+          left -6px;
+          top 0.1rem;
+          transform rotate(180deg)
+        }
+    }
+    .guide-title{
+       height 0.4rem;
+       line-height 0.4rem;
+       padding-left 0.15rem;
+       font-size 0.13rem;
+       color #666;
+       border 1px solid #e6e6e6;
+       margin-bottom 0.15rem;
+    }
+
+    .guide_btn{
+         clear both
+
+        a{
+          display block;
+          width 1.2rem;
+          height 0.35rem;
+          line-height 0.35rem;
+          background-color #f80
+          color #fff;
+          text-align center
+          border-radius 0.04rem;
+          margin 0 auto ;
+        }
+    }
 </style>
 <template>
   <section :class="special_class?'my-test':''">
@@ -82,6 +174,7 @@
            <span class="title_h">审批人</span>
            <span v-if="has_journal&data_list.length!=false">（已添加{{data_list.length}}人）</span>
            <span v-if="!data_list.length">（请添加审批人）</span>
+           <span style="color:#609ef7" @click="isShowGuide=true">添加指引</span>
            </div>
         <div v-if="more_prople&data_list.length>3"  @click="open_people" class="day_div_two">点击收缩</div>
         <div v-if="!more_prople&data_list.length>3"  @click="open_people" class="day_div_two">
@@ -134,17 +227,52 @@
         </li>
       </ul>
     </ul>
+
+    <div class="guide" v-if="isShowGuide" @touchmove.prevent @click="isShowGuide=false">
+        <div class="guide_content">
+            <div class="guide-title">
+                请参考以下流程添加审批人
+            </div>
+            <div style="margin-bottom:0.2rem;overflow:hidden">
+                <div class="guide_item" v-for="(item,index) in guideData[type]" :key="index">
+                  <svg style="font-size: 0.4rem" class="icon" aria-hidden="false">
+                    <use xlink:href="#icon-shenpiliuchengtouxiang"></use>
+                  </svg>
+                  <p>{{item}}</p>
+                  <span v-if="index==guideData[type].length-1&item=='人事行政部门'">(抄送)</span>
+                  <div class="guide_arrows">
+                      <svg style="font-size: 0.12rem" class="icon" aria-hidden="false" v-if="index!=guideData[type].length-1">
+                        <use xlink:href="#icon-jiantou1"></use>
+                      </svg>
+                  </div>
+                </div>
+            </div>
+           
+
+            <div class="guide_btn">
+                <a @click="isShowGuide=false">知道了</a>
+            </div>
+        </div>
+    </div>
   </section>
 </template>
 <script>
   export default {
     data () {
       return {
-        more_prople: true
+        more_prople: true,
+        isShowGuide:false,
+        guideData:[
+          ['发起人','部门负责人','人事行政部门','总经理','人事行政部门'],
+          ['发起人','部门负责人','财务管理中心','总经理','人事行政部门'],
+          ['发起人','部门负责人','财务管理中心','法务部','总经理','董事长'],
+          ['发起人','相关领导1','相关领导2','相关领导3','公司领导','董事长'],
+          ['发起人','部门负责人','总经理','人事行政部门'],
+        ]
       }
     },
     props: [
-      'color', 'data_list', 'has_journal','special_class','isGroup'
+      'color', 'data_list', 'has_journal','special_class','isGroup','type'
     //  颜色  选中的联系人数据  
     ],
     methods: {

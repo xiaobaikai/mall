@@ -3,7 +3,7 @@
     <top-header :title="title"  bgcolor="#FD545C"></top-header>
     <div class="content-wrapper">
       <div class="content">
-        <router-link :to="{path:'/detailslist',query:{id:item.machineId,workdate:workdate}}" class="machine-item" v-for="(item,index) in machineList" :key="index">
+        <router-link :to="{path:'/detailslist',query:{id:item.machineId,workshopId:workshopId,worklineId:worklineId,workdate:workdate}}" class="machine-item" v-for="(item,index) in machineList" :key="index">
           <svg class="icon-machine" aria-hidden="false">
             <use xlink:href="#icon-shebei"></use>
           </svg>
@@ -25,6 +25,8 @@
         title: '',
         lineId: "",
         workdate: "",
+        workshopId:'',
+        worklineId:'',
         machineList: [],
       }
     },
@@ -32,6 +34,8 @@
       this.title = '运行历史-'+this.$route.query.name;
       this.lineId = sessionStorage.getItem("lineId");
       this.workdate = this.$route.query.workdate;
+      this.workshopId = this.$route.query.workshopId;
+      this.worklineId = this.$route.query.worklineId;
       this.getData(this.$route.query.id,this.lineId);
     },
     methods:{

@@ -25,23 +25,29 @@
       return{
         workdate: "",
         machineId: "",
+        workshopId:'',
+        linedata:'',
         list: [],
       }
     },
     created(){
       this.workdate = this.$route.query.workdate;
+      this.linedata = this.$route.query.worklineId;
+      this.workshopId = this.$route.query.workshopId; 
       this.machineId = this.$route.query.id;
-      this.getData(this.machineId,this.workdate);
+      this.getData(this.machineId,this.workshopId,this.linedata,this.workdate);
       console.log({
         id: this.machineId,
         date: this.workdate
       });
     },
     methods:{
-      getData(id,workdate){
+      getData(id,workshopId,linedata,workdate){
         if(id){
           this.$mes.get("/device/realtime_data",{
             machineId: id,
+            workShopId:workshopId,
+            lineId:linedata,
             workDate: workdate
           }).then(res =>{
             console.log("详情列表",res);

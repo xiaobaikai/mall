@@ -2,7 +2,7 @@
     <section>
         <TopHead
         mark='mark'
-        bgcolor = '#ff8800'
+        bgcolor = '#f80'
         :title=title
         v-on:history_back="history_back_click"
          ></TopHead>
@@ -11,7 +11,7 @@
                 <div class="content_head">
                     <img class="imgHead" :src="dataObj.profileImg" @click="go_user(dataObj.userId)">
                     <div>
-                        <p class="nameTl">{{dataObj.userName}}</p>
+                        <p class="nameTl">{{dataObj.username}}</p>
                         <p :class="leaveType==2?'careOf':leaveType==4?'res':'consent'" v-if="leaveType!=''&leaveType!=3">{{leaveType |details}}</p>
                         <p class="res" v-if="leaveType==3||leaveType==4">{{'等待'+dataObj.auditName+'的审批'}}</p>
                     </div>
@@ -33,133 +33,45 @@
           
                 <div class="infor-box">
                     <span>请示内容</span>
-                    <p>{{dataObj.content}}</p>
+                    <p v-html="dataObj.content"></p>
                 </div>
                 
             </div>
 
-            <div class="styles infor" v-if="accessory.length">
-                    <ul class="accessory">
-                        <li  v-for="(item,index) in accessory">
-                            <img @click="go_fildDetails(item.url)" v-if="item.isImg"  :src="item.url"/>
-                            <img @click="go_fildDetails(item.url)" v-if="!item.isImg" src="../../assets/wenjian.png"/>
-                            <div @click="go_fildDetails(item.url)"  class="accessory-cont">
-                                <p >{{item.fileName}}</p>
-                                <span>{{item.fileSize | fileSize}}kb</span>
-                            </div>
-                        </li>
-                    </ul>
-            </div>
-            
-            <div class="styles approve">
-                <p class="title">审批人<span>（已添加{{dataObj.auditers.length}}人）</span></p>
-                <ul class="list">
-                    <li>
-                        <div class="approve_list">
-                            <img class="imgHead" :src="dataObj.profileImg">
-                            <div class="approve_inf">
-                                <span>{{dataObj.userName}}</span>
-                                <span>发起申请</span>
-                                <span>{{dataObj.applyTime | timeStrSlice}}</span>
-                            </div>
-                        </div>
-                        <svg class="icon icon-back" aria-hidden="false" v-if="index!=2">
-                            <use xlink:href="#icon-jiantou1"></use>
-                        </svg>
-                    </li>
-                    
-                    <li v-if="dataObj.auditStatus == '3'">
-                        <div class="approve_list">
-                            <img class="imgHead" :src="dataObj.profileImg">
-                            <div class="approve_inf">
-                                <span>{{dataObj.userName}}</span>
-                                <span style="color:#f80">已撤销</span>
-                                <span></span>
-                            </div>
-                        </div>
-                    </li>
-                    <li v-for="(item,index) in dataObj.auditers" v-if="refuseIndex==-1||(refuseIndex>-1&index<refuseIndex)">
-                        <div class="approve_list">
-                            <img class="imgHead" @click="go_user(item.auditUserId)" :src="item.profileImg">
-                            <div class="approve_inf">
-                                <span>{{item.name}}</span>
-                                <span v-if="item.connectFslag!=1" :class="item.status!=2?'consent':'refause'">{{item.status | stateName}}</span>
-                                <span v-if="item.connectFslag==1" class="careOf">已转交</span>
-                                <span>{{item.auditTime | timeStrSlice}}</span>
-                            </div>
-                        </div>
-                        <svg class="icon icon-back" aria-hidden="false" v-if="index!=dataObj.auditers.length-1&item.status!=2&item.connectFslag!=1">
-                            <use xlink:href="#icon-jiantou1"></use>
-                        </svg>
-                        <div class="reason" v-if="item.status==2">
-                            {{item.reason}}
-                        </div>
-                        <div class="reasons" v-if="item.connectFslag==1">
-                            <svg  class="icon icon-back" aria-hidden="false" >
-                                <use xlink:href="#icon-jiantou1"></use>
-                             </svg>
-                            <p>{{item.reason}}</p>
-                            <div v-if="item.accessory.length">
-                            <ul class="accessory">
-                                <li  v-for="child in item.accessory">
-                                    <img @click="go_fildDetails(child.url)"  v-if="child.isImg"  :src="item.url"/>
-                                    <img @click="go_fildDetails(child.url)" v-if="!child.isImg" src="../../assets/wenjian.png"/>
-                                    <div @click="go_fildDetails(child.url)"  class="accessory-cont">
-                                        <p style="margin-bottom:0">{{child.fileName}}</p>
-                                        <span>{{child.fileSize | fileSize}}kb</span>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                        </div>
-                        
-                    </li>
-                    
-                </ul>
-            </div>
+            <AccessoryList :accessory='accessory'>
 
-            <div class="styles copy">
-                <p class="title">抄送人<span>（已抄送{{dataObj.receivers.length+newCopy.length}}人）</span></p>
-                
-                <ul class="list">
-                    <li v-for="(item,index) in dataObj.receivers" class="list_item"> 
-                        <img class="imgHead" @click="go_user(item.receiverId)" :src="item.profileImg">
-                        <span>
-                            {{item.name}}
-                         </span>
-                    </li>
-                    <li v-for="(item,index) in newCopy" class="list_item newCopy">
-                        <svg @click="remove(index)" style="font-size: 0.15rem" class="icon" aria-hidden="false">
-                            <use xlink:href="#icon-shanchu"></use>
-                        </svg>
-                        <img class="imgHead" @click="go_user(item.receiverId)" v-if="item.profileImg!=''" :src="item.profileImg">
-                        <img class="imgHead" v-else src="../../assets/tou.png">
-                        <span>
-                            {{item.name}}
-                         </span>
-                    </li>
-                    <li  class="list_item" @click="go_imchoice" v-if="dataObj.myselfApply==0">
-                        <svg style="font-size: 0.33rem;margin-top: 0.085rem" class="icon" aria-hidden="false">
-                            <use xlink:href="#icon-tianjiarenyuan"></use>
-                        </svg>
-                        <div style="margin-top: 0.055rem">添加</div>
-                    </li>
-                </ul>
-            </div>
+            </AccessoryList>
+
+            <Approver
+             :dataObj = dataObj
+             :refuseIndex = refuseIndex
+             :newAppr = newAppr
+             v-on:removeApp = "removeApp"
+             color='#f80'
+             :amount='amount'
+             >
+            </Approver>
+
+            <Copy
+             color='#f80'
+             :dataObj = dataObj
+             :newCopy = newCopy
+             v-on:remove = "removeCopy"
+            >
+            </Copy>
         </div>
 
-        <div class="btn_box" v-if="dataObj.myselfApply!=4">
-            <div class="btn_box_content">
-                <div v-if="dataObj.myselfApply==3&dataObj.auditStatus!='3'&leaveType!=4"  class="revocation_btn" @click="isDialog=true">撤销</div>
-                <!-- <div> -->
-                    <a v-if="dataObj.myselfApply!=3&dataObj.myselfApply==0&dataObj.auditStatus!='3'"  class="consent_btn" @click="consent()">同意</a> 
-                    <a v-if="dataObj.myselfApply!=3&dataObj.myselfApply==0&dataObj.auditStatus!='3'"  class="deliver_btn" @click="deliverTo()">转交</a>
-                    <a v-if="dataObj.myselfApply!=3&dataObj.myselfApply==0&dataObj.auditStatus!='3'"  class="refuse_btn" @click="refuse()">拒绝</a>
-                <!-- </div> -->
-                <div style="clear:both"></div>
-            </div>
-        </div>
-
+        <OaBtn
+            :dataObj = dataObj
+            :leaveType = leaveType
+            v-on:consent="consent"
+            v-on:refuse="refuse"
+            v-on:more='moreBtn'
+            v-on:revocation="isDialog=true"
+            v-on:resubmit="resubmit"
+            v-on:urge="urge"
+            >
+        </OaBtn>
 
         <div class="dialog" v-show="isDialog" @touchmove.prevent>
             <div class="dialog_box">
@@ -170,7 +82,18 @@
                 </div>
             </div>
         </div>
-          
+
+         <MoreBtn
+          v-show="isShow"
+          v-on:approveBack="approveBack"
+          v-on:deliverTo="deliverTo"
+          v-on:revocation="revocation"
+          v-on:urge="urge"
+          v-on:isShow="isShow=!isShow"
+          :myself="myself"
+        >
+        </MoreBtn>
+
     </section>
 </template>
 
@@ -178,6 +101,12 @@
     import {mapState, mapMutations} from 'vuex';
     import TopHead  from '../../components/topheader.vue'  //header导航栏
     import CopeMan  from '../../components/worknews/copy_man.vue'    //抄送人
+    import AccessoryList  from '../../components/oa/accessoryList.vue'  //附件
+    import Approver  from '../../components/oa/approverDetails.vue'  // 审批人
+    import Copy  from '../../components/oa/copyDetails.vue'  // 抄送人
+    import OaBtn  from '../../components/oa/oa_btn.vue'  // 动作按钮
+    import MoreBtn  from '../../components/oa/more_btn.vue'  // 更多弹窗
+
     export default {
         data(){
             return{
@@ -194,17 +123,25 @@
                 accessory:[],
                 letterId:'',
                 newCopy:[],
-                head:'native'
+                newAppr:[],
+                isShow: false,
+                myself:false,
+                amount:0,
             }
         },
         
         components:{
-            TopHead
+            TopHead,
+            AccessoryList,
+            Approver,
+            Copy,
+            OaBtn,
+            MoreBtn
         },
         methods :{
-            ...mapMutations(['change_man']),
+            ...mapMutations(['change_man',"approver_man"]),
             refuse:function(){
-                 this.$router.push({path:'/opinion',query:{id:this.dataObj.letterId,isLetter:true}})
+                 this.$router.push({path:'/opinion',query:{id:this.dataObj.letterId,type:'letter',color:'#ff8800'}})
             },
             history_back_click:function(){
                     if(location.href.indexOf('goWork=0')>0){
@@ -213,81 +150,79 @@
                     }
                     window.location.href = "epipe://?&mark=goWork"
             },
-            deliverTo(){
-                this.$router.push({path:'/imchoices',query:{id:this.dataObj.letterId,careOf:true}})
-            },
             consent:function(){
-                    // this.axios.post('/work/letter/result?letterId='+this.dataObj.letterId+'&type=2').then(function(res){
-                    //         window.location.href = "epipe://?&mark=workUpdate";
-                    //         setTimeout(()=>{
-                    //             history.back()
-                    //         },500)      
-                    // })
-                let that = this;
-                let copyStr = '';
-                for(let i=0;i<this.newCopy.length;i++){
-                        copyStr = copyStr + "|" + this.newCopy[i].userId
-                }
+               let that = this;
+               let copyStr =  this.appAndCopy(this.newCopy)
+               let apprStr = this.appAndCopy(this.newAppr,'auditUserId')
 
-                copyStr = copyStr.slice(1)
-
-                this.axios.post('/work/letter/result'+this.Service.queryString({
-                    letterId:this.dataObj.letterId,
-                    type:2,
-                    receiverIds:copyStr,
-                })).then(function(res){
-                            if(res.data.h.code==1502){
-                                that.$toast(res.data.h.msg)
-                            }else if(res.data.h.code==200){
-
-                            that.$toast('审批通过')
-                             window.location.href = "epipe://?&mark=workUpdate";
-                            setTimeout(()=>{
-                                // location.reload() 
-                                window.location.href = "epipe://?&mark=leOfReDetails&_id="+that.dataObj.letterId+'&data='+JSON.stringify({text:1});;
-                            },500)      
+                this.$router.push({path:'/opinion',query:{id:this.dataObj.letterId,receiverIds:copyStr,auditerIds:apprStr,color:'#ff8800',type:'letter',pageType:'consent'}})
+            },
+            deliverTo(){ //转交
+                let newApprStr = this.appAndCopy(this.newAppr,'auditUserId')
+                let newCopy = this.appAndCopy(this.newCopy)
+                this.$router.push({path:'/imchoices',query:{id:this.dataObj.letterId,careOf:true,type:'letter',auditerIds:newApprStr,num:1}})
+            },
+            approveBack(){ // 退回
+                 this.$router.push({path:'/approveBack',query:{id:this.dataObj.letterId,type:'letter',color:'#f80'}})
+            },
+            resubmit(){ //再次提交
+                 this.$router.replace({path:'/letterOfRequest',query:{letterId:this.dataObj.letterId,resubmit:true}})
+            },
+            urge(){ //催办
+                    let that = this;
+                    this.axios.post('/work/audit'+this.Service.queryString({
+                            applyId:this.dataObj.letterId,
+                            type:6,
+                            applyType:1,
+                    })).then(function(res){
+                        if(res.data.h.code==200){
+                            that.$toast('催办成功!')
+                        }else{
+                            that.$toast(res.data.h.msg)
                         }
                     })
             },
-            
-            
+            appAndCopy:function(arr,type){
+                if(!type) type='userId'
+                let str = '';
+                for(let i=0;i<arr.length;i++){
+                        let obj = arr[i]
+                        str = str + "|" + obj[type]
+                }
+                return str.slice(1);
+            },
+             moreBtn(){
+                this.isShow = true;
+		        this.$forceUpdate();
+            },
             revocation:function(){
-                    let that = this;
-                     this.axios.post('/work/letter/result?letterId='+this.dataObj.letterId+'&type=1').then(function(res){
-                            window.location.href = "epipe://?&mark=workUpdate";
+                let that = this;
+                    this.axios.post('/work/audit'+this.Service.queryString({
+                        applyId:this.dataObj.letterId,
+                        type:1,
+                        applyType:1,
+                    })).then(function(res){
+                        if(res.data.h.code!=200){
+                            that.$toast(res.data.h.msg)
+                        }else if(res.data.h.code==200){
+                                window.location.href = "epipe://?&mark=workUpdate";
                             that.$toast('撤销成功！')
                             window.location.href = "epipe://?&mark=workUpdate";
                             setTimeout(()=>{
                                 //   location.reload()
                                 window.location.href = "epipe://?&mark=leOfReDetails&_id="+that.dataObj.letterId+'&data='+JSON.stringify({text:1});;
-                                  
-                            },500)      
-                    })
+                                
+                            },500)    
+                        }
+                })
             },
             go_fildDetails: function (url) { //查看图片详情
                 let that = this;
                 let obj = {index_num: 0, data:[url],type:0}
                 window.location.href = "epipe://?&mark=imgdetail&url=" + JSON.stringify(obj);
             },
-            accessoryFor:function(){
-                if(this.dataObj.accessory.url==null) return false
-               var urlArr = this.dataObj.accessory.url.split('|')
-               var fileSizeArr = this.dataObj.accessory.fileSize.split('|')
-               var fileNameArr = this.dataObj.accessory.fileName.split('|')
-                for(let i=0;i<urlArr.length;i++){
-                    let bool = this.Util.isImg(urlArr[i])
-                    this.accessory.push({
-                        url:urlArr[i],
-                        fileSize:fileSizeArr[i],
-                        fileName:fileNameArr[i],
-                        isImg: bool,
-                    })
-                }
-
-
-            },
              accessoryFors:function(datas){
-                if(!datas.url==null) return false
+                if(!datas||datas.url==null) return false
                let urlArr = datas.url.split('|')
                let fileSizeArr = datas.fileSize.split('|')
                let fileNameArr = datas.fileName.split('|')
@@ -301,30 +236,37 @@
                         isImg: bool,
                     })
                 }
-              
                 return arrs
-
             },
-            go_imchoice:function(){
-                this.$router.push({path: 'imchoices', query: {bgcolor:this.color,num:0}})
+            go_imchoice:function(num){
+                this.$router.push({path: 'imchoices', query: {bgcolor:this.color,num:num}})
             },
-            remove:function(index){
+            removeCopy:function(index){
                 this.newCopy.splice(index, 1);
                 this.change_man(this.newCopy)
+            },
+            removeApp:function(index){
+                this.newAppr.splice(index, 1);
+                this.approver_man(this.newAppr)
             },
              go_user(id){
                 window.location.href = "epipe://?&mark=userinfo&_id="+id;
             },
             // computed: mapState(["chosed_man_state","approver_man_state"])
-            
         },
         mounted:function(){
             let that = this;
-            this.letterId = this.Util.getUrlValue('letterId').slice(1)
+            this.letterId = this.$route.query.letterId;
             this.axios.get('/work/letter/info?letterId='+this.letterId).then(function(res){
                 that.dataObj = res.data.b.data[0]
-                that.accessoryFor();
-                that.title = that.dataObj.userName+'的请示函'
+                that.accessory = that.accessoryFors(that.dataObj.accessory)
+                that.title = that.dataObj.username+'的请示函'
+                let arr = []
+                if(that.dataObj.auditStatus=='4'){
+                    that.leaveType='5'
+                    return;
+                }                
+
                 for(let i =0;i<that.dataObj.auditers.length;i++){   
 
                         if(that.dataObj.auditers[i].status=='2'){
@@ -333,9 +275,22 @@
                             return;
                         }
 
-                        if(that.dataObj.auditers[i].accessory.fileName!=null){
+                        if(that.dataObj.auditers[i].status=='00'){
+                            arr.push(that.dataObj.auditers[i])
+                        }else{
+                            that.amount++;
+                        }
+
+                        if(that.dataObj.auditers[i].accessory!=null){
                             that.dataObj.auditers[i].accessory = that.accessoryFors(that.dataObj.auditers[i].accessory)
                         }
+                    }
+
+                    that.newAppr = arr
+                    that.approver_man(arr)
+
+                    if(that.dataObj.userId==that.dataObj.auditUserId){
+                        that.myself=true;
                     }
 
                     if(that.dataObj.auditers[that.dataObj.auditers.length-1].status == 1){ // 已同意
@@ -343,7 +298,7 @@
                         return;
                     }
 
-                    if(that.dataObj.auditers[0].status!='0'){ //审批开始
+                    if(that.dataObj.auditers[0].status!='0'&&that.dataObj.auditers[0].status!='00'){ //审批开始
                         that.leaveType = '4';
                         return;
                     }
@@ -358,6 +313,7 @@
         },
         activated(){
             this.newCopy = this.chosed_man_state
+            this.newAppr = this.approver_man_state;
          },
         filters:{
             timeStrSlice:function(value){
@@ -371,13 +327,24 @@
                     return '已拒绝'
                 }else if(value=='2'){
                     return '已撤销'
+                }else if(value =='5'){
+                    return '已退回'
                 }
             },
             stateName: function(value){
                     return value=='0'?'审批中':value=='1'?'已同意':value=='2'?'已拒绝':'';
             },
+            fileSize:function(value){
+                    value = value-0
+                    if(value<5500){
+                        value = value/1024
+                        return value.toFixed(2)+'kb';
+                    }
+                    value = value/1024/1024
+                    return value.toFixed(2)+'mb';
+            }
         },
-        computed: mapState(["chosed_man_state"])
+        computed: mapState(["chosed_man_state","approver_man_state"])
 
     }
 </script>
@@ -459,7 +426,6 @@
             margin-top 0.59rem;
             padding 0 0.15rem;
              overflow: scroll;
-            height: 6.4rem;
             margin-bottom 0.5rem;
 
             .styles{
@@ -600,11 +566,10 @@
             }
 
             .reason{
-                padding-left 0.48rem;
                 font-szie 0.14rem;
                 color #666;
                 line-height 0.2rem;
-                margin-top 0.1rem;
+                margin 0.1rem 0;
                 word-wrap:break-word;
             }
             
@@ -613,8 +578,9 @@
                 padding-left 0.48rem;
                 font-szie 0.14rem;
                 color #666;
+                min-height:0.2rem;
                 line-height 0.2rem;
-                margin-top 0.1rem;
+                margin 0.1rem 0;
                 word-wrap:break-word;
 
                 svg{
@@ -622,9 +588,11 @@
                     top:0;
                     left:0.1rem;
                     bottom:0;
-                    margin:auto;
+                    margin:auto !important;
+
                 }
             }
+
         }
 
         .copy{
@@ -717,14 +685,14 @@
 
             .refuse_btn{
                 position relative;
-                color #fd545c;
                 margin-right 0
                 border 1px solid #fd545c;
+                background-color:#fd545c;
             }
 
             .deliver_btn{
-                background-color:#fd545c;
-                border:1px solid #fd545c;
+                background-color:#609ef7;
+                border:1px solid #609ef7;
             }
         }
 
@@ -764,6 +732,16 @@
         }
     }
 
+      .newList{
+            position relative;
+
+            svg{
+                position absolute;
+                left 0.32rem;
+                top -0.05rem;
+            }
+        }
+
     
      .newCopy{
             position relative;
@@ -774,5 +752,68 @@
                 right:-0.07rem;
             }
         }
+
+        .dialog{
+            position fixed;
+            width 100%;
+            height 100%;
+            top 0;
+            z-index 5;
+            font-size 0.18rem;
+            background-color rgba(0,0,0,0.5)
+
+            .dialog_box{
+                width 2.7rem;
+                height 1.5rem;
+                position absolute;
+                left 0;
+                right 0;
+                top 0;
+                bottom 0;
+                margin auto;
+                background #fff;
+                text-align center;
+            }
+
+            .dialog_content{
+                height 1rem;
+                line-height 1rem;
+                color #333;
+                border-bottom 0.01rem solid #e6e6e6;
+            }
+
+            .dialog_btn{
+                height 0.5rem;
+                line-height 0.5rem;
+                display flex;
+
+                a{
+                    flex  1;
+                    touch-action:none;
+                    cursor:pointer;
+                }
+            }
+
+             .dialog_option{
+                height 0.4rem;
+                line-height 0.4rem;
+                position relative;
+                font-size:0.16rem;
+            }
+
+            .dialog_border{
+                border 1px solid #f5f5f5
+            }
+
+            .confirm_btn{
+                color #0fc37c;
+            }
+            .cancel_btn{
+                ciolor #666;
+            }
+        }
+ .accessory li:last-child{
+        margin-bottom:0;
+    }
 </style>
 

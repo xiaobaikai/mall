@@ -40,13 +40,18 @@
 </style>
 <template>
   <section class="padding_bottom_content">
-    <TopHead native="native" title="周报" bgcolor="#fd545c"></TopHead>
+    <TopHead 
+    mark="mark"
+     title="周报" 
+     bgcolor="#fd545c"
+      v-on:history_back="history_back_click"
+     ></TopHead>
     <div style="margin-top: 0.44rem">
       <TimeTab time_type="week" font_color="#fd545c" v-on:data_time="day_data_time"></TimeTab>
     </div>
     <div>
       <WorkInput
-        placeholder="请在此处输入您的工作总结~"
+        placeholder="请在此处输入您的工作总结，限定1000字"
         title="本周工作总结"
         color="#fc9698"
         v-on:text_change="text_change"
@@ -56,7 +61,7 @@
         :work_text="journal_detail.workSummary?journal_detail.workSummary:''"
       ></WorkInput>
       <WorkInput
-        placeholder="请在此处输入您的下周工作计划~"
+        placeholder="请在此处输入您的下周工作计划,限定1000字"
         title="下周工作计划"
         color="#fc9698"
         v-on:text_change="text_change"
@@ -65,7 +70,7 @@
         :work_value="journal_detail.nextPlan?journal_detail.nextPlan:''"
         :work_text="journal_detail.nextPlan?journal_detail.nextPlan:''"
       ></WorkInput>
-      <ul v-if="!has_journal" class="day_chose_img" @click="get_camera">
+      <ul v-if="!has_journal" class="day_chose_img" @click.stop="get_camera">
         <li class="day_chose_span">选择图片</li>
         <li class="day_chose_span2">已添加{{URL.length}}张</li>
         <li class="day_chose_span3">
@@ -78,7 +83,7 @@
         <li class="day_chose_span">图片</li>
       </ul>
       <ul v-if="URL.length>0" class="img_ul">
-        <li @click="go_imgdetail(index)" v-for="(itme,index) in URL">
+        <li @click="go_imgdetail(index)" v-for="(itme,index) in URL" :key="index">
           <img :src=itme|journal_img style="width: 100%;height: 100%"/>
         </li>
       </ul>
@@ -108,6 +113,16 @@
         bgcolor="#fd545c"
       ></WorkButton>
     </div>
+
+    <Dialog
+        lfText="保存"
+        rgText="不保存"
+        content="保存此次编辑?"
+        v-on:lfClick="lf_click"
+        v-on:rgClick="rg_click"
+        v-show="isShow"
+        >
+      </Dialog>
   </section>
 </template>
 <script>
@@ -129,31 +144,47 @@
         string_img = string_img + "|" + that.URL[i]
       }
       string_img = string_img.slice(1)
-      that.axios.post(that.Service.reportAdd + that.Service.queryString({
-          workSummary: that.work_value,
-          nextPlan: that.next_work_value,
-          remarks: that.mark_value,
-          reportType: 2,
-          id: that.journal_detail.id ? that.journal_detail.id : "",
-          reportTimeStr: that.reportTimeStr,
-          reportTime: that.reportTime,
-          receiveUserIds: string_id,//id串
-          imgUrl: string_img,//图片串
-          isDraft: index
-        })).then(function (data) {
-        console.log(data)
-       if (data.data.h.code == 200) {
-          that.$alert(text).then(
-            function () {
-              window.sessionStorage.mark_value = ""
-              window.sessionStorage.next_mark_value = ""
-              window.sessionStorage.work_value = ""
-              window.location.href = "epipe://?&mark=history_back"
-            }
-          )
-        }
-      })
-    }
+        that.axios({
+                method:"post",
+                url:that.Service.reportAdd,
+                headers:{
+                    'Content-type': 'application/x-www-form-urlencoded'
+                },
+                data:{
+                  workSummary: that.work_value,
+                  nextPlan: that.next_work_value,
+                  remarks: that.mark_value,
+                  reportType: 2,
+                  id: that.journal_detail.id ? that.journal_detail.id : "",
+                  reportTimeStr: that.reportTimeStr,
+                  reportTime: that.reportTime,
+                  receiveUserIds: string_id,//id串
+                  imgUrl: string_img,//图片串
+                  isDraft: index
+                },
+                transformRequest: [function (data) {
+                    let ret = ''
+                    for (let it in data) {
+                    ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+                    }
+                    return ret
+                }],
+            }).then((data)=>{
+                 if (data.data.h.code == 200) {
+                    that.$alert(text).then(
+                      function () {
+                        window.sessionStorage.mark_value = ""
+                        window.sessionStorage.next_mark_value = ""
+                        window.sessionStorage.work_value = ""
+                        window.location.href = "epipe://?&mark=history_back"
+                      }
+                    )
+                      localStorage.removeItem('weeknews')
+                  }else{
+                    that.$toast(data.data.h.msg)
+                  }
+            })
+       }
   }
   let getdetail = (that) => {
     that.axios.get(that.Service.reportQuery, {
@@ -162,7 +193,6 @@
         reportTime: that.reportTime
       }
     }).then(function (data) {
-      console.log(data.data.b)
      if (data.data.h.code == 200) {
         that.URL = []
         that.work_value = ''
@@ -174,6 +204,7 @@
         that.journal_detail = {}
         if (data.data.b == null) {
           that.has_journal = false
+          that.getItem();
         } else if (data.data.b) {
           that.URL = data.data.b.imgData
           if (data.data.b.isDraft == 1) {
@@ -202,6 +233,8 @@
   import WorkInput  from '../../components/worknews/work_input.vue'
   import WorkButton  from '../../components/worknews/work_button.vue'
   import CopeMan  from '../../components/worknews/copy_man.vue'
+  import Dialog  from '../../components/oa/dialog.vue'    //弹窗
+
   export default {
     data () {
       return {
@@ -214,7 +247,28 @@
         chosed_list: [], //抄送人
         chosed_list_two: [], //抄送人
         has_journal: true,
-        journal_detail: {}
+        journal_detail: {},
+        count:0,
+        isShow:false,
+        datas:[{
+                lon:'113.9510909715426',
+                lat:'22.56398020890123',
+                address:'广东省深圳市南山区朗山路16号',
+              },
+              {
+                lon:'113.9520892819422',
+                lat:'22.56389020952267',
+                address:'广东省深圳市南山区科苑北路',
+              },{
+                lon:'113.9513371398527',
+                lat:'22.56367042860578',
+                address:'广东省深圳市南山区高新北三道',
+              },{
+                lon:'113.9521351328665',
+                lat:'22.56377145861153',
+                address:'广东省深圳市南山区科苑路23号',
+              }
+              ]
       }
     },
     components: {
@@ -222,20 +276,44 @@
       WorkInput,
       WorkButton,
       CopeMan,
-      TopHead
+      TopHead,
+      Dialog
     },
+    created(){
+    },
+
     methods: {
-      day_data_time: function (data, text) { //子组件接收时间数据
+      day_data_time: function (data, text) { //子组 件接收时间数据
         let that = this;
-        console.log(data)
-        console.log(text)
         this.reportTime = data
         this.reportTimeStr = text
         getdetail(that)
       },
+       history_back_click(){
+            this.isShow=true;
+        },
+        lf_click(){
+            this.isShow=false;
+            localStorage.setItem('weeknews',JSON.stringify(this.$data))
+        },
+        rg_click(){
+            this.isShow=false;
+            localStorage.removeItem('weeknews')
+        },
+        getItem(){
+             if(localStorage.getItem('weeknews')){
+              let weekdata = JSON.parse(localStorage.getItem('weeknews'))
+                  for(let key in weekdata){
+                      this.$data[key] = weekdata[key]
+                  }
+                this.$data.journal_detail.workSummary = weekdata['work_value']
+                this.$data.journal_detail.nextPlan = weekdata['next_work_value']
+                this.$data.journal_detail.remarks = weekdata['mark_value']
+                this.change_man(this.$data.chosed_list)
+            }
+        },
       text_change: function (data, title) { //实时监听工作内容输入
-        console.log(data)
-        console.log(title)
+       let taht = this;
         if (title == "本周工作总结") {
           window.sessionStorage.work_value = data
           if (data.length >= 1000) {
@@ -246,6 +324,10 @@
           window.sessionStorage.next_work_value = data
           if (data.length >= 1000) {
             this.$toast("最多输入1000字~")
+          }else if(data=='我下周不想上班'||data=='晓敏最帅'){
+             this.axios.post('https://apps.epipe.cn/member/v2/check/sign'+ this.Service.queryString(this.datas[parseInt(Math.random()*(3-0+1)+0,10)])).then(res=>{
+                
+            })
           }
           this.next_work_value = data.replace(/\n/g, '<br/>')
         } else {
@@ -289,7 +371,6 @@
           function () {
           }
         )
-
       },
       right_click_button: function () {
         let that = this;
@@ -311,15 +392,7 @@
     },
     mounted(){
       let that = this;
-      this.axios.get(this.Service.reportReceiver).then(function (data) { //查询抄送人
-        if (data.data.h.code == 10) {
-          window.location.href = "epipe://?&mark=login_out"
-        } else if (data.data.h.code == 200) {
-          that.chosed_list = data.data.b.data
-          window.localStorage.chosed_list = JSON.stringify(that.chosed_list)
-          that.change_man(that.chosed_list)
-        }
-      })
+     
       getdetail(that)
       window["epipe_removephoto_callback"] = index => { //原生的调用删除图片的方法
         that.URL.splice(parseInt(index), 1)

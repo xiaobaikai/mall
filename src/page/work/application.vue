@@ -95,12 +95,12 @@
         </div>
         <div class="form-item">
           <div class="form-title">邮箱</div>
-          <div class="form-content" v-if="email.length>0">
+          <!-- <div class="form-content" v-if="email.length>0">
               <span>{{email}}</span>
-          </div>
-          <div class="form-content" v-else>
+          </div> -->
+          <div class="form-content" >
             <router-link :to="{ path:'/edit', query: { title: '邮箱',bg: '#0fc37c',value: this.email} }">
-              <span>设置</span>
+              <span>{{email}}</span>
               <svg class="icon icon-into" aria-hidden="false">
                 <use xlink:href="#icon-into"></use>
               </svg>
@@ -124,7 +124,7 @@
         company: this.$route.query.name,
         id: this.$route.query.id,
         name: this.$store.state.application.name?this.$store.state.application.name:"",
-        email: this.$store.state.application.email?this.$store.state.application.email:"",
+        email: this.$store.state.application.email?this.$store.state.application.email:"设置",
         phone: this.$store.state.application.phone?this.$store.state.application.phone:"",
         department: this.$store.state.application.department?this.$store.state.application.department:"",
         department_id: -1,
@@ -162,6 +162,9 @@
           }
           if(res.data.b.email){
             vm.email = res.data.b.email;
+          }
+          if(res.data.b.officeName){
+            vm.department = res.data.b.officeName
           }
           if((vm.name && vm.phone) || (vm.name && vm.email)){
             vm.submit_active = true;

@@ -126,7 +126,30 @@ const Imchoices = r => require.ensure([], () => r(require('@/page/work/oa/imchoi
 const AddressList = r => require.ensure([], () => r(require('@/page/work/addressList.vue')), 'group-work')
 const Contract = r => require.ensure([], () => r(require('@/page/work/oa/contract.vue')), 'group-work')
 const ContractDetails = r => require.ensure([], () => r(require('@/page/work/oa/contractDetails.vue')), 'group-work')
+const goOutWork = r => require.ensure([], () => r(require('@/page/work/oa/goOutWork.vue')), 'group-work')
+const goOutWorkDetails = r => require.ensure([], () => r(require('@/page/work/oa/goOutWorkDetails.vue')), 'group-work')
 const ApproveBack = r => require.ensure([], () => r(require('@/page/work/oa/approveBack.vue')), 'group-work')
+const AddressMap = r =>  require.ensure([], () => r(require('@/page/work/addressMap.vue')), 'group-work')
+const WorkReport = r =>  require.ensure([], () => r(require('@/page/work/workReport.vue')), 'group-work')
+const Trip = r =>  require.ensure([], () => r(require('@/page/work/oa/trip.vue')), 'group-work')
+const TripDetails = r =>  require.ensure([], () => r(require('@/page/work/oa/tripDetails.vue')), 'group-work')
+const SearchMore = r =>  require.ensure([], () => r(require('@/page/home/searchMore.vue')), 'group-foo')
+const Pay = r =>  require.ensure([], () => r(require('@/page/work/pay/pay.vue')), 'group-work')
+const WaitPay = r =>  require.ensure([], () => r(require('@/page/work/pay/waitPay.vue')), 'group-work')
+const PayRecord = r =>  require.ensure([], () => r(require('@/page/work/pay/payRecord.vue')), 'group-work')
+const PayDetails = r =>  require.ensure([], () => r(require('@/page/work/pay/payDetails.vue')), 'group-work')
+const PayParticulars = r =>  require.ensure([], () => r(require('@/page/work/pay/payParticulars.vue')), 'group-work')
+const ImmediatePay = r =>  require.ensure([], () => r(require('@/page/work/pay/immediatePay.vue')), 'group-work')
+const Stamp = r => require.ensure([], () => r(require('@/page/work/oa/stamp.vue')), 'group-work')
+const StampDetails = r => require.ensure([], () => r(require('@/page/work/oa/stampDetails.vue')), 'group-work')
+const Reimburse = r => require.ensure([], () => r(require('@/page/work/oa/reimburse.vue')), 'group-work')
+const ReimburseDetails = r => require.ensure([], () => r(require('@/page/work/oa/reimburseDetails.vue')), 'group-work')
+const ReimburseType = r => require.ensure([], () => r(require('@/page/work/oa/reimburseType.vue')), 'group-work')
+const PayApply = r => require.ensure([], () => r(require('@/page/work/oa/payApply.vue')), 'group-work')
+const PayApplyDetails = r => require.ensure([], () => r(require('@/page/work/oa/payApplyDetails.vue')), 'group-work')
+const Dimission = r => require.ensure([], () => r(require('@/page/work/oa/dimission.vue')), 'group-work')
+const DimissionDetails = r => require.ensure([], () => r(require('@/page/work/oa/dimissionDetails.vue')), 'group-work')
+
 
 export default new Router({
   routes: [
@@ -329,6 +352,7 @@ export default new Router({
     {
       path: '/runhistory',  //设备运行历史
       component: RunHistory,
+      meta: {keepAlive: true}
     },
     {
       path: '/machinelist',  //设备列表
@@ -516,8 +540,9 @@ export default new Router({
       meta: {keepAlive: true}
     },
     {
-      path: '/leaveDetails',  //请假
-      component: LeaveDetails
+      path: '/leaveDetails',  //请假详情
+      component: LeaveDetails,
+      meta: {keepAlive: true}
     },
     {
       path: '/opinion',  //拒绝理由
@@ -608,8 +633,105 @@ export default new Router({
       meta: {keepAlive: true}
     },
     {
+      path:'/goOutWork', //公出工作
+      component : goOutWork,
+      meta: {keepAlive: true}
+    },
+    {
+      path:'/goOutWorkDetails', //公出详情
+      component : goOutWorkDetails,
+      meta: {keepAlive: true}
+    },
+    {
       path:'/approveBack', //退回
       component : ApproveBack
+    },
+    {
+      path:'/addressMap', //公出地点地图
+      component : AddressMap
+    },
+    {
+      path:'/workReport', //工作汇报
+      component: WorkReport
+    },
+    {
+      path:'/trip', //出差
+      component:Trip,
+      meta: {keepAlive: true}
+    },
+    {
+      path:'/tripDetails', //出差详情
+      component:TripDetails,
+      meta: {keepAlive: true}
+    },
+    {
+      path:'/stamp', //用印
+      component:Stamp,
+      meta: {keepAlive: true}
+    },
+    {
+      path:'/stampDetails', //用印详情
+      component:StampDetails,
+      meta: {keepAlive: true}
+    },
+    {
+      path:'/reimburse', //报销
+      component:Reimburse,
+      meta: {keepAlive: true}
+    },
+    {
+      path:'/reimburseDetails', //报销详情
+      component:ReimburseDetails,
+      meta: {keepAlive: true}
+    },
+    {
+      path:'/payApply', //付款
+      component:PayApply,
+      meta: {keepAlive: true}
+    },
+    {
+      path:'/payApplyDetails', //付款详情
+      component:PayApplyDetails,
+      meta: {keepAlive: true}
+    },
+    {
+      path:'/dimission', //离职
+      component:Dimission,
+      meta: {keepAlive: true}
+    },
+    {
+      path:'/dimissionDetails', //离职详情
+      component:DimissionDetails,
+      meta: {keepAlive: true}
+    },
+    {
+      path:'/reimburseType', //报销详情
+      component:ReimburseType,
+    },
+    {
+      path:'/searchMore', //搜索更多加载
+      component:SearchMore,
+    },
+    {
+      path:'/pay', //待缴费
+      component:Pay,
+    },
+    {
+      path:'/payRecord', //缴费记录
+      component:PayRecord,
+    },
+    {
+      path:'/payDetails', //缴费明细
+      component:PayDetails
+    },{
+      path:'/immediatePay', //立即支付
+      component:ImmediatePay
+    },{
+      path:'/payParticulars', //缴费详情
+      component:PayParticulars
+    },{
+      path:'/waitPay', //待付款
+      component:WaitPay,
     }
   ]
 })

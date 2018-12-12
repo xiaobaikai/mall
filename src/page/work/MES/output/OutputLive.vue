@@ -113,7 +113,7 @@
         tabItem: null,
         mask: false,
         showContent: true,
-        result: true,
+        result: false,
         date: "日期",
         workshop_arr:[],
         workline_arr:[],
@@ -125,10 +125,10 @@
         nowDate:'',//接口返回的当前时间
         selection:{
           workshop: "车间",
-          workshop_id: "",
+          workshop_id: "no",
           workline: "产线",
-          workline_id: "",
-          shift:'班次',
+          workline_id: "no",
+          shift:'白班',
           shiftCode:"01",
           date: new Date().getFullYear()+"-"+(new Date().getMonth() + 1)+"-"+new Date().getDate(),
         }
@@ -156,7 +156,6 @@
       workshopSelect(index){
         this.selection.workshop = this.workshop_arr[index].workshopName;
         this.selection.workshop_id = this.workshop_arr[index].workShopId;
-        // debugger
         this.mask = false;
         this.showContent = true;
         this.tabItem = null;
@@ -249,6 +248,10 @@
         if(workshop_id){
           line = true;
         }
+
+        if(workshop_id=="no"||workline_id=="no"){
+          return false
+        }
         this.$mes.get("/produce/outputKanban",{
           workShopId: workshop_id,
           lineId: workline_id,
@@ -263,40 +266,31 @@
                 let data = {
                   time: [],
                   outputQty: [],
+                  title:this.selection.workshop+this.selection.workline,
                 };
                 obj.map(function(item){
-                  if(item.outputQty > 0){
                     data.outputQty.push(item.outputQty);
                     data.time.push(item.workPeriod);
-                  }
                 });
                 setTimeout(()=>{
                   this.echarts(data,1);
                 },0);
               }else{
-                let data = {
-                  lines: [],
-                  time: {},
-                  outputQty: {},
+                 let timeList = [], outputList = [];
+                let objs = res.b[0].data[0].data;
+                objs.forEach(item => {
+                      timeList.push(item.workPeriod);
+                      outputList.push(item.outputQty);
+                });
+                let params = {
+                  time: timeList,
+                  outputQty: outputList,
+                  title:this.selection.workshop+this.selection.workline,
+                  legend: ["产量"],
+                  unit:'单位/米',
                 };
-                let obj = res.b[0].data;
-                for(let i=0;i<obj.length-1;i++){
-                  let _time = "time-"+i;
-                  let _outputQty = "outputQty"+i;
-                  let outputQty = [];
-                  let workPeriod = [];
-                  if(obj[i].lineName){
-                    data.lines.push(obj[i].lineName);
-                  }
-                  for(let j=0;j<obj[i].data.length;j++){
-                    outputQty.push(obj[i].data[j].outputQty);
-                    workPeriod.push(obj[i].data[j].workPeriod);
-                  }
-                  data.time[_time] = workPeriod;
-                  data.outputQty[_outputQty] = outputQty;
-                }
                 setTimeout(()=>{
-                  this.echarts(data,2);
+                  this.echarts(params,1);
                 },0);
               }
             }else{
@@ -313,6 +307,8 @@
         let target =  document.querySelector(".my-echarts");
         let el = echarts.init(target);
         el.clear();
+
+        console.log(data)
         if(type === 1){
           this.echartsLib.MutipleBars(el,data);
         }else{
@@ -359,14 +355,14 @@
         })
 
         this.$mes.get("/common/currentWorkDateAndShift").then(res=>{
-            that.nowDate = res.b.workDate;
-            that.creat();
             for(let i=0;i<that.shift_arr.length;i++){
                   if(res.b.shift==that.shift_arr[i].shiftCode){
                       that.selection.shift = that.shift_arr[i].shiftName;
                       that.selection.shiftCode = res.b.shift
                   }
             }
+            that.nowDate = res.b.workDate;
+            that.creat();
         })
     },
     mounted(){

@@ -16,10 +16,18 @@
 
   .header_top > li {
     flex: 1;
+
   }
 
   .header_top > li:first-child:active {
     opacity: 0.5;
+  }
+
+  .top-ri{
+      font-size: 0.14rem;
+      color: #fff;
+      text-align: right;
+      padding-right: 0.1rem;
   }
 </style>
 <template>
@@ -31,12 +39,13 @@
           <use xlink:href="#icon-zuoyoujiantou"></use>
         </svg>
       </li>
-      <li style="flex: 4.5">{{title}}</li>
+      <li style="flex: 3">{{title}}</li>
       <li @click="show_edit">
         <svg v-if="is_button" style="font-size: 0.17rem;color: #fff" class="icon"
              aria-hidden="false">
           <use xlink:href="#icon-caidan"></use>
         </svg>
+        <div class="top-ri" v-if="is_relative_approva && is_relative_approva.isShow" >{{is_relative_approva.title}}</div>
       </li>
     </div>
   </div>
@@ -46,10 +55,9 @@
     data () {
       return {}
     },
-    props: ["title", "native", "mark", "bgcolor", "is_button",'show','bgColor'],
+    props: ["title", "native", "mark", "bgcolor", "is_button",'show','bgColor','is_relative_approva'],
     methods: {
       history_back: function () {
-        
         if (this.mark == "mark"||this.native =='mark') {
           this.$emit("history_back")
         } else {
@@ -64,6 +72,11 @@
         if (this.is_button) {
           this.$emit("show_edit")
         }
+        if(this.is_relative_approva){
+          this.$emit("show_edit");
+
+        }
+
       }
     },
     mounted(){
