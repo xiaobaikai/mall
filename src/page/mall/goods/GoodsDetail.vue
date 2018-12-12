@@ -1,5 +1,5 @@
 <template>
-  <div class="goods-con">
+  <div class="goods-con" v-if="showSelection">
     <div class="detail-tab" ref="header">
       <ul>
         <li v-for="(item, index) in tabList" :class="{tabActive:selected==index}" @click="change(index)"><span>{{item}}</span></li>
@@ -36,6 +36,17 @@
           <div class="promotion-detail" v-if="item.promotionType === 'TG'">
             <div class="promotion-tit discount-tit">团购</div>
             <div class="promotion-con">本商品参与团购活动，活动于{{item.promotionList[0].endTimeStr}}结束。</div>
+          </div>
+        </div>
+        <div class="goods-transport" v-if="priceNegotiable === 0 ">
+          <div class="one-line">
+            <span class="sp1">发货</span><span class="sp2">{{shipAddress}}</span>
+          </div>
+          <div class="one-line" @click="changeTrasAdress()">
+            <span class="sp1">送至</span><span class="sp2">{{receiveAddress}}</span><span class="sp3"><i class="iconfont icon-jinru"></i></span>
+          </div>
+          <div class="one-line">
+            <span class="sp1">运费</span><span class="sp4">{{transportPrice}}<i>元</i></span>
           </div>
         </div>
         <div class="goods-spec">
@@ -186,12 +197,16 @@
       </div>
     </div>
   </div>
+  <div class="select-address" v-else>
+    <area-selector @selectArea="handleSelection"></area-selector>
+  </div>
 </template>
 <script>
   import 'swiper/dist/css/swiper.css'
   import { swiper, swiperSlide } from 'vue-awesome-swiper'
   import InfiniteLoading from 'vue-infinite-loading';
   import Pagination from '../../../components/Pagination.vue';
+  const AreaSelector = () => import("../../../components/mall/AreaSelector.vue");
   export default {
     data:function () {
       return{
@@ -222,14 +237,20 @@
         promotionShowState:false,
 	      promotionType:'',
         promotionList:[],
-	      priceNegotiable:''
+	      priceNegotiable:'',
+	      shipAddress:'',
+        receiveAddress:'',
+        transportPrice:'',
+	      showSelection: true,
+	      areaObj: {}
       }
     },
     components: {
       InfiniteLoading,
       Pagination,
       swiper,
-      swiperSlide
+      swiperSlide,
+	    AreaSelector
     },
     mounted () {
 
@@ -296,6 +317,27 @@
         this.selected = index;
         this.showIndex = index;
       },
+      //更换发货地址
+	    changeTrasAdress(){
+	    	this.showSelection = false;
+      },
+	    /*监听回调函数*/
+	    handleSelection(obj){
+		    console.log(obj);
+		    this.receiveAddress = obj.provice+obj.city+obj.area;
+		    this.areaObj = obj;
+		    this.showSelection = true;
+		    this.axios.post(this.baseURL.mall + "/m/goods/queryTransportInfoByAreaId"+this.Service.queryString({
+			    token: this.mallToken.getToken(),
+			    goodsId: this.goodsId,
+          storeId: this.storeId,
+			    areaId: obj.areaId
+		    })).then(res=>{
+		    	  if(res.data.h.code == 200){
+		    	  	this.transportPrice = res.data.b.sprice;
+            }
+        })
+	    },
       //选择规格
       selt(i,j){
         console.log(i,j);
@@ -462,8 +504,24 @@
             detailImg= detailImg.replace(/&gt;/g,">");
             this.detailList.push(detailImg);
             this.goodsId=goodsData.goods[0].goodsId;
+	          this.getTransportInfo();
           }
         })
+      },
+      //获取发货信息
+      getTransportInfo(){
+	      this.axios.post(this.baseURL.mall + "/m/goods/autoGetTransportInfoByIp"+this.Service.queryString({
+		      token:this.mallToken.getToken(),
+          goodsId: this.goodsId,
+          storeId: this.storeId
+	      })).then(res=> {
+		      //console.log('发货信息'+res);
+          if(res.data.h.code == 200){
+          	this.shipAddress = res.data.b.goodsAreaInfo;
+          	this.receiveAddress = res.data.b.areaInfo;
+          	this.transportPrice = res.data.b.sprice;
+          }
+	      })
       },
       //获取商品评论
       onInfinite(){
@@ -692,6 +750,42 @@
         .promotion-more{
           font-size .26rem;
           line-height .1rem;
+        }
+      }
+    }
+    .goods-transport{
+      margin-top .1rem;
+      padding .15rem;
+      background #fff;
+      .one-line{
+        margin-bottom .2rem;
+        &:last-child{
+          margin-bottom 0;
+        }
+        span{
+          line-height 1.27;
+          font-size .14rem;
+        }
+        .sp1{
+          color #999;
+          margin-right .1rem;
+        }
+        .sp2{
+          color #333;
+        }
+        .sp3{
+          float right;
+          font-size .12rem;
+          color #ccc;
+        }
+        .sp4{
+          font-size .14rem;
+          color #d94a45;
+          i{
+            font-size .12rem;
+            font-style normal;
+            margin-left .05rem;
+          }
         }
       }
     }
