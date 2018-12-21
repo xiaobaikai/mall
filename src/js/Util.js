@@ -31,7 +31,14 @@ const Util = {
     str = str.replace(/&(lt|gt|nbsp|amp|quot|ldquo|rdquo|mdash|middot|hellip|rsquo|lsquo);/ig,function(all,t){ return arrEntities[t]});
     str = str.replace(/%/g, "%25").replace("+", "%2B").replace(" ", "%20").replace("/", "%2F").replace("?", "%3F").replace("#", "%23").replace(/&/g, "%26").replace("=", "%3D")
     return str
- 
+  },
+  Count_format:function(str){
+    if(!str){
+      return ''
+    }
+    var arrEntities={'lt':'<','gt':'>','nbsp':' ','amp':'&','quot':'"','ldquo':'"','rdquo':'"','mdash':'_','middot':'·','hellip':'......','rsquo':"'",'lsquo':"'"};
+    str = str.replace(/&(lt|gt|nbsp|amp|quot|ldquo|rdquo|mdash|middot|hellip|rsquo|lsquo);/ig,function(all,t){ return arrEntities[t]});
+    return str;
   },
   GetPreMonth: function (mydate) {  //前一个月
     let arr = mydate.split('-');

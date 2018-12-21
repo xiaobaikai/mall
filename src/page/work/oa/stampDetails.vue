@@ -12,7 +12,7 @@
                     <img class="imgHead" :src="dataObj.profileImg" @click="go_user(dataObj.userId)">
                     <div>
                         <p class="nameTl">{{dataObj.username}}</p>
-                        <p class="res" >{{leaveType |details}}</p>
+                        <p  :class="leaveType==2?'careOf':leaveType==0?'res':'consent'" class="res" >{{leaveType |details}}</p>
                         <p class="res" v-if="leaveType==3||leaveType==4">{{'等待'+dataObj.auditUserName+'的审批'}}</p>
                     </div>
                 </div>
@@ -95,7 +95,8 @@
             v-on:more='moreBtn'
             v-on:revocation="isDialog=true"
             v-on:resubmit="resubmit"
-            v-on:urge="urge"
+            v-on:urge="isBackout=true"
+            v-on:print="print"
             >
         </OaBtn>
 
@@ -117,8 +118,19 @@
           v-on:urge="urge"
           v-on:isShow="isShow=!isShow"
           :myself="myself"
+          v-on:print="print"
         >
         </MoreBtn>
+
+        <Dialog
+            lfText="确认"
+            rgText="取消"
+            content="是否提醒审批人审批？"
+            v-on:lfClick="urge"
+            v-on:rgClick="isBackout=false"
+            v-show="isBackout"
+            >
+        </Dialog>
         
 
     </section>
@@ -132,6 +144,7 @@
     import Copy  from '../../../components/oa/copyDetails.vue'  // 抄送人
     import OaBtn  from '../../../components/oa/oa_btn.vue'  // 动作按钮
     import MoreBtn  from '../../../components/oa/more_btn.vue'  // 更多弹窗
+    import Dialog  from '../../../components/oa/dialog.vue'    //弹窗
 
     export default {
         data(){
@@ -153,6 +166,7 @@
                 newCopy:[],
                 newAppr:[],
                 isShow:false,
+                isBackout:false,
                 amount:0,
 
             }
@@ -164,7 +178,8 @@
             Approver,
             Copy,
             OaBtn,
-            MoreBtn
+            MoreBtn,
+            Dialog
         },
         methods :{
         ...mapMutations(['change_man','approver_man']),
@@ -191,7 +206,7 @@
                 this.$router.push({path: 'imchoices', query: {bgcolor:'#609df6',num:num}})
             },
             refuse(){  //拒绝
-                this.$router.push({path:'/opinion',query:{id:this.dataObj.stampId,type:'stamp',color:'#609df6'}})
+                this.$router.push({path:'/opinion',query:{id:this.dataObj.stampId,typeName:'stamp',applyType:5,color:'#609df6'}})
             },
              removeCopy:function(index){
                 this.newCopy.splice(index, 1);
@@ -201,24 +216,28 @@
                 this.newAppr.splice(index, 1);
                 this.approver_man(this.newAppr)
             },
+             print(){//打印
+                window.location.href = "epipe://?&mark=print&url="+location.href;
+            },
             consent(){ //同意
                 let that = this;
                 let copyStr =  this.appAndCopy(this.newCopy);
                 let apprStr = this.appAndCopy(this.newAppr,'auditUserId');
-                this.$router.push({path:'/opinion',query:{id:this.dataObj.stampId,receiverIds:copyStr,auditerIds:apprStr,color:'#609df6',type:'stamp',pageType:'consent'}})
+                this.$router.push({path:'/opinion',query:{id:this.dataObj.stampId,receiverIds:copyStr,auditerIds:apprStr,color:'#609df6',typeName:'stamp',applyType:5,pageType:'consent'}})
             },
             approveBack(){ //退回
-                 this.$router.push({path:'/approveBack',query:{id:this.dataObj.stampId,type:'stamp',color:"#609df6"}})
+                 this.$router.push({path:'/approveBack',query:{id:this.dataObj.stampId,typeName:'stamp',applyType:5,color:"#609df6"}})
             },
              deliverTo(){ //转交
                 let newApprStr = this.appAndCopy(this.newAppr,'auditUserId')
                 let newCopy = this.appAndCopy(this.newCopy)
-                this.$router.push({path:'/imchoices',query:{id:this.dataObj.stampId,careOf:true,type:'stamp',auditerIds:newApprStr,num:1}})
+                this.$router.push({path:'/imchoices',query:{id:this.dataObj.stampId,receiverIds:newCopy,bgcolor:'#609df6',careOf:true,typeName:'stamp',applyType:5,auditerIds:newApprStr,num:1}})
             },
             resubmit(){ //再次提交
-                this.$router.replace({path:'/stamp',query:{stampId:this.dataObj.stampId,resubmit:true}})
+                this.$router.replace({path:'/stamp',query:{stampId:this.dataObj.stampId,resubmit:1}})
             },
             urge(){ //催办
+                this.isBackout = false;
                 let that = this;
                 this.axios.post('/work/audit'+this.Service.queryString({
                     applyId:this.dataObj.stampId,
@@ -285,9 +304,9 @@
         },
         mounted:function(){
             let that = this;
-          
             let stampId = this.$route.query.stampId
-            this.axios.get('/work/stamp/info?stampId='+stampId).then(function(res){
+            let pusthId = this.$route.query.pushId
+            this.axios.get('/work/stamp/info?stampId='+stampId+'&pushId='+pusthId).then(function(res){
                 if(res.data.h.code === 200){
                     that.dataObj = res.data.b;
                     that.title = that.dataObj.username+'的用印审批';
@@ -295,9 +314,7 @@
                     let arr=[];
                     for(let i =0;i<that.dataObj.auditers.length;i++){            
                         if(that.dataObj.auditers[i].status=='2'){
-                            that.refuseIndex = i+1;
                             that.leaveType = '0';  //已经拒绝
-                            return;
                         }
 
                          if(that.dataObj.auditers[i].status=='00'){
@@ -314,8 +331,11 @@
                     that.newAppr = arr
                     that.approver_man(arr)
 
-                    if(that.dataObj.userId==that.dataObj.auditId){
+                    if(that.dataObj.userId==that.dataObj.auditUserId){
                         that.myself=true;
+                         if(that.dataObj.auditStatus==0&&that.dataObj.myselfApply!='00'){
+                            that.dataObj.myselfApply="0"
+                        }
                     }
 
                      if(that.dataObj.auditStatus=='4'){
@@ -332,11 +352,6 @@
                     
                     if(that.dataObj.auditers[that.dataObj.auditers.length-1].status == 1){ // 已同意
                         that.leaveType = '1';
-                        return;
-                    }
-
-                     if(that.dataObj.auditers[0].status!='0'){ //审批开始
-                        that.leaveType = '4'
                         return;
                     }
                 }

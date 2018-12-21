@@ -8,11 +8,16 @@
             </svg>
             </div>
             我的申请
+            <div  class="redact" @click="go_search">
+                <svg class="icon icon-back" aria-hidden="false">
+                    <use xlink:href="#icon-sousuo2"></use>
+                </svg>
+            </div>
         </div>
         
         <div class="affairs_content" >
             <div v-for="(item,index) in leaveData" :key="index">
-                <div v-if="item.typecode == 1" @click="leaveDetail(item.applyId,item.fianlStatus)"   class="affairs_item myaffairs_shadow">
+                <div v-if="item.typecode == 1"  @click="goDetails(item.applyId,item.fianlStatus,'leave')"   class="affairs_item myaffairs_shadow">
                     <div class="affirs_child">
                         <div class="affairs_title">
                             <img :src="item.profileImg" @click="go_user(item.userId)"/>
@@ -31,7 +36,7 @@
                     </div>
                 </div>
 
-                <div v-else-if="item.typecode == 2" @click="letterDetail(item.applyId,item.fianlStatus)"  class="affairs_item myaffairs_shadow">
+                <div v-else-if="item.typecode == 2"  @click="goDetails(item.applyId,item.fianlStatus,'letterOfRequest','leOfRe')"  class="affairs_item myaffairs_shadow">
                     <div class="affirs_child">
                         <div class="affairs_title">
                             <img :src="item.profileImg" @click="go_user(item.userId)"/>
@@ -57,7 +62,7 @@
 
                 </div>
 
-                <div v-else-if="item.typecode == 3" @click="contractDetail(item.applyId,item.fianlStatus)"   class="affairs_item myaffairs_shadow">
+                <div v-else-if="item.typecode == 3"  @click="goDetails(item.applyId,item.fianlStatus,'contract')"   class="affairs_item myaffairs_shadow">
                     <div class="affirs_child">
                         <div class="affairs_title">
                             <img :src="item.profileImg" @click="go_user(item.userId)"/>
@@ -82,12 +87,12 @@
                     </div>
                 </div>
 
-                <div v-else-if="item.typecode == 4"  @click="goOutWorkDetails(item.applyId,item.fianlStatus)"  class="affairs_item myaffairs_shadow"   :key="item.id">
+                <div v-else-if="item.typecode == 4"   @click="goDetails(item.applyId,item.fianlStatus,'goOutWork')"  class="affairs_item myaffairs_shadow"   :key="item.id">
                     <div class="affirs_child">
                         <div>
                             <div class="affairs_title">
                                 <img :src="item.profileImg"/>
-                                <h2>{{item.title}}的公出审批</h2>
+                                <h2>我的的公出审批</h2>
                                 <time >{{item.applyTime | timeFormat}}</time>
                             </div>
                             <div class="affairs_infor">
@@ -115,12 +120,12 @@
 
                     </div>
                  </div>
-                <div v-else-if="item.typecode == 5" @click="tripDetails(item.applyId,item.fianlStatus)"   class="affairs_item" >
+                <div v-else-if="item.typecode == 5"  @click="goDetails(item.applyId,item.fianlStatus,'trip')"   class="affairs_item" >
                     <div class="affirs_child">
                             <div>
                                 <div class="affairs_title">
                                     <img :src="item.profileImg"/>
-                                    <h2>{{item.title}}的出差审批</h2>
+                                    <h2>我的的出差审批</h2>
                                     <time >{{item.applyTime | timeFormat}}</time>
                                 </div>
                                 <div class="affairs_infor">
@@ -151,12 +156,12 @@
                             </div>
                     </div>
                 </div>
-                <div v-else-if="item.typecode == 6" @click="stampDetails(item.applyId,item.fianlStatus)"   class="affairs_item" >
+                <div v-else-if="item.typecode == 6"  @click="goDetails(item.applyId,item.fianlStatus,'stamp')"   class="affairs_item" >
                     <div class="affirs_child">
                             <div>
                                 <div class="affairs_title">
                                     <img :src="item.profileImg"/>
-                                    <h2>{{item.title}}的用印审批</h2>
+                                    <h2>我的的用印审批</h2>
                                     <time >{{item.applyTime | timeFormat}}</time>
                                 </div>
                                 <div class="affairs_infor">
@@ -183,12 +188,12 @@
                             </div>
                     </div>
                 </div>
-                <div v-else-if="item.typecode == 7" @click="reimburseDetails(item.applyId,item.fianlStatus)"  class="affairs_item" >
+                <div v-else-if="item.typecode == 7"  @click="goDetails(item.applyId,item.fianlStatus,'reimburse')"  class="affairs_item" >
                     <div class="affirs_child">
                             <div>
                                 <div class="affairs_title">
                                     <img :src="item.profileImg"/>
-                                    <h2>{{item.title}}的报销审批</h2>
+                                    <h2>我的的报销审批</h2>
                                     <time >{{item.applyTime | timeFormat}}</time>
                                 </div>
                                 <div class="affairs_infor">
@@ -215,12 +220,12 @@
                             </div>
                     </div>
                 </div>
-                <div v-else-if="item.typecode == 8" @click="payApplyDetails(item.applyId,item.title)"   class="affairs_item" >
+                <div v-else-if="item.typecode == 8" @click="goDetails(item.applyId,item.fianlStatus,'payApply')"   class="affairs_item" >
                 <div class="affirs_child">
                         <div>
                             <div class="affairs_title">
                                 <img :src="item.profileImg"/>
-                                <h2>{{item.title}}的付款申请</h2>
+                                <h2>我的的付款申请</h2>
                                 <time >{{item.applyTime | timeFormat}}</time>
                             </div>
                             <div class="affairs_infor">
@@ -248,12 +253,12 @@
                 </div>
                 
             </div>
-            <div v-else-if="item.typecode == 9" @click="dimissionDetails(item.applyId,item.title)"   class="affairs_item" >
+            <div v-else-if="item.typecode == 9"  @click="goDetails(item.applyId,item.fianlStatus,'dimission')"   class="affairs_item" >
                 <div class="affirs_child">
                         <div>
                             <div class="affairs_title">
                                 <img :src="item.profileImg"/>
-                                <h2>{{item.title}}的离职申请</h2>
+                                <h2>我的的离职申请</h2>
                                 <time >{{item.applyTime | timeFormat}}</time>
                             </div>
                             <div class="affairs_infor">
@@ -279,7 +284,102 @@
                             查看详情
                         </div>
                 </div>
-            </div>  
+            </div>
+            <div v-else-if="item.typecode == 10"  @click="goDetails(item.applyId,item.fianlStatus,'borrow')"   class="affairs_item" >
+                <div class="affirs_child">
+                        <div>
+                            <div class="affairs_title">
+                                <img :src="item.profileImg"/>
+                                <h2>我的的借款申请</h2>
+                                <time >{{item.applyTime | timeSlice}}</time>
+                            </div>
+                            <div class="affairs_infor">
+                                <div class="request_infor lineHeight">
+                                    <span >借款金额 : </span>
+                                    <p class="line1">{{item.borrowAmount}} 元</p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span>借款日期 :</span>
+                                    <p class="line1"> {{item.useDate  }}</p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span >归还日期 :</span>
+                                    <p class="line1">{{item.returnDate  }} </p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span>借款事由 :</span>
+                                    <p class="line2" style="line-height:0.2rem;">{{item.content  }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div  class="skip" tag="div">
+                            查看详情
+                        </div>
+                </div>
+            </div>
+             <div v-else-if="item.typecode == 11" @click="goDetails(item.applyId,item.fianlStatus,'reception')"   class="affairs_item" >
+                <div class="affirs_child">
+                        <div>
+                            <div class="affairs_title">
+                                <img :src="item.profileImg"/>
+                                <h2>我的的接待申请</h2>
+                                <time >{{item.applyTime | timeSlice}}</time>
+                            </div>
+                            <div class="affairs_infor">
+                                <div class="request_infor lineHeight">
+                                    <span >来宾单位 : </span>
+                                    <p class="line1">{{item.visitorCompany}} </p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span>到访日期 :</span>
+                                    <p class="line1"> {{item.visitDate |timeSlice }}</p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span >接待等级 :</span>
+                                    <p class="line1">{{item.receptionLevel}} </p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span>预算总费用 :</span>
+                                    <p class="line1">{{item.totalBudget}} 元</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div  class="skip" tag="div">
+                            查看详情
+                        </div>
+                </div>
+            </div>
+             <div v-else-if="item.typecode == 12" @click="goDetails(item.applyId,item.fianlStatus,'absence')"   class="affairs_item" >
+                <div class="affirs_child">
+                        <div>
+                            <div class="affairs_title">
+                                <img :src="item.profileImg"/>
+                                <h2>我的的补卡申请</h2>
+                                <time >{{item.applyTime | timeSlice}}</time>
+                            </div>
+                            <div class="affairs_infor">
+                                <div class="request_infor lineHeight">
+                                    <span> 提 &nbsp;交&nbsp;人 :</span><p class="line1">{{item.title}} </p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span>所属部门 :</span>
+                                    <p class="line1">{{item.officeName }}</p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span >时&emsp;&emsp;间 :</span>
+                                    <p class="line1">{{item.absenceDate|timeSlice }} </p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span>原&emsp;&emsp;因 :</span>
+                                    <p class="line2" style="line-height:0.2rem;">{{item.absenceReason  }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div  class="skip" tag="div">
+                            查看详情
+                        </div>
+                </div>
+            </div> 
 
             </div>
 
@@ -289,19 +389,18 @@
         </div>
 
         <div class="footer">
-            <div class='tab tab_user active' @click="tabEven()">
-
+            <div class='tab tab_user active' >
                 <svg class="icon icon-user active" aria-hidden="false">
                     <use  xlink:href="#icon-wodeshenqing-mian"></use>
                 </svg>
                 <span>我的申请</span>
             </div>
-            <router-link class="tab tab_drafts" @click="tabEven()" tag="div" :to="{path:'drafts'}">
+            <div class="tab tab_drafts" @click="tabEven">
                 <svg class="icon icon-drafts" aria-hidden="false">
-                    <use  xlink:href="#icon-caogaoxiang-line"></use>
+                    <use xlink:href="#icon-caogaoxiang-line"></use>
                 </svg>
                 <span>草稿箱</span>                
-            </router-link>
+            </div>
         </div>
 
          <infinite-loading  spinner="bubbles" :on-infinite="onInfinite" ref="infiniteLoading">
@@ -332,82 +431,19 @@
             goback(){
                 window.location.href = "epipe://?&mark=history_back"
             },
-            tabEven(flag){
-                this.btnShow = !this.btnShow
-                if(!this.btnShow){
-                    this.title = '草稿箱';
-                    this.num = 3;
-                    return
-                }
-                this.num = 2;
-                this.title = '我的申请';
+            tabEven(){
+               this.$router.replace({path:'/drafts'});
             },
             go_user(id){
                 window.location.href = "epipe://?&mark=userinfo&_id="+id;
+            },  
+            goDetails(id,type,typeName,details){
+             
+                typeName=details?details:typeName
+                window.location.href = "epipe://?&mark="+typeName+"Details&_id="+id+'&data='+JSON.stringify({text:0});
             },
-         
-            leaveDetail(id,type){
-                if(type==4){
-                    window.location.href = "epipe://?&mark=leave&_id="+id;
-                    return 
-                }
-                window.location.href = "epipe://?&mark=leaveDetails&_id="+id+'&data='+JSON.stringify({text:0});
-            },
-            letterDetail(id,type){
-                if(type==4){
-                    window.location.href = "epipe://?&mark=letterOfRequest&_id="+id;
-                    return 
-                }
-                window.location.href = "epipe://?&mark=leOfReDetails&_id="+id+'&data='+JSON.stringify({text:0});
-            },
-            contractDetail(id,type){
-                if(type==4){
-                 window.location.href = "epipe://?&mark=contract&_id="+id;
-                    return 
-                }
-                window.location.href = "epipe://?&mark=contractDetails&_id="+id+'&data='+JSON.stringify({text:0});
-            },
-               goOutWorkDetails(id,type){
-                if(type==4){
-                 window.location.href = "epipe://?&mark=goOutWork&_id="+id;
-                    return 
-                }
-                window.location.href = "epipe://?&mark=goOutWorkDetails&_id="+id+'&data='+JSON.stringify({text:0});
-            },
-            tripDetails(id,type){
-                 if(type==4){
-                    window.location.href = "epipe://?&mark=trip&_id="+id;
-                    return 
-                }
-                window.location.href = "epipe://?&mark=tripDetails&_id="+id+'&data='+JSON.stringify({text:0});
-            },
-            stampDetails(id,type){
-                if(type==4){
-                    window.location.href = "epipe://?&mark=stamp&_id="+id;
-                    return
-                }
-                window.location.href = "epipe://?&mark=stampDetails&_id="+id+'&data='+JSON.stringify({text:0});
-            },
-            reimburseDetails(id,type){
-                if(type==4){
-                    window.location.href = "epipe://?&mark=reimburse&_id="+id;
-                    return
-                }
-                window.location.href = "epipe://?&mark=reimburseDetails&_id="+id+'&data='+JSON.stringify({text:0});
-            },
-             payApplyDetails(id,type){
-                if(type==4){
-                    window.location.href = "epipe://?&mark=payApply&_id="+id;
-                    return
-                }
-                window.location.href = "epipe://?&mark=payApplyDetails&_id="+id+'&data='+JSON.stringify({text:0});
-            },
-             dimissionDetails(id,type){
-                if(type==4){
-                    window.location.href = "epipe://?&mark=dimission&_id="+id;
-                    return
-                }
-                window.location.href = "epipe://?&mark=dimissionDetails&_id="+id+'&data='+JSON.stringify({text:0});
+            go_search(){
+                this.$router.push({path:'/oaSearch',query:{tag:1,color:'#f80'}})
             },
             onInfinite(){
                 let that = this;
@@ -636,7 +672,13 @@
         color #666;
         border-top: 0.01rem solid  #e6e6e6;
     }
-
+    .redact{
+        position:absolute;
+        right:0;
+        top:0;
+        margin-right:0.15rem;
+        font-size 0.15rem;
+    }
     .footLine{
        height 0.13rem;
        font-size:0.13rem;

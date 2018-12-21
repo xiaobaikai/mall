@@ -72,7 +72,7 @@
                 v-on:remove_item="remove_item"
                 :special_class='1'
                 :isGroup = true
-                type = 2
+                type = 5
             ></ApproverMan>
 
             <CopeMan 
@@ -221,7 +221,11 @@ let save_leave = (index,text,that) =>{
 
                     that.$toast('已保存至草稿箱!')
                     setTimeout(()=>{
-                        window.location.href = "epipe://?&mark=history_back";
+                          if(that.$route.query.stampId){
+                             window.location.href = "epipe://?&mark=goWork"
+                        }else{
+                            window.location.href = "epipe://?&mark=history_back" 
+                        }
                     },700)
                 }else{
                     that.$toast('提交成功！')
@@ -451,8 +455,12 @@ export default {
             })
 
             if(this.$route.query.stampId){
-                  this.axios.get('/work/stamp/info?stampId='+this.$route.query.stampId).then(function(res){
-                    //   console.log(res.data.b.data)
+                   this.axios.get('/work/stamp/info',{
+                        params:{
+                            type:that.$route.query.resubmit,
+                            stampId:this.$route.query.stampId
+                        }
+                    }).then(function(res){ //   console.log(res.data.b.data)
                        let data = res.data.b;
                        if(!that.$route.query.resubmit){
                             that.id = data.stampId;

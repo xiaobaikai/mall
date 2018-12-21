@@ -37,6 +37,10 @@
       color $font_color_3
       font-weight bold
       flex 1
+  .accessory{
+    margin 0.15rem;
+    background-color #fff
+  }
 </style>
 <template>
   <section class="padding_bottom_content">
@@ -48,42 +52,25 @@
     </div>
     <div>
       <WorkInput
-        placeholder="请在此处输入您的工作总结,限定1000字"
+        placeholder="请在此处输入您的工作总结,限定5000字"
         title="本月工作总结"
         color="#0fc37c"
         v-on:text_change="text_change"
         :is_input=!has_journal
-        maxlength="1000"
+        maxlength="5000"
         :work_value="journal_detail.workSummary?journal_detail.workSummary:''"
         :work_text="journal_detail.workSummary?journal_detail.workSummary:''"
       ></WorkInput>
       <WorkInput
-        placeholder="请在此处输入您的下月工作计划,限定1000字"
+        placeholder="请在此处输入您的下月工作计划,限定5000字"
         title="下月工作计划"
         color="#0fc37c"
         v-on:text_change="text_change"
         :is_input=!has_journal
-        maxlength="1000"
+        maxlength="5000"
         :work_value="journal_detail.nextPlan?journal_detail.nextPlan:''"
         :work_text="journal_detail.nextPlan?journal_detail.nextPlan:''"
       ></WorkInput>
-      <ul v-if="!has_journal" class="day_chose_img" @click="get_camera">
-        <li class="day_chose_span">选择图片</li>
-        <li class="day_chose_span2">已添加{{URL.length}}张</li>
-        <li class="day_chose_span3">
-          <svg style="font-size: 0.22rem" class="icon" aria-hidden="false">
-            <use xlink:href="#icon-tianjiazhaopian"></use>
-          </svg>
-        </li>
-      </ul>
-      <ul v-if="URL.length>0&has_journal" class="day_chose_img" @click="get_camera">
-        <li class="day_chose_span">图片</li>
-      </ul>
-      <ul v-if="URL.length>0" class="img_ul">
-        <li @click="go_imgdetail(index)" v-for="(itme,index) in URL">
-          <img :src=itme|journal_img style="width: 100%;height: 100%"/>
-        </li>
-      </ul>
       <WorkInput
         v-on:text_change="text_change"
         :is_input=!has_journal
@@ -94,6 +81,21 @@
         :work_value="journal_detail.remarks?journal_detail.remarks:''"
         :work_text="journal_detail.remarks?journal_detail.remarks:''"
       ></WorkInput>
+      <div class="accessory" v-if="!has_journal">
+          <Accessory
+            :accessory="accessory"
+          >
+            </Accessory>
+
+      </div>
+
+      <div class="accessory" style="padding:0.15rem;" v-if="has_journal&&accessory.length">
+        <AccessoryList
+            :accessory="accessory"
+          >
+
+          </AccessoryList>
+      </div>
       <CopeMan
         :has_journal="!has_journal"
         color="#0fc37c"
@@ -110,6 +112,13 @@
         bgcolor="#0fc37c"
       ></WorkButton>
     </div>
+
+     <Comment
+      v-if="has_journal"
+      :data='journal_detail'
+    >
+     </Comment>
+
 
     <Dialog
         lfText="保存"
@@ -136,11 +145,16 @@
         string_id = string_id + "|" + that.chosed_list[i].userId
       }
       string_id = string_id.slice(1)
-      let string_img = ""
-      for (var i = 0; i < that.URL.length; i++) {
-        string_img = string_img + "|" + that.URL[i]
-      }
-      string_img = string_img.slice(1)
+      
+      let urlStr = '',fileSizeStr = '',fileNameStr = '';
+        for(let i=0;i<that.accessory.length;i++){
+            urlStr+='|'+that.accessory[i].url;
+            fileSizeStr+='|'+that.accessory[i].fileSize;
+            fileNameStr+='|'+that.accessory[i].fileName;  
+        }
+        urlStr = urlStr.slice(1)
+        fileSizeStr = fileSizeStr.slice(1)
+        fileNameStr = fileNameStr.slice(1)
 
       that.axios({
             method:"post",
@@ -157,8 +171,10 @@
                 reportTimeStr: that.reportTimeStr,
                 reportTime: that.reportTime,
                 receiveUserIds: string_id,//id串
-                imgUrl: string_img,//图片串
-                isDraft: index
+                isDraft: index,
+                urls:urlStr,
+                fileSizes:fileSizeStr,
+                fileNames:fileNameStr
             },
             transformRequest: [function (data) {
                 let ret = ''
@@ -199,6 +215,7 @@
           that.chosed_list = JSON.parse(window.localStorage.chosed_list)
         }
         that.has_journal = true
+        that.accessory = [];
         that.journal_detail = {}
         if (data.data.b == null) {
           that.has_journal = false
@@ -215,10 +232,13 @@
             that.work_value = data.data.b.workSummary.replace(/\n/g, '<br/>')
             that.next_work_value = data.data.b.nextPlan.replace(/\n/g, '<br/>')
             that.mark_value = data.data.b.remarks.replace(/\n/g, '<br/>')
+            that.accessory = that.accessoryFor(data.data.b)
+            that.getItem();
           } else {
             that.journal_detail = data.data.b
             that.chosed_list = data.data.b.receiverData
             that.has_journal = true
+            that.accessory = that.accessoryFor(data.data.b)
           }
         }
       }
@@ -232,6 +252,9 @@
   import WorkButton  from '../../components/worknews/work_button.vue'
   import CopeMan  from '../../components/worknews/copy_man.vue'
   import Dialog  from '../../components/oa/dialog.vue'    //弹窗
+  import Comment  from '../../components/worknews/comment.vue'    //
+  import Accessory  from '../../components/worknews/accessory_select.vue'    //附件
+  import AccessoryList  from '../../components/oa/accessoryList.vue'  //附件
 
   export default {
     data () {
@@ -247,6 +270,9 @@
         has_journal: true,
         journal_detail: {},
         isShow:false,
+        accessory:[],
+        oldData:null,
+        isCheck:false,
       }
     },
     components: {
@@ -255,13 +281,14 @@
       WorkButton,
       CopeMan,
       TopHead,
-      Dialog
+      Dialog,
+      Comment,
+      Accessory,
+      AccessoryList
     },
     methods: {
       day_data_time: function (data, text) { //子组件接收时间数据
         let that = this;
-        console.log(data)
-        console.log(text)
         this.reportTime = data
         this.reportTimeStr = text
         getdetail(that)
@@ -269,14 +296,14 @@
       text_change: function (data, title) { //实时监听工作内容输入
         if (title == "本月工作总结") {
           window.sessionStorage.work_value = data
-          if (data.length >= 1000) {
-            this.$toast("最多输入1000字~")
+          if (data.length >= 5000) {
+            this.$toast("最多输入5000字~")
           }
           this.work_value = data.replace(/\n/g, '<br/>')
         } else if (title == "下月工作计划") {
           window.sessionStorage.next_work_value = data
-          if (data.length >= 1000) {
-            this.$toast("最多输入1000字~")
+          if (data.length >= 5000) {
+            this.$toast("最多输入5000字~")
           }
           this.next_work_value = data.replace(/\n/g, '<br/>')
         } else {
@@ -286,16 +313,75 @@
           }
           this.mark_value = data.replace(/\n/g, '<br/>')
         }
-      },history_back_click(){
-            this.isShow=true;
+      },
+      accessoryFor:function(datas){
+                if(!datas.urls) return [];
+               let urlArr = datas.urls.split('|')
+               let fileSizeArr = datas.fileSizes.split('|')
+               let fileNameArr = datas.fileNames.split('|')
+               let arrs = [];
+                for(let i=0;i<urlArr.length;i++){
+                    let bool = this.Util.isImg(urlArr[i])
+                    arrs.push({
+                        url:urlArr[i],
+                        fileSize:fileSizeArr[i],
+                        fileName:fileNameArr[i],
+                        isImg: bool,
+                    })
+                }
+                return arrs
+            },
+      isUpdate(){
+            let data = this.$data;
+            if(!this.oldData) return
+            for(let key in data){
+               if(key=='chosed_list_two'||key=='chosed_list'||key=='URL'){
+                    if(data[key].length!=this.oldData[key].length){
+                        return true
+                    }
+                    for(let i=0;i<data[key].length;i++){
+
+                        if(key!='accessory'&&data[key][i].auditUserId!=this.oldData[key][i].auditUserId){
+                            return true
+                        }else if(key=='accessory'&&data[key][i].url!=this.oldData[key][i].url){
+                            return true
+                        }
+                    }
+
+                }else if(key=='journal_detail'){
+                    let obj = data[key]
+                    for(let keys in obj ){
+                        if(obj[keys]!=this.oldData[key][keys]){
+                          console.log(this.oldData[key][keys])
+                        }
+                    }
+                }else if(key!='oldData'&&key!='accessory'){
+                    if(data[key]!=this.oldData[key]){
+                            console.log(data[key],this.oldData[key],key)
+                            return true;
+                    }
+                }
+            }
+            return false
+        },
+      history_back_click(){
+        console.log(this.isCheck,this.isUpdate())
+            if(!this.isCheck||!this.isUpdate()){
+                 window.location.href = "epipe://?&mark=history_back"
+            }else{
+                this.isShow = true;
+            }
         },
         lf_click(){
             this.isShow=false;
             localStorage.setItem('monthnews',JSON.stringify(this.$data))
+            window.location.href = "epipe://?&mark=history_back"
+
         },
         rg_click(){
             this.isShow=false;
             localStorage.removeItem('monthnews')
+            window.location.href = "epipe://?&mark=history_back"
         },
         getItem(){
              if(localStorage.getItem('monthnews')){
@@ -303,10 +389,12 @@
                   for(let key in weekdata){
                       this.$data[key] = weekdata[key]
                   }
-                this.$data.journal_detail.workSummary = weekdata['work_value']
-                this.$data.journal_detail.remarks = weekdata['mark_value']
+                this.$data.journal_detail.workSummary = weekdata['work_value'].replace(/<br\/>/g,'\n')
+                this.$data.journal_detail.remarks = weekdata['mark_value'].replace(/<br\/>/g,'\n')
                 this.change_man(this.$data.chosed_list)
             }
+            this.isCheck = true;
+            this.oldData = JSON.parse(JSON.stringify(this.$data))
         },
       get_camera: function () { //调用手机摄像头
         let that = this;

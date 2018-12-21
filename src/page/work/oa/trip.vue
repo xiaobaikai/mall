@@ -26,7 +26,7 @@
 
             </EvectionTemp>
 
-              <div class="addDiv styles" @click="addEvection" v-if="datas.length<10">
+            <div class="addDiv styles" @click="addEvection" v-if="datas.length<10">
                 + 增加行程明细
             </div>
 
@@ -177,7 +177,7 @@ let save_leave = (index,text,that) =>{
              Id : that.id, // id
             urls : urlStr, //附件
             tripTitle:that.tripTitle, //标题
-            tripReason:encodeURI(that.contractDesc),//出差事由
+            tripReason:that.contractDesc,//出差事由
             fileNames : fileNameStr, //文件名称 
             fileSizes : fileSizeStr, //文件大小
             auditUserIds : approver_id, //审批人
@@ -221,7 +221,11 @@ let save_leave = (index,text,that) =>{
                         if(index){
                             that.$toast('已保存至草稿箱!')
                             setTimeout(()=>{
-                                window.location.href = "epipe://?&mark=history_back";
+                                if(that.$route.query.tripId){
+                                    window.location.href = "epipe://?&mark=goWork"
+                                }else{
+                                    window.location.href = "epipe://?&mark=history_back" 
+                                }
                             },500)
                         }else{
                             that.$toast('提交成功!')
@@ -485,8 +489,12 @@ export default {
 
             let that = this;
             if(this.$route.query.tripId){
-                  this.axios.get('/work/trip/info?tripId='+this.$route.query.tripId).then(function(res){
-                    //   console.log(res.data.b.data)
+                 this.axios.get('/work/trip/info',{
+                        params:{
+                            type:that.$route.query.resubmit,
+                            tripId:this.$route.query.tripId
+                        }
+                    }).then(function(res){ ///   console.log(res.data.b.data)
                        let data = res.data.b;
                        if(!that.$route.query.resubmit){
                              that.id = data.tripId;

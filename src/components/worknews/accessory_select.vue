@@ -23,7 +23,7 @@
                     <use xlink:href="#icon-tianjiarenyuan"></use>
                 </svg>
                 <div style="flex:1">
-                    <p>仅支持图片、文档( .doc/.docx/.ppt/.pptx/.txt/.jpg/.jpeg/.png/.xlsx/.xls/.pdf)</p>
+                    <p >仅支持图片、文档( .doc/.docx/.ppt/.pptx/.txt/.jpg/.jpeg/.png/.xlsx/.xls/.pdf)</p>
                 </div>
             </div>
         </div>
@@ -37,6 +37,7 @@
             }
         },
         mounted:function(){
+                let that = this;
                  window["epipe_camera_callback"] = (url,fileSize,fileName) => {
                     var obj = {
                             url,
@@ -45,7 +46,6 @@
                     }
                     that.isImg(url)?obj.isImg=true:obj.isImg=false;
                     that.accessory.push(obj)
-
             }
         },
           props: [
@@ -64,6 +64,19 @@
             addAccessory:function(){
             let that = this;
                 window.location.href = "epipe://?&mark=addAccessory"
+            },
+            isImg:function(str){
+                 //判断是否是图片 - strFilter必须是小写列举
+                var strFilter=".jpeg|.gif|.jpg|.png|.bmp|.pic|"
+                if(str.indexOf(".")>-1){
+                    var p = str.lastIndexOf(".");
+                    var strPostfix=str.substring(p,str.length) + '|';        
+                    strPostfix = strPostfix.toLowerCase();
+                    if(strFilter.indexOf(strPostfix)>-1){
+                        return true;
+                    }
+                }        
+                return false;   
             },
 
         },
@@ -104,7 +117,6 @@
             margin-right 0.1rem;
         }
 
-
         .accessory-cont{
             flex 1;
 
@@ -130,7 +142,8 @@
 
      .add-btn{
         display flex;
-        padding-left:0.15rem;
+        padding:0 0.15rem;
+        box-sizing border-box
 
         div{
             height:0.33rem;
@@ -141,8 +154,8 @@
         p{
             font-size:0.12rem;
             color:#999;
-            display: table-cell;  
-            vertical-align: middle; 
+            // display: table-cell;  
+            // vertical-align: middle; 
             word-wrap: break-word;
             word-break: break-all;
         }

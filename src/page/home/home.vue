@@ -32,7 +32,7 @@
         <li @click="go_mall">
           <div style="background: -webkit-linear-gradient(top, #fd535b 0%,#fc757e 100%);">
             <svg style="width: 0.22rem;height: 0.22rem" class="icon" aria-hidden="false">
-              <use xlink:href="#icon-youguanyouxuan"></use>
+              <use :xlink:href='name'></use>
             </svg>
           </div>
           <div>优管优选</div>
@@ -55,14 +55,13 @@
           </div>
           <div>优招标</div>
         </li>
-      
         </ul>
        
       <div class="home_title_con1">
         <div></div>
         <div>头条</div>
       </div>
-      <!-- <div class="home_content_news-1" v-for="newsData_item in newsData"> 
+  <!-- <div class="home_content_news-1" v-for="newsData_item in newsData"> 
           <ul v-if="newsData_item.coverImgUrl==''" @click="go_news(newsData_item)" class="home_title_con2">
           <li class="over_width" v-html="newsData_item.resTitle"></li>
           <li class="home_title_con3 simple-ellipsis" v-html="newsData_item.summary">
@@ -94,7 +93,7 @@
               </div>
             </div>
           </div>
-        </ul> -->
+    </ul> -->
         <div class="item" v-for="item in newsData" @click="go_news(item)" :key="item.id" >
             <div class="img-show">
                 <img :src="item.coverImgUrl" />
@@ -142,6 +141,7 @@
           width: 350,
           height: 180
         },
+        name:'#icon-youguanyouxuan'
       }
     },
     components: {

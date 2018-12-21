@@ -405,8 +405,7 @@
               }
       },
       chose_child(index,num,el,c){
-          
-         if(this.iscareOf){
+          if(this.iscareOf){
            if(el.mark_chose){
              this.$toast('该用户为审批人')
              return;
@@ -416,7 +415,10 @@
               userName:el.name,
               userId:el.userId,
               auditerIds:this.$route.query.auditerIds,
+              receiverIds:this.$route.query.receiverIds,
               type:this.$route.query.type,
+              typeName:this.$route.query.typeName,
+              applyType:this.$route.query.applyType,
               color:this.$route.query.bgcolor
               }})
              return false;
@@ -458,11 +460,7 @@
 
                   if(flag){
                       el.auditUserId = el.userId;
-                      if(this.$route.query.isOrder){
-                        this.approver_array.unshift(el)
-                      }else{
-                        this.approver_array.push(el)
-                      }
+                      this.approver_array.push(el)
                       this.approver_man(this.approver_array)
                       window.history.back()
                   }
@@ -560,13 +558,19 @@
       chose_select: function (item, index) { //搜索之后选中某个人
 
         if(this.iscareOf){
+           if(item.mark_chose){
+             this.$toast('该用户为审批人')
+             return;
+           }
               this.$router.push({path:'/deliverExplain',
               query:{id:this.$route.query.id,
               userName:item.name,
               auditerIds:this.$route.query.auditerIds,
               userId:item.userId,
-              type:this.$route.query.type,
-              color:this.$route.query.color
+              typeName:this.$route.query.typeName,
+              applyType:this.$route.query.applyType,
+              color:this.$route.query.bgcolor,
+              receiverIds:this.$route.query.receiverIds,
               }})
              return false;
          } 
@@ -599,9 +603,14 @@
           setTimeout(function () { //300毫秒后去掉搜索界面
             that.is_search = false
             that.seach_list_man = []
-          }, 300)
+          }, 100)
         }else{
           that.seach_list_man[index].mark_chose = false;
+          that.reduce(item)
+          setTimeout(function () { //300毫秒后去掉搜索界面
+            that.is_search = false
+            that.seach_list_man = []
+          }, 100)
         }
       },
       hide_seach: function () {

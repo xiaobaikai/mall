@@ -24,7 +24,7 @@
                             <use xlink:href="#icon-tianjiarenyuan"></use>
                         </svg>
                         <div style="margin-top: 0.055rem">添加</div>
-      ]               </li>
+                   </li>
                 </ul>
             </div>
     </div>

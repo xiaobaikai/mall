@@ -25,12 +25,12 @@
     "vue-axios": "^2.0.2",
     "vue-carousel-3d": "^0.1.19",
     "vue-infinite-loading": "^2.1.3",
+    "vue-mobile-calendar": "^2.1.0",
     "vue-router": "^2.6.0",
     "vuex": "^2.3.1",
     "wc-messagebox": "^1.5.6",
     "wc-swiper": "^1.0.7",
-    "zepto": "^1.2.0",
-    "vue-mobile-calendar": "2.1.0"
+    "zepto": "^1.2.0"
   },
   "devDependencies": {
     "autoprefixer": "^6.7.2",
@@ -98,7 +98,8 @@
     "node": ">= 4.0.0",
     "npm": ">= 3.0.0"
   },
-  "browserslist": ["> 1%",
+  "browserslist": [
+    "> 1%",
     "safari >= 7",
     "Android > 4.1",
     "Firefox > 20",

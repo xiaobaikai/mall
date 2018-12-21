@@ -128,6 +128,29 @@
     padding-top: 0.15rem;
     background-color: #fff;
   }
+
+  .lackCard{
+    margin-top 0.05rem;
+
+    a{
+      display inline-block
+      width 0.3rem;
+      height 0.15rem;
+      line-height 0.15rem;
+      border 0.01rem solid #fd545c
+      border-raidus 0.02rem;
+      font-size 0.12rem;
+      text-align center
+      margin-right 0.1rem;
+      color #fd545c
+    }
+
+    .success{
+        color #0f73c3
+        border-color #0f73c3 
+    }
+
+  }
 </style>
 
 <template>
@@ -165,7 +188,7 @@
           当天考勤信息
         </div>
       </div>
-      <div v-for="item in items" class="record_my-1">
+      <!-- <div v-for="item in items" class="record_my-1">
         <div class="record_wordcon_div">
           <div style="flex: 1;align-items: center">
             <svg style="width: 0.18rem;height: 0.18rem;" class="icon" aria-hidden="false">
@@ -178,7 +201,53 @@
           <div style="flex: 1"></div>
           <div class="record_con_div3">{{item.address}}</div>
         </div>
+      </div> -->
+
+      <div v-for="item in items" class="record_my-1">
+        <div v-if="item.address">
+            <div class="record_wordcon_div">
+              <div style="flex: 1;align-items: center">
+                <svg style="width: 0.18rem;height: 0.18rem;" class="icon" aria-hidden="false">
+                  <use xlink:href="#icon-time"></use>
+                </svg>
+              </div>
+              <div class="record_con_div2">打卡时间（{{item.signTime.substring(11)}}）</div>
+              </div>
+            <div class="record_wordcon_div">
+              <div style="flex: 1"></div>
+              <div class="record_con_div3">{{item.address}}</div>
+            </div>
+        </div>
+
+        <div v-if="!item.address">
+            <div class="record_wordcon_div">
+              <div style="flex: 1;align-items: center">
+                <svg style="width: 0.18rem;height: 0.18rem;" class="icon" aria-hidden="false">
+                  <use xlink:href="#icon-time"></use>
+                </svg>
+              </div>
+              <div class="record_con_div2">{{item.workShift | workFor }}（{{item.signTime}}）</div>
+            </div>
+            <div class="record_wordcon_div">
+              <div style="flex: 1"></div>
+              <div class="record_con_div3 lackCard" @click="go_absence(item)">
+                <a v-if="item.absenceApplyState!='申请补卡'" :class="item.absenceApplyState=='已通过'?'success':''">
+                  {{item.absenceApplyState | absenceState}}
+                </a>
+                
+                <span style="margin-right:0.05rem;" v-if="item.absenceApplyState!='申请补卡'">
+                  申请补卡 ·
+                </span>
+
+                <span style="color:#609ef7">
+                  {{item.absenceApplyState}} >
+                </span>
+              </div>
+            </div>
+        </div>
+
       </div>
+
       <div style="width: 100%;height: 0.15rem;background-color: #fff;position: relative;top: -0.01rem"></div>
     </div>
     <div v-show="!has_record" class="no_record_1">
@@ -300,6 +369,22 @@
         mydate = myyear + '-' + mymonth + '-' + myday
         this.dateArrray = commonways(new Date(Util.GetNextMonth(mydate)), "left_right", this)
         this.topdate = myyear + '年' + mymonth + '月'
+      },
+      go_absence(item){
+          if(item.type==='0'){
+                window.location.href = "epipe://?&mark=leaveDetails&_id="+item.applyId
+          }else if(item.type==='3'){//公出
+                window.location.href = "epipe://?&mark=goOutWorkDetails&_id="+item.applyId
+          }else if(item.type === '4'){ //出差
+                window.location.href = "epipe://?&mark=tripDetails&_id="+item.applyId
+          }else if(item.type === '11'){ //补卡
+              if(item.applyId){
+                window.location.href = "epipe://?&mark=absenceDetails&_id="+item.applyId
+              }else{
+                window.location.href = "epipe://?&mark=absence&data="+JSON.stringify({absenceTime:item.signTime})
+              }
+          }
+
       }
     },
     mounted: function () {
@@ -308,6 +393,18 @@
       this.dateArrray = commonways(mydate)
       this.topdate = myyear + '年' + mymonth + '月'
       get_record(that, new Date())
+    },
+    filters:{
+      workFor(value){
+          if(value.indexOf('L')>-1){
+            return '上班时间'
+          }else{
+            return '下班时间'
+          }
+      },
+      absenceState(value){
+        return value.indexOf('已申请')>-1?'正常':'缺卡'
+      }
     }
 
   }

@@ -9,10 +9,10 @@
         <div class="content">
             <div class="styles">
                 <div class="content_head">
-                    <img class="imgHead" :src="dataObj.profileImgs" @click="go_user(dataObj.userId)">
+                    <img class="imgHead" :src="dataObj.profileImg" @click="go_user(dataObj.userId)">
                     <div>
                         <p class="nameTl">{{dataObj.username}}</p>
-                        <p class="res" >{{leaveType |details}}</p>
+                        <p :class="leaveType==2?'careOf':leaveType==0?'res':'consent'" >{{leaveType |details}}</p>
                         <p class="res" v-if="leaveType==3||leaveType==4">{{'等待'+dataObj.auditName+'的审批'}}</p>
                     </div>
                 </div>
@@ -53,7 +53,6 @@
 
             </AccessoryList>
 
-
             <Approver
              :dataObj = dataObj
              :refuseIndex = refuseIndex
@@ -74,7 +73,6 @@
 
         </div>
 
-
         <OaBtn
             :dataObj = dataObj
             :leaveType = leaveType
@@ -83,7 +81,8 @@
             v-on:more='moreBtn'
             v-on:revocation="isDialog=true"
             v-on:resubmit="resubmit"
-            v-on:urge="urge"
+            v-on:urge="isBackout=true"
+            v-on:print="print"
             >
 
         </OaBtn>
@@ -106,8 +105,20 @@
           v-on:urge="urge"
           v-on:isShow="isShow=!isShow"
           :myself='myself'
+          v-on:print="print"
         >
         </MoreBtn>
+
+        <Dialog
+        lfText="确认"
+        rgText="取消"
+        content="是否提醒审批人审批？"
+        v-on:lfClick="urge"
+        v-on:rgClick="isBackout=false"
+        v-show="isBackout"
+        >
+      </Dialog>
+
 
     </section>
 </template>
@@ -120,6 +131,8 @@
     import Copy  from '../../components/oa/copyDetails.vue'  // 抄送人
     import OaBtn  from '../../components/oa/oa_btn.vue'  // 动作按钮
     import MoreBtn  from '../../components/oa/more_btn.vue'  // 更多弹窗
+    import Dialog  from '../../components/oa/dialog.vue'    //弹窗
+
 
     export default {
         data(){
@@ -141,6 +154,7 @@
                 newCopy:[],
                 newAppr:[],
                 isShow:false,
+                isBackout:false,
                 myself:false,
                 amount:0,
             }
@@ -152,7 +166,9 @@
             Approver,
             Copy,
             OaBtn,
-            MoreBtn
+            MoreBtn,
+            Dialog
+            
         },
         methods :{
         ...mapMutations(['change_man','approver_man']),
@@ -176,7 +192,7 @@
                 });
             },
             refuse(){  //拒绝
-                this.$router.push({path:'/opinion',query:{id:this.dataObj.leaveId,color:'#fd545c'}})
+                this.$router.push({path:'/opinion',query:{id:this.dataObj.leaveId,color:'#fd545c',applyType:0,typeName:'leave'}})
             },
              removeCopy:function(index){
                 this.newCopy.splice(index, 1);
@@ -190,12 +206,16 @@
                 let that = this;
                 let copyStr =  this.appAndCopy(this.newCopy);
                 let apprStr = this.appAndCopy(this.newAppr,'auditUserId');
-                this.$router.push({path:'/opinion',query:{id:this.dataObj.leaveId,receiverIds:copyStr,auditerIds:apprStr,color:'#fd545c',type:'leave',pageType:'consent'}})
+                this.$router.push({path:'/opinion',query:{id:this.dataObj.leaveId,receiverIds:copyStr,auditerIds:apprStr,color:'#fd545c',applyType:0,typeName:'leave',pageType:'consent'}})
             },
             resubmit(){
-                 this.$router.replace({path:'/leave',query:{leaveId:this.dataObj.leaveId,resubmit:true}})
+                 this.$router.replace({path:'/leave',query:{leaveId:this.dataObj.leaveId,resubmit:1}})
+            },
+            print(){//打印
+                window.location.href = "epipe://?&mark=print&url="+location.href;
             },
             urge(){ //催办
+                    this.isBackout=false;
                     let that = this;
                     this.axios.post('/work/audit'+this.Service.queryString({
                             applyId:this.dataObj.leaveId,
@@ -210,12 +230,12 @@
                     })
             },
             approveBack(){ //退回
-                 this.$router.push({path:'/approveBack',query:{id:this.dataObj.leaveId,type:'leave',color:"#fd545c"}})
+                 this.$router.push({path:'/approveBack',query:{id:this.dataObj.leaveId,applyType:0,color:"#fd545c"}})
             },
              deliverTo(){ //转交
                 let newApprStr = this.appAndCopy(this.newAppr,'auditUserId')
                 let newCopy = this.appAndCopy(this.newCopy)
-                this.$router.push({path:'/imchoices',query:{id:this.dataObj.leaveId,careOf:true,type:'leave',auditerIds:newApprStr,num:1,bgcolor:'#fd545c'}})
+                this.$router.push({path:'/imchoices',query:{id:this.dataObj.leaveId,receiverIds:newCopy,careOf:true,applyType:0,typeName:'leave',auditerIds:newApprStr,num:1,bgcolor:'#fd545c'}})
             },
             moreBtn(){
                 this.isShow = true;
@@ -230,7 +250,7 @@
                 }
                 return str.slice(1);
             },
-             go_user(id){
+            go_user(id){
                 window.location.href = "epipe://?&mark=userinfo&_id="+id;
             },
             go_imgdetail: function (index) { //查看图片详情
@@ -271,7 +291,8 @@
         mounted:function(){
             let that = this;
             let leaveId = this.$route.query.leaveId
-            this.axios.get('/work/leave/apply/info?leaveId='+leaveId).then(function(res){
+            let pusthId = this.$route.query.pushId
+            this.axios.get('/work/leave/apply/info?leaveId='+leaveId+'&pushId='+pusthId).then(function(res){
                 if(res.data.h.code == 200){
                     that.dataObj = res.data.b.data[0];
                     that.title = that.dataObj.username+'的请假审批';
@@ -279,9 +300,7 @@
                     let arr = []
                     for(let i =0;i<that.dataObj.auditers.length;i++){            
                         if(that.dataObj.auditers[i].status=='2'){
-                            that.refuseIndex = i+1;
                             that.leaveType = '0';  //已经拒绝
-                            return;
                         }
 
                         if(that.dataObj.auditers[i].status=='00'){
@@ -299,6 +318,9 @@
 
                     if(that.dataObj.userId==that.dataObj.auditUserId){
                         that.myself=true;
+                        if(that.dataObj.auditStatus==0&&that.dataObj.myselfApply!='00'){
+                            that.dataObj.myselfApply="0"
+                        }
                     }
 
                     if(that.dataObj.auditStatus=='4'){
@@ -308,7 +330,6 @@
                     
                     if(that.dataObj.auditStatus == '3'){ //已经撤销
                         that.leaveType = '2'
-                        that.refuseIndex = -2
                         return;
                     }
                     
@@ -318,7 +339,7 @@
                     }
 
                 }else{
-                    this.$toast(res.data.h.msg)
+                    that.$toast(res.data.h.msg)
                 }
             })
 
@@ -350,11 +371,6 @@
                     return '已退回'
                 }
             },
-            fileSize:function(value){
-                    value = value-0
-                    value = value/1024/1024
-                    return value.toFixed(2)
-            }
         },
         computed: mapState(["chosed_man_state","approver_man_state"])
     }

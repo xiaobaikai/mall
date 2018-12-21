@@ -57,7 +57,6 @@
    
     mounted(){
       let that = this;
-
       that.axios.get(that.Service.content_show + that.Service.queryString({type: 4, locationId: 40})).then(function(res){
             that.banner = res.data.b[0]
       })

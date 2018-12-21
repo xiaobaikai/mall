@@ -87,6 +87,11 @@
     top 0
   }
 
+  .accessory{
+    margin 0.15rem;
+    background-color #fff
+  }
+
 </style>
 <template>
   <section class="padding_bottom_content">
@@ -142,11 +147,25 @@
           title="备注"
           maxlength="40"
           placeholder="请输入您的备注~"></WorkInput>
+
+          <div class="accessory" style="padding:0.15rem;" v-if="accessory.length">
+            <AccessoryList
+                :accessory="accessory"
+              >
+
+              </AccessoryList>
+          </div>
+
         <CopeMan
           :has_journal="false"
           color="#609ef7"
           :data_list="chosed_list"
         ></CopeMan>
+        <Comment
+          :data="detail"
+        >
+
+        </Comment>
       </div>
     </div>
   </section>
@@ -156,25 +175,49 @@
   import WorkInput  from '../../components/worknews/work_input.vue'
   import TopHead  from '../../components/topheader.vue'
   import CopeMan  from '../../components/worknews/copy_man.vue'
+   import Comment  from '../../components/worknews/comment.vue'    //
+  import Accessory  from '../../components/worknews/accessory_select.vue'    //附件
+  import AccessoryList  from '../../components/oa/accessoryList.vue'  //附件
   export default {
     data () {
       return {
         is_showedit: false,
         detail: "",
         chosed_list: [],
-        img_list: []
+        img_list: [],
+        accessory:[],
       }
     },
     components: {
       WorkInput,
       TopHead,
-      CopeMan
+      CopeMan,
+      Comment,
+      Accessory,
+      AccessoryList
     },
     methods: {
       go_imgdetail: function (index) {
         let obj = {index_num: index, data: this.img_list, type:"0"}
         window.location.href = "epipe://?&mark=imgdetail&url=" + JSON.stringify(obj);
       },
+      accessoryFor:function(datas){
+                if(!datas.urls) return [];
+               let urlArr = datas.urls.split('|')
+               let fileSizeArr = datas.fileSizes.split('|')
+               let fileNameArr = datas.fileNames.split('|')
+               let arrs = [];
+                for(let i=0;i<urlArr.length;i++){
+                    let bool = this.Util.isImg(urlArr[i])
+                    arrs.push({
+                        url:urlArr[i],
+                        fileSize:fileSizeArr[i],
+                        fileName:fileNameArr[i],
+                        isImg: bool,
+                    })
+                }
+                return arrs
+            },
       remove_detail: function () {
         let that = this;
         that.$confirm("是否确定删除").then(function () {
@@ -203,6 +246,7 @@
           that.detail = data.data.b
           that.chosed_list = data.data.b.receiverData
           that.img_list = data.data.b.imgData
+          that.accessory = that.accessoryFor(data.data.b)
         }
       })
     }

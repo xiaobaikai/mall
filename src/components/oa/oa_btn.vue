@@ -1,21 +1,26 @@
 
 <template>
     <div>
-        <div class="btn_box" v-if="dataObj.myselfApply!='00'||dataObj.myselfApply!=4">
-            <div class="btn_box_content" v-if="dataObj.myselfApply=='ziji'&dataObj.auditStatus!=3">
+        <div class="btn_box" v-if="dataObj.myselfApply!='00'">
+            <div class="btn_box_content" v-if="dataObj.myselfApply=='ziji'&dataObj.auditStatus!=3&dataObj.auditStatus!=2&dataObj.auditStatus!=1&dataObj.auditStatus!=4">
                     <a  class="deliver_btn" @click="urge">催办</a> 
+                    <a  class="consent_btn"   @click="print">打印</a>
                     <a  class="refuse_btn"  @click="revocation">撤销</a>
             </div>
-            <div  @click="resubmit" v-if="dataObj.myselfApply=='ziji'&dataObj.auditStatus==3" class="revocation_btn re_btn" >再次提交</div>
-             <!-- <div  @click="revocation" v-if="dataObj.myselfApply==3&dataObj.auditStatus!='3'&leaveType!=4&leaveType!=1&leaveType!=0"  class="revocation_btn re_btn" >撤销</div> -->
-            <div class="btn_box_content" v-if="dataObj.myselfApply==0">
-            <!-- <div class="btn_box_content" v-if="dataObj.myselfApply!=3&dataObj.myselfApply==0&dataObj.auditStatus!='3'&dataObj.auditStatus!='4'"> -->
+            <div  @click="resubmit" v-else-if="dataObj.myselfApply=='ziji'&(dataObj.auditStatus==3||dataObj.auditStatus==4)" class="revocation_btn re_btn" >再次提交</div>
+
+            <div class="btn_box_content" v-else-if="dataObj.myselfApply=='0'&&dataObj.auditStatus!=3">
                     <a  class="consent_btn" @click="consent">同意</a> 
                     <a  class="refuse_btn"  @click="refuse">拒绝</a>
                     <a  class="deliver_btn" @click="more">更多</a>
                 <div style="clear:both"></div>
-            </div> 
+            </div>
+
+            <div class="revocation_btn re_btn" @click="print" v-else>打印</div>
         </div>
+        <!-- <div v-else class="btn_box_content" >
+            <a>打印</a>
+        </div> -->
     </div>
 </template>
 
@@ -43,6 +48,9 @@
             },
             resubmit(){ //重新提交
                 this.$emit('resubmit')
+            },
+            print(){
+                this.$emit('print')
             }
         },
         props:['dataObj','leaveType']

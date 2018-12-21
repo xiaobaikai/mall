@@ -1,7 +1,7 @@
 <template>
     <section>
         <div v-for="item in leaveData" :key="item.applyId">
-            <div v-if="item.typecode == 1"   @click="leaveDetail(item.applyId,item.title)" class="affairs_content"  :key="item.id">
+            <div v-if="item.typecode == 1"   @click="goDetails(item.applyId,'leave')" class="affairs_content"  :key="item.id">
                 <div class="affirs_child">
                     <div>
                         <div class="affairs_title">
@@ -22,7 +22,7 @@
                 </div>
             </div>
 
-            <div v-if="item.typecode == 2"  class="affairs_content"  @click="letterDetail(item.applyId,item.title)" >
+            <div v-if="item.typecode == 2"  class="affairs_content"  @click="goDetails(item.applyId,'leOfRe')" >
                 <div class="affirs_child">
                     <div>
                         <div class="affairs_title">
@@ -48,7 +48,7 @@
                 </div>
             </div>
 
-             <div v-if="item.typecode == 3"  @click="contractDetail(item.applyId,item.title)" class="affairs_content"  >
+             <div v-if="item.typecode == 3"  @click="goDetails(item.applyId,'contract')" class="affairs_content"  >
                 <div class="affirs_child">
                     <div>
                         <div class="affairs_title">
@@ -73,7 +73,7 @@
                 </div>
             </div>
 
-            <div  class="affairs_content" v-if="item.typecode==4"  @click="goOutWorkDetails(item.applyId,item.title)"  >
+            <div  class="affairs_content" v-if="item.typecode==4"  @click="goDetails(item.applyId,'goOutWork')"  >
                
                 <div class="affirs_child">
                     <div>
@@ -97,7 +97,7 @@
                             </div>
                             <div class="request_infor lineHeight">
                                 <span >开始时间 :</span>
-                                <p class="line1"> {{item.beginTime |slice}}</p>
+                                <p class="line1"> {{item.beginTime |timeSlice}}</p>
                             </div>
                         </div>
                     </div>
@@ -107,7 +107,7 @@
 
                 </div>
             </div>
-            <div v-if="item.typecode == 5" @click="tripDetails(item.applyId,item.title)"   class="affairs_content" >
+            <div v-if="item.typecode == 5" @click="goDetails(item.applyId,'trip')"   class="affairs_content" >
                 <div class="affirs_child">
                         <div>
                             <div class="affairs_title">
@@ -126,11 +126,11 @@
                                 </div>
                                 <div class="request_infor lineHeight">
                                     <span >开始时间 :</span>
-                                    <p class="line1"> {{item.beginTime |slice}}</p>
+                                    <p class="line1"> {{item.beginTime |timeSlice}}</p>
                                 </div>
                                 <div class="request_infor lineHeight">
                                     <span >结束时间 :</span>
-                                    <p class="line1"> {{item.endTime |slice}}</p>
+                                    <p class="line1"> {{item.endTime |timeSlice}}</p>
                                 </div>
                                 <div class="request_infor margin10">
                                     <span>出差事由 :</span>
@@ -143,7 +143,7 @@
                         </div>
                 </div>
             </div>
-             <div v-else-if="item.typecode == 6" @click="stampDetails(item.applyId,item.title)"   class="affairs_content" >
+             <div v-else-if="item.typecode == 6" @click="goDetails(item.applyId,'stamp')"   class="affairs_content" >
                 <div class="affirs_child">
                         <div>
                             <div class="affairs_title">
@@ -175,7 +175,7 @@
                         </div>
                 </div>
             </div>
-            <div v-else-if="item.typecode == 7" @click="reimburseDetails(item.applyId,item.title)"   class="affairs_content" >
+            <div v-else-if="item.typecode == 7" @click="goDetails(item.applyId,'reimburse')"   class="affairs_content" >
                 <div class="affirs_child">
                         <div>
                             <div class="affairs_title">
@@ -190,7 +190,7 @@
                                 </div>
                                 <div class="request_infor lineHeight">
                                     <span >日&emsp;&emsp;期 :</span>
-                                    <p class="line1"> {{item.reimburseDate | slice}}</p>
+                                    <p class="line1"> {{item.reimburseDate | timeSlice}}</p>
                                 </div>
                                 <div class="request_infor lineHeight">
                                     <span >报销类别 :</span>
@@ -207,7 +207,7 @@
                         </div>
                 </div>
             </div> 
-            <div v-else-if="item.typecode == 8" @click="payApplyDetails(item.applyId,item.title)"   class="affairs_content" >
+            <div v-else-if="item.typecode == 8" @click="goDetails(item.applyId,'payApply')"   class="affairs_content" >
                 <div class="affirs_child">
                         <div>
                             <div class="affairs_title">
@@ -226,7 +226,7 @@
                                 </div>
                                 <div class="request_infor lineHeight">
                                     <span >付款日期 :</span>
-                                    <p class="line1">{{item.payDate |slice }} </p>
+                                    <p class="line1">{{item.payDate |timeSlice }} </p>
                                 </div>
                                 <div class="request_infor lineHeight">
                                     <span>收款人全称 :</span>
@@ -240,7 +240,7 @@
                 </div>
                 
             </div>
-            <div v-else-if="item.typecode == 9" @click="dimissionDetails(item.applyId,item.title)"   class="affairs_content" >
+            <div v-else-if="item.typecode == 9" @click="goDetails(item.applyId,'dimission')"   class="affairs_content" >
                 <div class="affirs_child">
                         <div>
                             <div class="affairs_title">
@@ -255,15 +255,15 @@
                                 </div>
                                 <div class="request_infor lineHeight">
                                     <span>入职日期 :</span>
-                                    <p class="line1"> {{item.hireDate |slice}}</p>
+                                    <p class="line1"> {{item.hireDate |timeSlice}}</p>
                                 </div>
                                 <div class="request_infor lineHeight">
                                     <span >合同到期日 :</span>
-                                    <p class="line1">{{item.contractEndDate |slice }} </p>
+                                    <p class="line1">{{item.contractEndDate |timeSlice }} </p>
                                 </div>
                                 <div class="request_infor lineHeight">
                                     <span>最后工作日 :</span>
-                                    <p class="line1">{{item.dimissionDate |slice }}</p>
+                                    <p class="line1">{{item.dimissionDate |timeSlice }}</p>
                                 </div>
                             </div>
                         </div>
@@ -319,32 +319,8 @@ export default {
 
                 return res;
             },
-            leaveDetail(id,name){
-                window.location.href = "epipe://?&mark=leaveDetails&_id="+id+'&data='+JSON.stringify({text:0});
-            },
-            letterDetail(id,name){
-                window.location.href = "epipe://?&mark=leOfReDetails&_id="+id+'&data='+JSON.stringify({text:0});
-            },
-            contractDetail(id,name){
-                window.location.href = "epipe://?&mark=contractDetails&_id="+id+'&data='+JSON.stringify({text:0});
-            },
-             goOutWorkDetails(id){
-                window.location.href = "epipe://?&mark=goOutWorkDetails&_id="+id+'&data='+JSON.stringify({text:0});
-            },
-            tripDetails(id){
-                window.location.href = "epipe://?&mark=tripDetails&_id="+id+'&data='+JSON.stringify({text:0});
-            },
-            stampDetails(id){
-                window.location.href = "epipe://?&mark=stampDetails&_id="+id+'&data='+JSON.stringify({text:0});
-            },
-             reimburseDetails(id){
-                window.location.href = "epipe://?&mark=reimburseDetails&_id="+id+'&data='+JSON.stringify({text:0});
-            },
-            payApplyDetails(id){
-                window.location.href = "epipe://?&mark=payApplyDetails&_id="+id+'&data='+JSON.stringify({text:0});
-            },
-            dimissionDetails(id){
-                window.location.href = "epipe://?&mark=dimissionDetails&_id="+id+'&data='+JSON.stringify({text:0});
+            goDetails(id,type){
+                window.location.href = "epipe://?&mark="+type+"Details&_id="+id+'&data='+JSON.stringify({text:0});
             },
             onInfinite(){
                 let that = this;
@@ -394,9 +370,6 @@ export default {
                 }else{ 
                     return value.slice(0,10)
                 }
-            },
-            slice : function(value){
-                return value.slice(0,-3)
             },
         }
 }

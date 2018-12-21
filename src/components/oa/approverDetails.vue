@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="styles approve">
-                <p class="title">审批人<span>（已添加{{amount+newAppr.length}}人）</span></p>
+                <p class="title">审批人<span v-if="dataObj.auditStatus != '3'&&dataObj.auditStatus!= '2'">（已添加{{amount+newAppr.length}}人）</span></p>
                 <ul class="list">
                     <li>
                         <div class="approve_list">
@@ -25,37 +25,28 @@
                                 <span></span>
                             </div>
                         </div>
+
                     </li>
-                    <li v-for="(item,index) in dataObj.auditers" :key="index" v-if="(refuseIndex==-1||(refuseIndex>-1&index<refuseIndex))&item.status!='00'">
+                    <li v-for="(item,index) in dataObj.auditers" :key="index" v-if="item.status!='00'">
                         <div class="approve_list" >
                             <img class="imgHead" :src="item.profileImg">
                             <div class="approve_inf">
                                 <span>{{item.name}}</span>
-                                <span v-if="item.connectflag!=1" :class="item.status!=2?'consent':'refause'">{{item.status | stateName}}</span>
-                                <span v-else class="careOf">已转交</span>
+                                <span  :class="item.status | statusClass">{{item.status | stateName}}</span>
                                 <span>{{item.auditTime | timeStrSlice}}</span>
                             </div>
                         </div>
-                        
-                        <div class="reasons" v-if="(item.status!='0'||newAppr.length)&&item.status!=3">
-                            <svg class="icon icon-back" aria-hidden="false" v-if="newAppr.length!=0&&(item.status!=2||item.status!=1)">
-                                <use xlink:href="#icon-jiantou1"></use>
-                            </svg>
-                            <div class="reason" v-if="item.status==2||item.status==1">
-                                {{item.reason}}
-                            </div>
-                        </div>
-                        <div class="reasons ss" v-if="item.connectflag==1">
-                            <svg  class="icon icon-back" aria-hidden="false" >
+                        <div class="reasons" v-if="item.status!='0'||newAppr.length!='0'">
+                            <svg class="icon icon-back" aria-hidden="false" v-if="(item.status!='0'||newAppr.length!='0')&&((item.status!=2||item.status!=1)&&index!=dataObj.auditers.length-1)">
                                 <use xlink:href="#icon-jiantou1"></use>
                              </svg>
                             <p>{{item.reason}}</p>
                             <div v-if="item.accessory">
                                 <ul class="accessory">
                                     <li  v-for="child in item.accessory" :key="child.url">
-                                        <img @click="go_fildDetails(child.url)"  v-if="child.isImg"  :src="child.url"/>
-                                        <img @click="go_fildDetails(child.url)" v-if="!child.isImg" src="../../assets/wenjian.png"/>
-                                        <div @click="go_fildDetails(child.url)"  class="accessory-cont">
+                                        <img @click="go_fildDetails(child.url,child.fileName)"  v-if="child.isImg"  :src="child.url"/>
+                                        <img @click="go_fildDetails(child.url,child.fileName)" v-if="!child.isImg" src="../../assets/wenjian.png"/>
+                                        <div @click="go_fildDetails(child.url,child.fileName)"  class="accessory-cont">
                                             <p style="margin-bottom:0">{{child.fileName}}</p>
                                             <span>{{child.fileSize | fileSize}}</span>
                                         </div>
@@ -63,6 +54,34 @@
                                 </ul>
                             </div>
                         </div>
+                        
+                        <!-- <div class="reasons" v-if="(item.status!='0'||newAppr.length)&&item.status!=3">
+                            <svg class="icon icon-back" aria-hidden="false" v-if="newAppr.length!=0&&(item.status!=2||item.status!=1)">
+                                <use xlink:href="#icon-jiantou1"></use>
+                            </svg>
+                            <div class="reason" v-if="item.status==2||item.status==1">
+                                {{item.reason}}
+                            </div>
+                        </div> -->
+
+                        <!-- <div class="reasons ss">
+                            <svg  class="icon icon-back" aria-hidden="false" >
+                                <use xlink:href="#icon-jiantou1"></use>
+                             </svg>
+                            <p>{{item.reason}}</p>
+                            <div v-if="item.accessory">
+                                <ul class="accessory">
+                                    <li  v-for="child in item.accessory" :key="child.url">
+                                        <img @click="go_fildDetails(child.url,child.fileName)"  v-if="child.isImg"  :src="child.url"/>
+                                        <img @click="go_fildDetails(child.url,child.fileName)" v-if="!child.isImg" src="../../assets/wenjian.png"/>
+                                        <div @click="go_fildDetails(child.url,child.fileName)"  class="accessory-cont">
+                                            <p style="margin-bottom:0">{{child.fileName}}</p>
+                                            <span>{{child.fileSize | fileSize}}</span>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div> -->
                     </li>
 
                      <li v-for="(it,ind) in newAppr" :key="ind" v-if="dataObj.auditStatus!=3">
@@ -112,6 +131,9 @@
                 indexs:-1,
             }
         },
+        created() {
+
+        },
         methods:{
 
             go_imchoice:function(num){
@@ -126,9 +148,9 @@
                  }
                  this.show = true;
             },
-             go_fildDetails: function (url) { //查看图片详情
+             go_fildDetails: function (url,name) { //查看图片详情
                 let that = this;
-                let obj = {index_num: 0, data:[url],type:0}
+                let obj = {index_num: 0, data:[url],type:0,name}
                 window.location.href = "epipe://?&mark=imgdetail&url=" + JSON.stringify(obj);
             },
             affirm(){
@@ -154,8 +176,43 @@
                     return '已退回'
                 }
             },
+            statusClass:function(value){
+                 switch (value){
+                    case '0':
+                        return "consent";
+                        break;
+                    case '1':
+                        return "consent";
+                        break;
+                    case '2':
+                        return "refause";
+                        break;
+                    case '3':
+                        return "careOf";
+                        break;
+                    case '4':
+                        return "careOf";
+                        break;
+                    }
+            },
             stateName: function(value){
-                    return value=='0'?'审批中':value=='1'?'已同意':value=='2'?'已拒绝':'';
+                    switch (value){
+                    case '0':
+                        return "审批中";
+                        break;
+                    case '1':
+                        return "已同意";
+                        break;
+                    case '2':
+                        return "已拒绝";
+                        break;
+                    case '3':
+                        return "已转交";
+                        break;
+                    case '4':
+                        return "已退回";
+                        break;
+                    }
             },
             fileSize:function(value){
                 value = value-0

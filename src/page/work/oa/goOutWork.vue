@@ -207,7 +207,7 @@ let save_leave = (index,text,that) =>{
                     beginTime : that.beginTime, //开始时间
                     endTime : that.endTime, //结束时间
                     outSideReason:that.outSideReason,
-                    applyContent : encodeURI(contDesc), //附加内容
+                    applyContent : contDesc, //附加内容
                     outsideAddress: that.address, //公出地点
                     lon : that.lon, //经度
                     lat : that.lat, //纬度
@@ -228,33 +228,17 @@ let save_leave = (index,text,that) =>{
                     }],
                 }).then((res)=>{ 
 
-        // that.axios.post('/outsign/task/saves' + that.Service.queryString({
-        //   Id : that.id, // id
-        //   url : urlStr, //附件
-        //   fileName : fileNameStr, //文件名称 
-        //   fileSize : fileSizeStr, //文件大小
-        //   beginTime : that.beginTime, //开始时间
-        //   endTime : that.endTime, //结束时间
-        //   outSideReason:that.outSideReason,
-        //   applyContent : encodeURI(contDesc), //附加内容
-        //   outsideAddress: that.address, //公出地点
-        //   lon : that.lon, //经度
-        //   lat : that.lat, //纬度
-        //   auditUserIds : approver_id, //审批人
-        //   receiverIds : chosed_id, //抄送人
-        //   draftFlag : index, //草稿还是发送
-        //   peerNames:peerNames, //同行人员名称
-        //   peerUserIds:peerUserIds, //同行人员Id
-        //   outsideType:that.outsideIndex,
-        //   detailAddress:that.detailAddress,//详细地址
-        // })).then(function (res){
             if(res.data.h.code!=200){
                 that.$toast(res.data.h.msg)
             }else if(res.data.h.code == 200){
                 if(index){
                     that.$toast('已保存至草稿箱!')
                     setTimeout(()=>{
-                        window.location.href = "epipe://?&mark=history_back";
+                         if(that.$route.query.outSideId){
+                                window.location.href = "epipe://?&mark=goWork"
+                            }else{
+                                window.location.href = "epipe://?&mark=history_back" 
+                            }
                     },500)
                 }else{
                     that.$toast('提交成功!')
@@ -565,9 +549,13 @@ export default {
 
             let that = this;
             if(this.$route.query.outsideId){
-                  this.axios.get('/outsign/task/infos?outsideId='+this.$route.query.outsideId).then(function(res){
-                    //   console.log(res.data.b.data)
-                       let data = res.data.b.data[0];
+                     this.axios.get('/outsign/task/infos',{
+                        params:{
+                            type:that.$route.query.resubmit,
+                            outsideId:this.$route.query.outsideId
+                        }
+                    }).then(function(res){
+                     let data = res.data.b.data[0];
                        if(!that.$route.query.resubmit){
                              that.id = data.outsideId;
                         }

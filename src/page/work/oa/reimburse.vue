@@ -209,7 +209,12 @@ let save_leave = (index,text,that) =>{
                 if(index){
                     that.$toast('已保存至草稿箱!')
                     setTimeout(()=>{
-                        window.location.href = "epipe://?&mark=history_back";
+
+                         if(that.$route.query.reimburseId){
+                             window.location.href = "epipe://?&mark=goWork"
+                        }else{
+                            window.location.href = "epipe://?&mark=history_back" 
+                        }
                     },500)
                 }else{
                     that.$toast('提交成功!')
@@ -291,7 +296,6 @@ export default {
             let data = this.$data;
             for(let key in data){
                if(key=='approver_list'||key=='chosed_list'||key=='accessory'||key=='datas'||key=='reimburseArr'){
-                   console.log(key)
                     if(data[key].length!=this.oldData[key].length){
                         return true
                     }
@@ -300,13 +304,22 @@ export default {
                             return true
                         }else if(key=='accessory'&&data[key][i].url!=this.oldData[key][i].url){
                             return true
-                        }else if(key=='datas'&&data[key][i].reimburseDate!=this.oldData[key][i].reimburseDate){
-                            return true
+                        }else if(key=='datas'){
+                            for(let j=0;j<data['datas'].length;j++){
+                                let obj = data['datas'][j]
+                                let objs = this.oldData['datas'][j]
+                                for(let name in obj){
+                                    if(obj[name]!=objs[name]){
+                                        return true;
+                                    }
+                                }
+                            }
                         }else if(key=='reimburseArr'&&data[key][i].type!=this.oldData[key][i].type){
                             return true
                         }
                     }
                 }else if(key!='oldData'){
+                  
                     if(data[key]!=this.oldData[key]){
                             return true;
                     }
@@ -461,8 +474,13 @@ export default {
 
             let that = this;
             if(this.$route.query.reimburseId){
-                  this.axios.get('/work/reimburse/info?reimburseId='+this.$route.query.reimburseId).then(function(res){
-                       let data = res.data.b;
+                   this.axios.get('/work/reimburse/info',{
+                        params:{
+                            type:that.$route.query.resubmit,
+                            reimburseId:this.$route.query.reimburseId
+                        }
+                    }).then(function(res){ 
+                   let data = res.data.b;
                        if(!that.$route.query.resubmit){
                                 that.id = data.reimburseId;
                         }

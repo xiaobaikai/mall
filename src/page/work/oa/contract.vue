@@ -203,7 +203,11 @@ let save_leave = (index,text,that) =>{
 
                         that.$toast('已保存至草稿箱!')
                         setTimeout(()=>{
-                            window.location.href = "epipe://?&mark=history_back";
+                            if(that.$route.query.contractId){
+                                window.location.href = "epipe://?&mark=goWork"
+                            }else{
+                                window.location.href = "epipe://?&mark=history_back" 
+                            }
                         },700)
                     }else{
                         that.$toast('提交成功！')
@@ -409,8 +413,13 @@ export default {
             })
 
             if(this.$route.query.contractId){
-                  this.axios.post('/work/contract/info?contractId='+this.$route.query.contractId).then(function(res){
-                       let data = res.data.b.data[0];
+                    this.axios.get('/work/contract/info',{
+                        params:{
+                            type:that.$route.query.resubmit,
+                            contractId:this.$route.query.contractId
+                        }
+                    }).then(function(res){ 
+                     let data = res.data.b.data[0];
                        if(!that.$route.query.resubmit){
                             that.id = data.contractId;
                         }

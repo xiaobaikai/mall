@@ -137,8 +137,7 @@ let save_leave = (index,text,that) =>{
         that.$toast('付款金额不能大于8位数')
     }else if(that.receiverName == ''){
         that.$toast('请输入收款人姓名')
-    }
-    else if(that.receiverName.length<2||that.receiverName>30){
+    }else if(that.receiverName.length<2||that.receiverName>30){
         that.$toast('收款人不能低于2个或超过30个字符')
     }else if(that.bankName == ''){
         that.$toast('请输入开户行')
@@ -152,8 +151,7 @@ let save_leave = (index,text,that) =>{
         that.$toast('银行账户必须为数字字母')
     }else if(that.bankAcount.length<2||that.bankAcount.length>20){
         that.$toast('银行账户不能少于2个或超过20个字符')
-    }
-    else if(that.payReason == ''){
+    }else if(that.payReason == ''){
         that.$toast('付款事由不能为空')
     }else if(that.payReason.length>1000||that.payReason.length<6){
         that.$toast('付款事由不能少于6个或超过1000字符')
@@ -250,7 +248,11 @@ let save_leave = (index,text,that) =>{
 
                     that.$toast('已保存至草稿箱!')
                     setTimeout(()=>{
-                        window.location.href = "epipe://?&mark=history_back";
+                        if(that.$route.query.payApplyId){
+                             window.location.href = "epipe://?&mark=goWork"
+                        }else{
+                            window.location.href = "epipe://?&mark=history_back" 
+                        }
                     },700)
                 }else{
                     that.$toast('提交成功！')
@@ -490,9 +492,13 @@ export default {
             })
 
             if(this.$route.query.payApplyId){
-                  this.axios.get('/work/pay/info?payApplyId='+this.$route.query.payApplyId).then(function(res){
-                    //   console.log(res.data.b.data)
-                       let data = res.data.b;
+                    this.axios.get('/work/pay/info',{
+                        params:{
+                            type:that.$route.query.resubmit,
+                            payApplyId:this.$route.query.payApplyId
+                        }
+                    }).then(function(res){ 
+                     let data = res.data.b;
                        that.id = data.payApplyId;
                        that.isDraftFlag = 1;
                         that.accessoryFor(data)

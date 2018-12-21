@@ -25,6 +25,9 @@
         <li><span>结束时间：</span>{{detail.endTime}}</li>
         <li><span>目的地：</span>{{detail.destination}}</li>
       </div>
+       <li class="img">
+          <span>图片:</span><img :src="item" v-for="(item,index) in imgs" @click="go_imgdetail(index)"/>
+        </li>
     </div>
   </section>
 </template>
@@ -38,7 +41,8 @@
         detail: '',
         relativeInfo: {"isShow":false,"title":"关联审批"},
         id: '',
-        color:'#fd545c'
+        color:'#fd545c',
+        imgs:[],
       }
     },
     components:{ TopHead },
@@ -57,6 +61,7 @@
           that.detail = data.data.b;
           that.address(data.data.b.lon, data.data.b.lat);
           that.relativeInfo.isShow = !that.detail.related;
+          that.imgs = that.imgFor(that.detail.picUrls)
         }
       });
     },
@@ -73,7 +78,16 @@
       },
       relativeApprova(){
         window.location.href = "epipe://?&mark=relativeapprove&_id=" + this.id;
-      }
+      },
+      imgFor(val){
+
+          return val.split(',')
+
+      },
+      go_imgdetail: function (index) {
+        let obj = {index_num: index, data: this.imgs, type:0}
+        window.location.href = "epipe://?&mark=imgdetail&url=" + JSON.stringify(obj);
+      },
     },
     filters:{
         typeFor:function(value){
@@ -84,13 +98,32 @@
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style>
+<style scoped lang="stylus">
   .anchorBL {
     display: none;
   }
 
   .BMapLabel {
     font-size: 0.15rem;
+  }
+
+  .img{
+    height 0.3rem;
+    line-height 0.3rem;
+    overflow hidden;
+
+      span{
+        float left;
+        margin-right 0.05rem;
+        font-weight: bold;
+      }
+  }
+
+  .img img{
+      float left
+      width 0.4rem;
+      height 0.3rem;
+      margin-right 0.05rem;
   }
 
   #mapcontent {
@@ -108,7 +141,7 @@
   .text_map {
     opacity: 0.9;
     position: relative;
-    top: -2.5rem;
+    top: -2.8rem;
     background-color: #fff;
     margin: 0 0.15rem 0 0.15rem;
     padding: 0.15rem;
@@ -124,7 +157,6 @@
     display: flex;
     flex-direction: row;
     padding-bottom: 0.15rem;
-    border-bottom: 1px solid #eee;
   }
 
   .text_map ul li:first-child {

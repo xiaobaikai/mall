@@ -183,26 +183,12 @@
     </div>
     <div class="banner-wrapper">
       <div class="banner-h1">{{slogans.firstLine}}</div>
+            <!-- {{token}} -->
+
       <div class="banner-h2">{{slogans.secondLine}}</div>
       <div class="banner-h3">{{dateString}}</div>
     </div>
     <div class="content-wrapper">
-
-      <!-- <div class="tab_work_con broadcast">
-        <div>
-          <svg class="icon icon-broadcast" aria-hidden="false">
-            <use xlink:href="#icon-Msg"></use>
-          </svg>
-        </div>
-        <div class="broadcast-content-wrapper">
-          <div class="broadcast-content" ref="broadcast">
-            <div class="broadcast-item" v-for="(item,index) in broadcast_list" :key="index" @click="messageLink">
-              <div class="broadcast-time">{{item.sendDate}}</div>
-              <div class="broadcast-message">{{item.message}}</div>
-            </div>
-          </div>
-        </div>
-      </div> -->
 
  		 <div class="tab_work_con">
         <ul class="tab_work_3con first_tab_work_3con">
@@ -214,14 +200,6 @@
               </svg>
             </div>
             <div style="font-size:0.14rem;margin-top: 0.05rem">待办事宜</div>
-          </li> 
-          <li @click="go_finishAffairs">
-            <div>
-              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
-                <use xlink:href="#icon-yibanshiyi"></use>
-              </svg>
-            </div>
-            <div style="font-size:0.14rem;margin-top: 0.05rem">已办事宜</div>
           </li> 
           <li @click="go_myApply">
             <div>
@@ -321,6 +299,14 @@
             </div>
             <div style="font-size:0.14rem;margin-top: 0.05rem">用印</div>
           </li>
+          <li @click="go_absence">
+            <div>
+              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
+                <use xlink:href="#icon-buqiashenqing"></use>
+              </svg>
+            </div>
+            <div style="font-size:0.14rem;margin-top: 0.05rem">补卡</div>
+          </li>
           <li @click="go_dimission">
             <div>
               <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
@@ -328,6 +314,22 @@
               </svg>
             </div>
             <div style="font-size:0.14rem;margin-top: 0.05rem">离职</div>
+          </li>
+          <li @click="go_borrow">
+            <div>
+              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
+                <use xlink:href="#icon-jiekuanshenqing"></use>
+              </svg>
+            </div>
+            <div style="font-size:0.14rem;margin-top: 0.05rem">借款</div>
+          </li>
+          <li @click="go_reception">
+            <div>
+              <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
+                <use xlink:href="#icon-jiedaishenqing"></use>
+              </svg>
+            </div>
+            <div style="font-size:0.14rem;margin-top: 0.05rem">接待</div>
           </li>
         </ul>
       </div>
@@ -384,7 +386,7 @@
      <div class="tab_work_con" v-show="showMES">
         <ul class="tab_work_2con">
           <li></li>
-          <li>三化云平台</li>
+          <li>物联网云平台</li>
         </ul>
         <ul class="tab_work_3con">
           <li @click="go_IoT">
@@ -393,7 +395,7 @@
                 <use xlink:href="#icon-wulianwangpingtai"></use>
               </svg>
             </div>
-            <div style="font-size:0.14rem;margin-top: 0.05rem">物联网平台</div>
+            <div style="font-size:0.14rem;margin-top: 0.05rem">物联网管理</div>
           </li>
           <li @click="go_bigData">
             <div>
@@ -556,6 +558,7 @@
         logo: require("../../assets/no_wifi.png"),
         showMES: false,
         payShow:false,
+        token:'',
       }
     },
     created(){
@@ -564,6 +567,7 @@
       }
 
       this.setToken(this.Service.getCookie('auth_token'))
+      this.token = this.Service.getCookie('auth_token')
     },
     computed: mapState(["token"]),
     methods: {
@@ -648,10 +652,6 @@
           window.location.href = "epipe://?&mark=trip"
          TDGA.onEvent('trip','出差')
       },
-        go_tripDetails(){ //出差详情
-          window.location.href = "epipe://?&mark=tripDetails"
-         TDGA.onEvent('trip','出差')
-      },
       //公出
       go_goOutWork(){
         window.location.href = "epipe://?&mark=goOutWork"
@@ -659,11 +659,23 @@
       },
       go_payApply(){
         window.location.href = "epipe://?&mark=payApply"
-        TDGA.onEvent('goOutWork','付款')
+        TDGA.onEvent('payApply','付款')
       },
       go_dimission(){
         window.location.href = "epipe://?&mark=dimission"
-        TDGA.onEvent('goOutWork','离职')
+        TDGA.onEvent('dimmission','离职')
+      },
+      go_reception(){
+        window.location.href = "epipe://?&mark=reception"
+        TDGA.onEvent('reception','接待')
+      },
+      go_borrow(){
+        window.location.href = "epipe://?&mark=borrow"
+        TDGA.onEvent('borrow','借款')
+      },
+      go_absence(){
+        window.location.href = "epipe://?&mark=absence"
+        TDGA.onEvent('absence','补卡')
       },
       go_inform(){ //通知
         window.location.href = "epipe://?&mark=message"
@@ -674,7 +686,7 @@
         TDGA.onEvent('group','群组')                                
       },
       go_mes(){
-           window.location.href = "epipe://?&mark=mes";
+          window.location.href = "epipe://?&mark=mes";
         TDGA.onEvent('materialControl','移动制造')   
       },
        go_erp(){
@@ -682,8 +694,7 @@
           TDGA.onEvent('ERP','ERP')   
       },
       go_crm(){
-          window.location.href = "epipe://?&mark=crm&url="+"http://ccrmhhyg1001.epipe.cn/youguanapp?dbname=ccrmhhyg1001&token="+this.token
-
+          window.location.href = "epipe://?&mark=crm&url="+"http://ccrmhhyg1010.epipe.cn/youguanapp?dbname=ccrmhhyg1010&token="+this.token
           TDGA.onEvent('CRM','CRM')   
       },
       //物料管理
@@ -749,25 +760,27 @@
       organization(){
         this.axios.get(this.Service.organization).then(res =>{
           console.log("用户组织",res);
-          if(res.data.h.code ==200){
+
+          if(res.data.h.code == 200){
             let obj = res.data.b;
             if(obj.type == 1 || obj.type == 2){  //待审核，跳转到待审核页面
               this.$router.push({path:'/pending'});
             }else if(obj.type == 3){  //无组织，跳转到申请加入组织页面
               this.$router.push({path:'/Nologin'});
             }
-            if(obj.menuType.indexOf('1')>-1){
+            if(obj.menuType.indexOf('1')>-1){ //显示e付款
               this.payShow = true;
             }
             this.mask = false;  //有组织，展示工作台
        
-       }else{
+          }else{
             this.mask = false;
-            this.$router.push({path:'/Nologin'});
+            this.$toast(err.data.h.msg);
+            this.$router.push({path:'/Nologin'}); //跳转无组织页面
           }
         }).catch(err =>{
           this.mask = false;
-          this.noNetwork = true;
+          this.noNetwork = true; //显示无网络界面
           this.$toast(err.data.h.msg);
         });
       },

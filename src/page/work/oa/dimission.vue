@@ -150,7 +150,7 @@ let save_leave = (index,text,that) =>{
         that.$toast('请选择审批人')
     }else if(that.employeeNo.length<2||that.employeeNo.length>30){
         that.$toast('员工编号不能低于2个或超过30个字符')
-    }else if(!regs.test(that.employeeNo)){
+    }else if(isNaN(that.employeeNo)){
         that.$toast('员工编号为数字')
     }else if(that.position.length<2||that.position.length>30){
         that.$toast('职务不能低于2个或超过30个字符')
@@ -164,12 +164,14 @@ let save_leave = (index,text,that) =>{
         that.$toast('请输入离职原因')
     }else if(that.education.length<2||that.education.length>30){
         that.$toast('学历不能低于2个或超过30个字符')
-    }else if(that.dimissionDesc.length<2||that.dimissionDesc.length>30){
+    }else if(that.dimissionDesc.length<6||that.dimissionDesc.length>1000){
         that.$toast('离职原因不能低于6个或超过1000个字符')
     }else if(that.positionCode<0){
         that.$toast('请选择职务类型')
     }else if(that.dimissionCode<0){
         that.$toast('请选择离职类型')
+    }else if(that.dimissionDesc.length<6){
+        that.$toast('离职原因不能少于6个字符')
     }
     else{
       
@@ -221,7 +223,7 @@ let save_leave = (index,text,that) =>{
                 data:{
                     Id :that.id, // id
                     dimissionTitle:that.dimissionTitle,//标题
-                    dimissionDesc:that.dimissionDesc, //付款说明
+                    dimissionDesc:that.dimissionDesc, //离职原因
                     employeeNo:that.employeeNo, //员工编号
                     education:that.education, //学历
                     position:that.position,// 职务
@@ -246,25 +248,7 @@ let save_leave = (index,text,that) =>{
                     }],
                 }).then((res)=>{ 
 
-        // that.axios.post('/work/dimission/save' + encodeURI(that.Service.queryString({
-        //   Id :that.id, // id
-        //   dimissionTitle:that.dimissionTitle,//标题
-        //   dimissionDesc:that.dimissionDesc, //付款说明
-        //   employeeNo:that.employeeNo, //员工编号
-        //   education:that.education, //学历
-        //   position:that.position,// 职务
-        //   hireDate:that.hireDate,//入职时间
-        //   dimissionDate:that.dimissionDate,//离职日期
-        //   positionType:that.positionCode,
-        //   dimissionType:that.dimissionCode,
-        //   contractEndDate:that.contractEndDate,//合同终止日期
-        //   urls : urlStr, //附件
-        //   fileNames:fileNameStr, 
-        //   fileSizes:fileSizeStr,
-        //   auditUserIds: approver_id, //审批人
-        //   receiverIds: chosed_id, //抄送人
-        //   draftFlag : index, //草稿还是发送
-        // }))).then(function (res){
+
             if(res.data.h.code!=200){
                 that.$toast(res.data.h.msg)
             }else if(res.data.h.code == 200){
@@ -272,7 +256,12 @@ let save_leave = (index,text,that) =>{
 
                     that.$toast('已保存至草稿箱!')
                     setTimeout(()=>{
-                        window.location.href = "epipe://?&mark=history_back";
+                         if(that.$route.query.dimissionId){
+                             window.location.href = "epipe://?&mark=goWork"
+                        }else{
+                            window.location.href = "epipe://?&mark=history_back" 
+                        }
+                        // window.location.href = "epipe://?&mark=history_back";
                     },700)
                 }else{
                     that.$toast('提交成功！')
@@ -321,9 +310,9 @@ export default {
                 accessory : [],
                 isDraftFlag : 0, //判断是不是草稿
                 textNum : 0,
-                payName:'请选择付款方式',
                 isShow:false,
                 oldData:null,
+                dimissionDesc:'',
             }
         },
         components: {
@@ -571,8 +560,13 @@ export default {
             })
 
             if(this.$route.query.dimissionId){
-                  this.axios.get('/work/dimission/info?dimissionApplyId='+this.$route.query.dimissionId).then(function(res){
-                       let data = res.data.b;
+                     this.axios.get('/work/dimission/info',{
+                        params:{
+                            type:that.$route.query.resubmit,
+                            dimissionApplyId:this.$route.query.dimissionId
+                        }
+                    }).then(function(res){
+                     let data = res.data.b;
                        that.id = data.dimissionApplyId;
                        that.isDraftFlag = 1;
                        that.native = 'mark';
@@ -589,6 +583,10 @@ export default {
                         that.payDate = data.payDate;
                         that.bankAcount = data.bankAcount;
                         that.bankName=data.bankName;
+                        that.positionType = data.positionType
+                        that.positionCode =data.positionTypeCode
+                        that.dimissionCode = data.dimissionTypeCode
+                        that.dimissionType = data.dimissionType
                         that.textNum=data.dimissionDesc.length;
                         that.chosed_list = data.receivers;
                         that.change_man(that.chosed_list);

@@ -85,15 +85,14 @@
 
     .guide_content{
           position absolute;
-          top:0;
-          bottom:0;
-          left:0;
-          right:0;
-          margin auto;
-          height 3rem;
+          top:50%;
+          left:50%;
+          // height 3rem;
           width 91%;
           background-color #fff;
           z-index 10
+          transform: translate(-50%, -50%);
+          padding-bottom 0.15rem;
     }
 
     .guide_item{
@@ -109,8 +108,7 @@
 
     .guide_item:nth-child(1),.guide_item:nth-child(2),.guide_item:nth-child(3){
         float left;
-      padding-bottom 0.35rem;
-
+        padding-bottom 0.35rem;
 
         .guide_arrows{
           position absolute;
@@ -130,9 +128,9 @@
         margin auto ;
     }
 
+
     .guide_item:nth-child(4),.guide_item:nth-child(5),.guide_item:nth-child(6){
         float right;
-
         .guide_arrows{
           position absolute;
           left -6px;
@@ -140,6 +138,22 @@
           transform rotate(180deg)
         }
     }
+
+     .guide_item:nth-child(6){
+        padding-bottom 0.35rem;
+     }
+
+    .guide_item:nth-child(6) .guide_arrows{
+        transform rotate(90deg)
+        position absolute;
+        width 0.2rem;
+        height 0.12rem;
+        bottom -0.5rem;
+        left 0;
+        right 0;
+        margin auto ;
+    }
+
     .guide-title{
        height 0.4rem;
        line-height 0.4rem;
@@ -265,9 +279,10 @@
         guideData:[
           ['发起人','部门负责人','人事行政部门','总经理','人事行政部门'],
           ['发起人','部门负责人','财务管理中心','总经理','人事行政部门'],
-          ['发起人','部门负责人','财务管理中心','法务部','总经理','董事长'],
-          ['发起人','相关领导1','相关领导2','相关领导3','公司领导','董事长'],
+          ['发起人','部门负责人','财务管理中心','法务部','总经理','董事办'],
+          ['发起人','相关领导1','相关领导2','相关领导3','公司领导','董事办'],
           ['发起人','部门负责人','总经理','人事行政部门'],
+          ['发起人','部门负责人','财务管理中心','法务部','用印管理部门','总经理','懂事办'],
         ]
       }
     },

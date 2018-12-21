@@ -31,3 +31,7 @@ Vue.filter("escape2Html", function (str) {  //解码html标签
   return str.replace(/&(lt|gt|nbsp|amp|quot|ldquo|rdquo|mdash);/ig,function(all,t){
     return arrEntities[t]});
 });
+
+Vue.filter("timeSlice", function (value) {  //时间截取后三位 （秒）
+  return value.slice(0,-3)
+});

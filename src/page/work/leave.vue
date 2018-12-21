@@ -180,7 +180,11 @@ let save_leave = (index,text,that) =>{
                 if(index){
                     that.$toast('已保存至草稿箱!')
                     setTimeout(()=>{
-                        window.location.href = "epipe://?&mark=history_back";
+                        if(that.$route.query.leaveId){
+                             window.location.href = "epipe://?&mark=goWork"
+                        }else{
+                            window.location.href = "epipe://?&mark=history_back" 
+                        }
                     },700)
                 }else{
                     that.$toast('提交成功！')
@@ -465,9 +469,16 @@ export default {
                     that.accessory.push(obj)
                 }
         let that = this;
+
      
         if(this.$route.query.leaveId){
-            this.axios.get('/work/leave/apply/info?leaveId='+this.$route.query.leaveId).then(function(res){
+
+            this.axios.get('/work/leave/apply/info',{
+                params:{
+                    type:that.$route.query.resubmit,
+                    leaveId:this.$route.query.leaveId
+                }
+            }).then(function(res){
                  let datas = res.data.b.data[0];
                  if(res.data.h.code == 200){
                      that.isDraft = 1;

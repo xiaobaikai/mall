@@ -8,12 +8,12 @@
             </svg>
             </div>
             草稿箱
-            <div class="redact" @click="redact">编辑</div>
+            <div v-if="draftsData.length" class="redact" @click="redact">编辑</div>
         </div>
 
         <div class="affairs_content">
             <div v-for="item in draftsData" :key="item.applyId">
-             <div v-if="item.typecode == 1" @click="goLeaveDraft(item)"  :key="index"  class="affairs_item myaffairs_shadow">
+             <div v-if="item.typecode == 1" @click="go_Apply(item,'leave')"  :key="index"  class="affairs_item myaffairs_shadow">
                     <div class="item_infor">
                         <div class="select" v-if="redactState">
                              <svg v-if="item.isDel" class="icon" style="font-size:0.16rem;color:#f80" aria-hidden="false">
@@ -42,7 +42,7 @@
                     </div>
             </div>
 
-            <div v-if="item.typecode == 2" @click="goLetterDraft(item)" :key="index"  class="affairs_item myaffairs_shadow">
+            <div v-if="item.typecode == 2" @click="go_Apply(item,'letterOfRequest')" :key="index"  class="affairs_item myaffairs_shadow">
                 <div class="item_infor">
                     <div class="select" v-if="redactState">
                              <svg v-if="item.isDel" class="icon" style="font-size:0.16rem;color:#f80" aria-hidden="false">
@@ -76,7 +76,7 @@
                 </div>
             </div>
 
-            <div v-if="item.typecode == 3"  @click="goContractDraft(item)" :key="index"  class="affairs_item myaffairs_shadow">
+            <div v-if="item.typecode == 3"  @click="go_Apply(item,'contract')" :key="index"  class="affairs_item myaffairs_shadow">
                 <div class="item_infor">
                     <div class="select" v-if="redactState">
                              <svg v-if="item.isDel" class="icon" style="font-size:0.16rem;color:#f80" aria-hidden="false">
@@ -110,7 +110,7 @@
                 </div>
             </div>
 
-             <div v-if="item.typecode == 4" @click="goOutWork(item)"  class="affairs_item myaffairs_shadow" >
+             <div v-if="item.typecode == 4" @click="go_Apply(item,'goOutWork')"  class="affairs_item myaffairs_shadow" >
                  <div class="item_infor">
                     <div class="select" v-if="redactState">
                              <svg v-if="item.isDel" class="icon" style="font-size:0.16rem;color:#f80" aria-hidden="false">
@@ -154,7 +154,7 @@
                     </div>
 
              </div>
-             <div v-if="item.typecode == 5" @click="tripDraft(item)"   class="affairs_item myaffairs_shadow" >
+             <div v-if="item.typecode == 5" @click="go_Apply(item,'trip')"   class="affairs_item myaffairs_shadow" >
                 <div class="item_infor">
                     <div class="select" v-if="redactState">
                              <svg v-if="item.isDel" class="icon" style="font-size:0.16rem;color:#f80" aria-hidden="false">
@@ -200,7 +200,7 @@
                         查看详情
                     </div>
             </div>
-             <div v-if="item.typecode == 6" @click="stampDraft(item)"   class="affairs_item myaffairs_shadow" >
+             <div v-if="item.typecode == 6" @click="go_Apply(item,'stamp')"   class="affairs_item myaffairs_shadow" >
                  <div class="item_infor">
                     <div class="select" v-if="redactState">
                              <svg v-if="item.isDel" class="icon" style="font-size:0.16rem;color:#f80" aria-hidden="false">
@@ -242,7 +242,7 @@
                             查看详情
                  </div>
             </div> 
-             <div v-if="item.typecode == 7" @click="reimburseDraft(item)"   class="affairs_item myaffairs_shadow" >
+             <div v-if="item.typecode == 7" @click="go_Apply(item,'reimburse')"   class="affairs_item myaffairs_shadow" >
                  <div class="item_infor">
                     <div class="select" v-if="redactState">
                              <svg v-if="item.isDel" class="icon" style="font-size:0.16rem;color:#f80" aria-hidden="false">
@@ -285,7 +285,7 @@
                             查看详情
                 </div>
             </div>
-            <div v-else-if="item.typecode == 8" @click="payApplyDetails(item)"   class="affairs_item" >
+            <div v-else-if="item.typecode == 8" @click="go_Apply(item,'payApply')"   class="affairs_item" >
                 <div class="item_infor">
                     <div class="select" v-if="redactState">
                              <svg v-if="item.isDel" class="icon" style="font-size:0.16rem;color:#f80" aria-hidden="false">
@@ -328,7 +328,7 @@
                 </div>
                 
             </div>
-            <div v-else-if="item.typecode == 9" @click="dimissionDetails(item)"   class="affairs_item" >
+            <div v-else-if="item.typecode == 9" @click="go_Apply(item,'dimission')"   class="affairs_item" >
                 <div class="item_infor">
                     <div class="select" v-if="redactState">
                              <svg v-if="item.isDel" class="icon" style="font-size:0.16rem;color:#f80" aria-hidden="false">
@@ -369,7 +369,136 @@
                 <div  class="skip" tag="div">
                         查看详情
                 </div>
-            </div>  
+            </div>
+
+            <div v-else-if="item.typecode == 10" @click="go_Apply(item,'borrow')"   class="affairs_item" >
+                <div class="item_infor">
+                    <div class="select" v-if="redactState">
+                             <svg v-if="item.isDel" class="icon" style="font-size:0.16rem;color:#f80" aria-hidden="false">
+                                <use xlink:href="#icon-xuanzhong2"></use>
+                            </svg>
+                            <svg v-else  class="icon" style="font-size:0.16rem;" aria-hidden="false">
+                                <use xlink:href="#icon-meiyouxuanzhong"></use>
+                            </svg>
+                    </div>
+                    <div class="affirs_child">
+                        <div>
+                            <div class="affairs_title">
+                                <img :src="item.profileImg"/>
+                                <h2>{{item.title}}的借款申请</h2>
+                                <time >{{item.applyTime | timeFormat}}</time>
+                            </div>
+                            <div class="affairs_infor">
+                                <div class="request_infor lineHeight">
+                                    <span >借款金额 : </span>
+                                    <p class="line1">{{item.borrowAmount}} 元</p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span>借款日期 :</span>
+                                    <p class="line1"> {{item.useDate  }}</p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span >归还日期 :</span>
+                                    <p class="line1">{{item.returnDate  }} </p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span>借款事由 :</span>
+                                    <p class="line2" style="line-height:0.2rem;">{{item.content  }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div  class="skip" tag="div">
+                        查看详情
+                </div>
+            </div>
+
+            <div v-else-if="item.typecode == 12" @click="go_Apply(item,'absence')"   class="affairs_item" >
+                <div class="item_infor">
+                    <div class="select" v-if="redactState">
+                             <svg v-if="item.isDel" class="icon" style="font-size:0.16rem;color:#f80" aria-hidden="false">
+                                <use xlink:href="#icon-xuanzhong2"></use>
+                            </svg>
+                            <svg v-else  class="icon" style="font-size:0.16rem;" aria-hidden="false">
+                                <use xlink:href="#icon-meiyouxuanzhong"></use>
+                            </svg>
+                    </div>
+                    <div class="affirs_child">
+                        <div>
+                            <div class="affairs_title">
+                                <img :src="item.profileImg"/>
+                                <h2>{{item.title}}的补卡申请</h2>
+                                <time >{{item.applyTime | timeFormat}}</time>
+                            </div>
+                            <div class="affairs_infor">
+                                 <div class="request_infor lineHeight">
+                                    <span> 提 &nbsp;交&nbsp;人 :</span><p class="line1">{{item.title}} </p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span>所属部门 :</span>
+                                    <p class="line1">{{item.officeName }}</p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span >时&emsp;&emsp;间 :</span>
+                                    <p class="line1">{{item.absenceDate|timeSlice }} </p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span>原&emsp;&emsp;因 :</span>
+                                    <p class="line2" style="line-height:0.2rem;">{{item.absenceReason  }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div  class="skip" tag="div">
+                        查看详情
+                </div>
+            </div> 
+
+            <div v-else-if="item.typecode == 11" @click="go_Apply(item,'reception')"   class="affairs_item" >
+                <div class="item_infor">
+                    <div class="select" v-if="redactState">
+                             <svg v-if="item.isDel" class="icon" style="font-size:0.16rem;color:#f80" aria-hidden="false">
+                                <use xlink:href="#icon-xuanzhong2"></use>
+                            </svg>
+                            <svg v-else  class="icon" style="font-size:0.16rem;" aria-hidden="false">
+                                <use xlink:href="#icon-meiyouxuanzhong"></use>
+                            </svg>
+                    </div>
+                    <div class="affirs_child">
+                        <div>
+                            <div class="affairs_title">
+                                <img :src="item.profileImg"/>
+                                <h2>{{item.title}}的接待申请</h2>
+                                <time >{{item.applyTime | timeFormat}}</time>
+                            </div>
+                            <div class="affairs_infor">
+                               <div class="request_infor lineHeight">
+                                    <span >来宾单位 : </span>
+                                    <p class="line1">{{item.visitorCompany}} </p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span>到访日期 :</span>
+                                    <p class="line1"> {{item.visitDate |timeSlice }}</p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span >接待等级 :</span>
+                                    <p class="line1">{{item.receptionLevel}} </p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span>预算总费用 :</span>
+                                    <p class="line1">{{item.totalBudget}} 元</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div  class="skip" tag="div">
+                        查看详情
+                </div>
+            </div> 
+  
          </div>   
         </div>
 
@@ -471,6 +600,12 @@
                     }
                 }
             },
+            go_Apply(item,typeName){
+                this.delFor(item)
+                if(this.redactState) return
+                window.location.href = "epipe://?&mark="+typeName+"&_id="+item.applyId;
+            },
+
             goLeaveDraft(item){
                 this.delFor(item)
                 if(this.redactState) return
@@ -516,6 +651,11 @@
                 if(this.redactState) return
                 window.location.href = "epipe://?&mark=dimission&_id="+item.applyId;
             },
+            go_Details(item,url){
+                this.delFor(item)
+                if(this.redactState) return
+                window.location.href = "epipe://?&mark="+url+"&_id="+item.applyId;
+            },
             redact(){ //编辑
                 this.redactState = !this.redactState
 
@@ -560,6 +700,7 @@
                             for(let j=0;j<that.deleteArr.length;j++){
                                 if(that.draftsData[i].applyId==that.deleteArr[j]){
                                     that.draftsData.splice(i,1)
+                                    i--
                                 }
                             }
                         }

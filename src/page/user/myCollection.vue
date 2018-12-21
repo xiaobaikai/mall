@@ -6,12 +6,18 @@
           <div @click="btnShow=3" :class="btnShow==3?'active':''">图片</div>
       </header>
       <div v-show="btnShow==1">
-          <text-template :key="item.resId" v-for="item in datas" :item="item"></text-template>
+          <!-- <text-template :key="item.resId" v-for="item in datas" :item="item"></text-template> -->
+          <div v-for="item in datas" class="item" v-if="item.resTitle" @click="go_details(item)">
+              {{item.resTitle}}
+          </div>
 
            <div class="no-more">暂无内容</div>
       </div>
       <div v-show="btnShow==2">
-          <text-template :key="item.resId"  v-for="item in datas" :item="item"></text-template>
+            <div v-for="item in datas" class="item" v-if="item.resTitle"  @click="go_details(item)">
+              {{item.resTitle}}
+          </div>
+          <!-- <text-template :key="item.resId"  v-for="item in datas" :item="item"></text-template> -->
           <div class="no-more">暂无内容</div>
       </div>
       <div v-show="btnShow==3">
@@ -34,12 +40,17 @@ export default {
 
         mounted(){
             let that = this;
-            this.axios.get('/user/collect/info?collecType=0').then(function(res){
+            this.axios.get('/user/collect/list?collecType=1').then(function(res){
                 if(res.data.h.code==200){
-                
                     that.datas = res.data.b;
                 }
             })    
+        },
+        methods:{
+             go_details(item){
+                    window.location.href = "epipe://?&mark=newsdetail&title="+item.resTitle+"&_id="+item.resId+'&url='+item.resUrl
+
+             }
         },
         components:{
             TextTemplate,
@@ -62,6 +73,21 @@ export default {
              line-height 0.5rem;
              position relative
          }
+     }
+
+     .item{
+         height 0.6rem;
+         line-height 0.6rem;
+         background-color #fff
+         font-size 0.15rem;
+         color #333
+         overflow: hidden;
+         white-space: nowrap;
+         text-overflow: ellipsis;
+         margin 0 0.15rem;
+         margin-bottom 0.1rem;
+         padding 0 0.15rem;
+         border-radius 0.04rem;
      }
     
     .no-more{
@@ -87,6 +113,9 @@ export default {
         width 0.4rem;
         height 2px;
         background-color #f80;
+    }
+    section>div{
+        padding-top  0.15rem;
     }
 
 </style>

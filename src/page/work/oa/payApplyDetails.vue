@@ -13,7 +13,7 @@
                     <img class="imgHead" :src="dataObj.profileImg" @click="go_user(dataObj.userId)">
                     <div>
                         <p class="nameTl">{{dataObj.username}}</p>
-                        <p :class="leaveType==2?'careOf':leaveType==0?'res':'consent'" v-if="leaveType!=''&leaveType!=3">{{leaveType |details}}</p>
+                        <p :class="leaveType==2?'careOf':leaveType==0?'res':'consent'">{{leaveType |details}}</p>
                         <p class="res" v-if="leaveType==3||leaveType==4">{{'等待'+dataObj.auditUserName+'的审批'}}</p>
                     </div>
                 </div>
@@ -30,7 +30,7 @@
             </div>
             <div class="styles infor">
                 <div class="infor-box">
-                    <span >申 &nbsp;请 &nbsp;人 </span>
+                    <span style="letter-spacing:0.05rem">申请人</span>
                     <p>{{dataObj.username}}</p>
                 </div>
                 <div class="infor-box">
@@ -61,7 +61,7 @@
                     <p>{{dataObj.bankAcount}} </p>
                 </div>
                  <div class="infor-box">
-                    <span>开 &nbsp;户 &nbsp;行 </span>
+                    <span style="letter-spacing:0.05rem">开户行 </span>
                     <p>{{dataObj.bankName}} </p>
                 </div>
                 <div class="infor-box">
@@ -106,7 +106,8 @@
             v-on:more='moreBtn'
             v-on:revocation="isDialog=true"
             v-on:resubmit="resubmit"
-            v-on:urge="urge"
+             v-on:urge="isBackout=true"
+            v-on:print="print"
             >
         </OaBtn>
         <div style="width:100%;height:0.15rem;background-color:#fff"></div>
@@ -129,6 +130,7 @@
           v-on:urge="urge"
           v-on:isShow="isShow=!isShow"
           :myself="myself"
+          v-on:print="print"
         >
         </MoreBtn>
           
@@ -145,6 +147,7 @@
     import Copy  from '../../../components/oa/copyDetails.vue'  // 抄送人
     import OaBtn  from '../../../components/oa/oa_btn.vue'  // 动作按钮
     import MoreBtn  from '../../../components/oa/more_btn.vue'  // 更多弹窗
+    import Dialog  from '../../../components/oa/dialog.vue'    //弹窗
 
     export default {
         data(){
@@ -167,6 +170,7 @@
                 isShow:false,
                 title:'',
                 myself:false,
+                isBackout:false,
                 amount:0,
 
             }
@@ -178,12 +182,13 @@
             Approver,
             Copy,
             OaBtn,
-            MoreBtn
+            MoreBtn,
+            Dialog
         },
         methods :{
         ...mapMutations(['change_man','approver_man']),
             refuse:function(){
-                 this.$router.push({path:'/opinion',query:{id:this.dataObj.payApplyId,type:'payApply',color:'#f80'}})
+                 this.$router.push({path:'/opinion',query:{id:this.dataObj.payApplyId,typeName:'payApply',applyType:7,color:'#f80'}})
             },
             history_back_click:function(){
                     if(location.href.indexOf('goWork=0')>0){
@@ -195,23 +200,27 @@
             deliverTo(){ //转交
                 let newApprStr = this.appAndCopy(this.newAppr,'auditUserId')
                 let newCopy = this.appAndCopy(this.newCopy)
-                this.$router.push({path:'/imchoices',query:{id:this.dataObj.payApplyId,careOf:true,type:'payApply',color:'#f80',auditerIds:newApprStr,num:1}})
+                this.$router.push({path:'/imchoices',query:{id:this.dataObj.payApplyId,receiverIds:newCopy,careOf:true,typeName:'payApply',applyType:7,bgcolor:'#f80',auditerIds:newApprStr,num:1}})
             },
             approveBack(){ //退回
-                 this.$router.push({path:'/approveBack',query:{id:this.dataObj.payApplyId,type:'payApply',color:'#f80'}})
+                 this.$router.push({path:'/approveBack',query:{id:this.dataObj.payApplyId,typeName:'payApply',applyType:7,color:'#f80'}})
             },
             consent:function(){
               let that = this;
                let copyStr =  this.appAndCopy(this.newCopy)
                let apprStr = this.appAndCopy(this.newAppr,'auditUserId')
 
-            this.$router.push({path:'/opinion',query:{id:this.dataObj.payApplyId,receiverIds:copyStr,auditerIds:apprStr,color:'#f80',type:'payApply',pageType:'consent'}})
+            this.$router.push({path:'/opinion',query:{id:this.dataObj.payApplyId,receiverIds:copyStr,auditerIds:apprStr,color:'#f80',typeName:'payApply',applyType:7,pageType:'consent'}})
                
             },
+             print(){//打印
+                window.location.href = "epipe://?&mark=print&url="+location.href;
+            },
             resubmit(){ //再次提交
-                this.$router.replace({path:'/payApply',query:{payApplyId:this.dataObj.payApplyId,resubmit:true}})
+                this.$router.replace({path:'/payApply',query:{payApplyId:this.dataObj.payApplyId,resubmit:1}})
             },
             urge(){ //催办
+                this.isBackout = false;
                 let that = this;
                 this.axios.post('/work/audit'+this.Service.queryString({
                     applyId:this.dataObj.payApplyId,
@@ -253,7 +262,7 @@
                             that.$toast('撤销成功！')
           
                             setTimeout(()=>{
-                                window.location.href = "epipe://?&mark=payApply&_id="+that.dataObj.payApplyId+'&data='+JSON.stringify({text:1});;
+                                window.location.href = "epipe://?&mark=payApplyDetails&_id="+that.dataObj.payApplyId+'&data='+JSON.stringify({text:1});;
                             },500)     
                         } 
                     })
@@ -301,16 +310,15 @@
 
             let that = this;
             this.payApplyId = this.$route.query.payApplyId;
-            this.axios.get('/work/pay/info?payApplyId='+this.payApplyId).then(function(res){
+            let pusthId = this.$route.query.pushId
+            this.axios.get('/work/pay/info?payApplyId='+this.payApplyId+'&pushId='+pusthId).then(function(res){
                 that.dataObj = res.data.b;
                 let arr=[];
                 that.accessory = that.accessoryFors(that.dataObj.accessory)
                 that.title = that.dataObj.username+'的付款申请'
                 for(let i =0;i<that.dataObj.auditers.length;i++){   
                         if(that.dataObj.auditers[i].status=='2'){
-                            that.refuseIndex = i+1;
                             that.leaveType = '0';  //已经拒绝
-                            return;
                         }
                         if(that.dataObj.auditers[i].status=='00'){
                             arr.push(that.dataObj.auditers[i])
@@ -328,6 +336,9 @@
 
                     if(that.dataObj.userId==that.dataObj.auditUserId){
                         that.myself=true;
+                        if(that.dataObj.auditStatus==0&&that.dataObj.myselfApply!='00'){
+                            that.dataObj.myselfApply="0"
+                        }
                     }
 
                     if(that.dataObj.auditStatus=='4'){
@@ -340,14 +351,8 @@
                         return;
                     }
 
-                    if(that.dataObj.auditers[0].status!='0'&&that.dataObj.auditers[0].status!='00'){ //审批开始
-                        that.leaveType = '4';
-                        return;
-                    }
-
                     if(that.dataObj.auditStatus == '3'){ //已经撤销
                         that.leaveType = '2'
-                        that.refuseIndex = -2
                         return;
                     }
             })
@@ -373,25 +378,12 @@
                     return '已退回'
                 }
             },
-            stateName: function(value){
-                    return value=='0'?'审批中':value=='1'?'已同意':value=='2'?'已拒绝':'';
-            },
             nameFor:function(value){
                 if(!value) return ''
                 let arr = value.split('|')
 
                 return arr.join(',')
             },
-            fileSize:function(value){
-                value = value-0
-                if(value<5500){
-                    value = value/1024
-                    return value.toFixed(2)+'kb';
-                }
-                value = value/1024/1024
-                return value.toFixed(2)+'mb';
-            }
-          
         },
         computed: mapState(["chosed_man_state","approver_man_state"])
     }

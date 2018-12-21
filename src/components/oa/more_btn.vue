@@ -1,10 +1,11 @@
 <template>
     <div  class="dialog" @touchmove.prevent @click="show">
-        <div class="dialog_box" :style="{'height':(myself?'1.6rem':'0.8rem')}">
+        <div class="dialog_box" :style="{'height':(myself?'2rem':'1.2rem')}">
             <div class="dialog_option" @click="approveBack">退回</div>
             <div class="dialog_option" @click="deliverTo">转交</div>
             <div class="dialog_option" v-if="myself" @click="urge">催办</div>
             <div class="dialog_option" v-if="myself" @click="revocation">撤销</div>
+            <div class="dialog_option" @click="print">打印</div>
         </div>
     </div>
 </template>
@@ -26,6 +27,9 @@
             },
             urge(){
                 this.$emit('urge')
+            },
+            print(){
+                this.$emit('print')
             }
         },
         props:['myself']

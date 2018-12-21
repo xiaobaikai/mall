@@ -89,7 +89,8 @@
             v-on:more='moreBtn'
             v-on:revocation="isDialog=true"
             v-on:resubmit="resubmit"
-            v-on:urge="urge"
+            v-on:urge="isBackout=true"
+            v-on:print="print"
             >
         </OaBtn>
 
@@ -111,9 +112,20 @@
           v-on:urge="urge"
           v-on:isShow="isShow=!isShow"
           :myself="myself"
+          v-on:print="print"
         >
         </MoreBtn>
-          
+
+        <Dialog
+            lfText="确认"
+            rgText="取消"
+            content="是否提醒审批人审批？"
+            v-on:lfClick="urge"
+            v-on:rgClick="isBackout=false"
+            v-show="isBackout"
+            >
+        </Dialog>
+
     </section>
 </template>
 
@@ -126,6 +138,8 @@ import Approver  from '../../../components/oa/approverDetails.vue'  // 审批人
 import Copy  from '../../../components/oa/copyDetails.vue'  // 抄送人
 import OaBtn  from '../../../components/oa/oa_btn.vue'  // 动作按钮
 import MoreBtn  from '../../../components/oa/more_btn.vue'  // 更多弹窗
+import Dialog  from '../../../components/oa/dialog.vue'    //弹窗
+
 
 export default {
   data() {
@@ -147,6 +161,7 @@ export default {
       isShow: false,
       title: "",
       myself:false,
+      isBackout:false,
       amount:0,
 
     };
@@ -158,14 +173,15 @@ export default {
     Approver,
     Copy,
     OaBtn,
-    MoreBtn
+    MoreBtn,
+    Dialog
   },
   methods: {
     ...mapMutations(["change_man", "approver_man"]),
     refuse: function() {
       this.$router.push({
         path: "/opinion",
-        query: { id: this.dataObj.contractId, type: "contract" }
+        query: { id: this.dataObj.contractId, typeName: "contract",applyType:2 }
       });
     },
     history_back_click: function() {
@@ -185,13 +201,17 @@ export default {
       let newCopy = this.appAndCopy(this.newCopy);
       this.$router.push({
         path: "/imchoices",
-        query: { id: this.dataObj.contractId, careOf: true, type: "contract",auditerIds:newApprStr,num:1}
+        query: { id: this.dataObj.contractId,receiverIds:newCopy,careOf: true,bgcolor:'#fd545c', typeName: "contract",applyType:2,auditerIds:newApprStr,num:1}
       });
     },
     resubmit(){ //再次提交
-            this.$router.replace({path:'/contract',query:{contractId:this.dataObj.contractId,resubmit:true}})
+            this.$router.replace({path:'/contract',query:{contractId:this.dataObj.contractId,resubmit:1}})
     },
+     print(){//打印
+                window.location.href = "epipe://?&mark=print&url="+location.href;
+            },
     urge(){ //催办
+        this.isBackout = false;
         let that = this;
         this.axios.post('/work/audit'+this.Service.queryString({
                 applyId:this.dataObj.contractId,
@@ -208,14 +228,14 @@ export default {
     approveBack() {
       this.$router.push({
         path: "/approveBack",
-        query: { id: this.dataObj.contractId, type: "contract",color:'#fd545c'}
+        query: { id: this.dataObj.contractId, typeName: "contract",applyType:2,color:'#fd545c'}
       });
     },
     consent: function() {
       let that = this;
       let copyStr = this.appAndCopy(this.newCopy);
       let apprStr = this.appAndCopy(this.newAppr,'auditUserId');
-        this.$router.push({path:'/opinion',query:{id:this.dataObj.contractId,receiverIds:copyStr,auditerIds:apprStr,color:'#fd545c',type:'contract',pageType:'consent'}})
+        this.$router.push({path:'/opinion',query:{id:this.dataObj.contractId,receiverIds:copyStr,auditerIds:apprStr,color:'#fd545c',typeName: "contract",applyType:2,pageType:'consent'}})
     },
     appAndCopy:function(arr,type){
         if(!type) type='userId'
@@ -301,9 +321,10 @@ export default {
   },
   mounted: function() {
     let that = this;
-    this.contractId = this.Util.getUrlValue("contractId").slice(1);
+    this.contractId = this.$route.query.contractId
+     let pusthId = this.$route.query.pushId
     this.axios
-      .post("/work/contract/info?contractId=" + this.contractId)
+      .post("/work/contract/info?contractId=" + this.contractId+'&pushId='+pusthId)
       .then(function(res) {
         that.dataObj = res.data.b.data[0];
         that.accessory = that.accessoryFors(that.dataObj.accessory)
@@ -311,9 +332,7 @@ export default {
         let arr=[];
         for (let i = 0; i < that.dataObj.auditers.length; i++) {
           if (that.dataObj.auditers[i].status == "2") {
-            that.refuseIndex = i + 1;
             that.leaveType = "0"; //已经拒绝
-            return;
           }
 
           if(that.dataObj.auditers[i].status=='00'){
@@ -334,6 +353,9 @@ export default {
 
         if(that.dataObj.userId==that.dataObj.auditUserId){
             that.myself=true;
+            if(that.dataObj.auditStatus==0&&that.dataObj.myselfApply!='00'){
+                that.dataObj.myselfApply="0"
+            }
         }
 
         if(that.dataObj.auditStatus=='4'){
@@ -349,18 +371,9 @@ export default {
           return;
         }
 
-        if (
-          that.dataObj.auditers[0].status != "0" &&that.dataObj.auditers[0].status != "00"
-        ) {
-          //审批开始
-          that.leaveType = "4";
-          return;
-        }
-
         if (that.dataObj.auditStatus == "3") {
           //已经撤销
           that.leaveType = "2";
-          that.refuseIndex = -2;
           return;
         }
       });
@@ -370,9 +383,6 @@ export default {
     this.newAppr = this.approver_man_state;
   },
   filters: {
-    timeStrSlice: function(value) {
-      return value ? value.slice(0, -3) : value;
-    },
     details: function(value) {
       if (value == "1") {
         return "已同意";
@@ -384,20 +394,6 @@ export default {
                     return '已退回'
                 }
     },
-    stateName: function(value) {
-      return value == "0"
-        ? "审批中"
-        : value == "1" ? "已同意" : value == "2" ? "已拒绝" : "";
-    },
-    fileSize:function(value){
-            value = value-0
-            if(value<5500){
-                value = value/1024
-                return value.toFixed(2)+'kb';
-            }
-            value = value/1024/1024
-            return value.toFixed(2)+'mb';
-    }
 
   },
   computed: mapState(["chosed_man_state", "approver_man_state"])

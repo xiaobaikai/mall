@@ -514,7 +514,7 @@
       this.bgcolor = this.$route.query.bgcolor
       let that = this;
       // this.axios.get('https://apps.epipe.cn/member/v3/organ/addressbook',{
-      this.axios.get('http://192.168.3.166:8280/member/v3/organ/addressbook',{
+      this.axios.get('/organ/addressbook',{
         params:{
           showGroup : true,
         }

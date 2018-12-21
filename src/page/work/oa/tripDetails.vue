@@ -13,7 +13,7 @@
                     <img class="imgHead" :src="dataObj.profileImg" @click="go_user(dataObj.userId)">
                     <div>
                         <p class="nameTl">{{dataObj.username}}</p>
-                        <p :class="leaveType==2?'careOf':leaveType==0?'res':'consent'" v-if="leaveType!=''&leaveType!=3">{{leaveType |details}}</p>
+                        <p class="res">{{leaveType |details}}</p>
                         <p class="res" v-if="leaveType==3||leaveType==4">{{'等待'+dataObj.auditUserName+'的审批'}}</p>
                     </div>
                 </div>
@@ -67,7 +67,7 @@
                 </div>
             </div>
 
-             <AccessoryList v-if="accessory" :accessory='accessory'>
+             <AccessoryList  :accessory='accessory'>
 
             </AccessoryList>
 
@@ -76,7 +76,7 @@
              :refuseIndex = refuseIndex
              :newAppr = newAppr
              v-on:removeApp = "removeApp"
-             color="609df6"
+             color="#609df6"
              :amount='amount'
              >
             </Approver>
@@ -85,14 +85,12 @@
              :dataObj = dataObj
              :newCopy = newCopy
              v-on:remove = "removeCopy"
-             color="609df6"
+             color="#609df6"
             >
 
             </Copy>
-            
 
             <div class="foot-box">
-
             </div>
         </div>
         </div>
@@ -105,12 +103,12 @@
             v-on:more='moreBtn'
             v-on:revocation="isDialog=true"
             v-on:resubmit="resubmit"
-            v-on:urge="urge"
+            v-on:urge="isBackout=true"
+            v-on:print="print"
             >
         </OaBtn>
 
         <div style="width:100%;height:0.15rem;background-color:#fff"></div>
-
 
         <div class="dialog" v-show="isDialog" @touchmove.prevent>
             <div class="dialog_box">
@@ -129,8 +127,19 @@
           v-on:urge="urge"
           v-on:isShow="isShow=!isShow"
           :myself="myself"
+          v-on:print="print"
         >
         </MoreBtn>
+
+         <Dialog
+            lfText="确认"
+            rgText="取消"
+            content="是否提醒审批人审批？"
+            v-on:lfClick="urge"
+            v-on:rgClick="isBackout=false"
+            v-show="isBackout"
+            >
+        </Dialog>
           
     </section>
 </template>
@@ -144,6 +153,7 @@
     import Copy  from '../../../components/oa/copyDetails.vue'  // 抄送人
     import OaBtn  from '../../../components/oa/oa_btn.vue'  // 动作按钮
     import MoreBtn  from '../../../components/oa/more_btn.vue'  // 更多弹窗
+    import Dialog  from '../../../components/oa/dialog.vue'    //弹窗
     
     export default {
         data(){
@@ -164,8 +174,8 @@
                 newAppr:[], //新增审批人
                 isShow:false,
                 title:'',
+                isBackout:false,
                 amount:0,
-
             }
         },
         
@@ -175,12 +185,13 @@
             Approver,
             Copy,
             OaBtn,
-            MoreBtn
+            MoreBtn,
+            Dialog
         },
         methods :{
         ...mapMutations(['change_man','approver_man']),
             refuse:function(){
-                 this.$router.push({path:'/opinion',query:{id:this.dataObj.tripId,type:'trip',color:'#609df6'}})
+                 this.$router.push({path:'/opinion',query:{id:this.dataObj.tripId,typeName:'trip',applyType:4,color:'#609df6'}})
             },
             history_back_click:function(){
                     if(location.href.indexOf('goWork=0')>0){
@@ -192,15 +203,16 @@
             deliverTo(){ //转交
                 let newApprStr = this.appAndCopy(this.newAppr,'auditUserId')
                 let newCopy = this.appAndCopy(this.newCopy)
-                this.$router.push({path:'/imchoices',query:{id:this.dataObj.tripId,careOf:true,type:'trip',auditerIds:newApprStr,num:1}})
+                this.$router.push({path:'/imchoices',query:{id:this.dataObj.tripId,receiverIds:copyStr,bgcolor:'#609df6', careOf:true,typeName:'trip',applyType:4,auditerIds:newApprStr,num:1}})
             },
             approveBack(){ //退回
-                 this.$router.push({path:'/approveBack',query:{id:this.dataObj.tripId,type:'trip',color:'#609df6'}})
+                 this.$router.push({path:'/approveBack',query:{id:this.dataObj.tripId,typeName:'trip',applyType:4,color:'#609df6'}})
             },
             resubmit(){ //再次提交
-                this.$router.replace({path:'/trip',query:{tripId:this.dataObj.tripId,resubmit:true}})
+                this.$router.replace({path:'/trip',query:{tripId:this.dataObj.tripId,resubmit:1}})
             },
             urge(){ //催办
+                this.isBackout = false;
                 let that = this;
                 this.axios.post('/work/audit'+this.Service.queryString({
                     applyId:this.dataObj.tripId,
@@ -214,11 +226,14 @@
                     }
                 })
             },
+            print(){//打印
+                window.location.href = "epipe://?&mark=print&url="+location.href;
+            },
             consent:function(){ //同意
                let that = this;
                let copyStr =  this.appAndCopy(this.newCopy)
                let apprStr = this.appAndCopy(this.newAppr,'auditUserId')
-               this.$router.push({path:'/opinion',query:{id:this.dataObj.tripId,receiverIds:copyStr,auditerIds:apprStr,color:'#609df6',type:'trip',pageType:'consent'}})
+               this.$router.push({path:'/opinion',query:{id:this.dataObj.tripId,receiverIds:copyStr,auditerIds:apprStr,color:'#609df6',typeName:'trip',applyType:4,pageType:'consent'}})
             },
             moreBtn(){
                 this.isShow = true;
@@ -306,7 +321,9 @@
 
             let that = this;
             this.tripId = this.$route.query.tripId;
-            this.axios.get('/work/trip/info?tripId='+this.tripId).then(function(res){
+            let pusthId = this.$route.query.pushId
+
+            this.axios.get('/work/trip/info?tripId='+this.tripId+'&pushId='+pusthId).then(function(res){
                 that.dataObj = res.data.b;
                 let arr = [];
                 that.accessory = that.accessoryFors(that.dataObj.accessory)
@@ -314,9 +331,7 @@
                 for(let i =0;i<that.dataObj.auditers.length;i++){   
 
                         if(that.dataObj.auditers[i].status=='2'){
-                            that.refuseIndex = i+1;
                             that.leaveType = '0';  //已经拒绝
-                            return;
                         }
 
                         if(that.dataObj.auditers[i].status=='00'){
@@ -333,13 +348,16 @@
                     that.newAppr = arr
                     that.approver_man(arr)
 
-                    if(that.dataObj.userId==that.dataObj.auditId){
+                    if(that.dataObj.userId==that.dataObj.auditUserId){
                         that.myself=true;
+                         if(that.dataObj.auditStatus==0&&that.dataObj.myselfApply!='00'){
+                            that.dataObj.myselfApply="0"
+                        }
                     }
 
                     if(that.dataObj.auditStatus=='4'){
-                                that.leaveType='5'
-                                return;
+                        that.leaveType='5'
+                        return;
                     }
 
                     if(that.dataObj.auditers[that.dataObj.auditers.length-1].status == 1){ // 已同意
@@ -347,14 +365,8 @@
                         return;
                     }
 
-                    if(that.dataObj.auditers[0].status!='0'&&that.dataObj.auditers[0].status!='00'){ //审批开始
-                        that.leaveType = '4';
-                        return;
-                    }
-
                     if(that.dataObj.finalStatus == '3'){ //已经撤销
                         that.leaveType = '2'
-                        that.refuseIndex = -2
                         return;
                     }
             })
@@ -365,9 +377,6 @@
             this.newAppr = this.approver_man_state;
          },
         filters:{
-            timeStrSlice:function(value){
-                return value?value.slice(0,-3):value;
-            },
             details:function(value){
     
                 if(value == '1'){
@@ -386,18 +395,8 @@
             nameFor:function(value){
                 if(!value) return ''
                 let arr = value.split('|')
-
                 return arr.join(',')
             },
-            fileSize:function(value){
-                value = value-0
-                if(value<5500){
-                    value = value/1024
-                    return value.toFixed(2)+'kb';
-                }
-                value = value/1024/1024
-                return value.toFixed(2)+'mb';
-            }
           
         },
         computed: mapState(["chosed_man_state","approver_man_state"])

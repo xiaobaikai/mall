@@ -144,7 +144,6 @@
         pageNo: 1
       }
     }).then(function (data) {
-      console.log(data)
       if (data.data.h.code == 200) {
         that.show=true
         that.data_list = data.data.b.data;
@@ -244,17 +243,16 @@
           console.log(data)
           setTimeout(() => {
             if (data.data.h.code == 10) {
-              window.location.href = "epipe://?&mark=login_out"
+              // window.location.href = "epipe://?&mark=login_out"
             } else if (data.data.h.code == 200) {
               if (data.data.b.pageTotal == pageNo || data.data.b.pageSize >= data.data.b.dataTotal) {
                 that.show = false
               }
               pageNo++
               that.data_list = that.data_list.concat(data.data.b.data);
-              console.log(that.data_list.length)
               that.$refs.infiniteLoading.$emit('$InfiniteLoading:loaded');
             }
-          }, 700);
+          }, 200);
 
         })
       },

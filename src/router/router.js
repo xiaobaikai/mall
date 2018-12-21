@@ -2,7 +2,9 @@ import Vue from 'vue'
 import Router from 'vue-router'
 Vue.use(Router)
 const Home = r => require.ensure([], () => r(require('@/page/home/home.vue')), 'group-foo')
-const Work = r => require.ensure([], () => r(require('@/page/work/work.vue')), 'group-foo')
+const Work = r => require.ensure([], () => r(require('@/page/work/works.vue')), 'group-foo')
+const NeatenWork = r => require.ensure([], () => r(require('@/page/work/neatenWork.vue')), 'group-foo')
+const AddWork = r => require.ensure([], () => r(require('@/page/work/addWork.vue')), 'group-foo')
 const Find = r => require.ensure([], () => r(require('@/page/find/find.vue')), 'group-foo')
 const User = r => require.ensure([], () => r(require('@/page/user/User.vue')), 'group-foo')
 const Record = r => require.ensure([], () => r(require('@/page/work/record.vue')), 'group-foo')
@@ -30,6 +32,7 @@ const Create = r => require.ensure([], () => r(require('@/page/work/create.vue')
 const Search = r => require.ensure([], () => r(require('@/page/work/search.vue')), 'group-work')
 const Pending = r => require.ensure([], () => r(require('@/page/work/pending.vue')), 'group-work')
 const Department = r => require.ensure([], () => r(require('@/page/work/department.vue')), 'group-work')
+
 const EarlyList = r => require.ensure([], () => r(require('@/page/work/enterprise/EarlyList.vue')), 'group-enterprise')
 const LateList = r => require.ensure([], () => r(require('@/page/work/enterprise/LateList.vue')), 'group-enterprise')
 const NotClocking = r => require.ensure([], () => r(require('@/page/work/enterprise/NotClocking.vue')), 'group-enterprise')
@@ -100,7 +103,6 @@ const StoreHome = r => require.ensure([], () => r(require('@/page/mall/store/Sto
 const StoreClass = r => require.ensure([], () => r(require('@/page/mall/store/StoreClass.vue')), 'mall-store')
 const StoreInfo = r => require.ensure([], () => r(require('@/page/mall/store/StoreInfo.vue')), 'mall-store')
 
-
 const Affairs = r => require.ensure([], () => r(require('@/page/work/affairs.vue')), 'group-work')
 const Leave = r => require.ensure([], () => r(require('@/page/work/leave.vue')), 'group-work')
 const LeaveDetails = r => require.ensure([], () => r(require('@/page/work/leaveDetails.vue')), 'group-work')
@@ -149,6 +151,18 @@ const PayApply = r => require.ensure([], () => r(require('@/page/work/oa/payAppl
 const PayApplyDetails = r => require.ensure([], () => r(require('@/page/work/oa/payApplyDetails.vue')), 'group-work')
 const Dimission = r => require.ensure([], () => r(require('@/page/work/oa/dimission.vue')), 'group-work')
 const DimissionDetails = r => require.ensure([], () => r(require('@/page/work/oa/dimissionDetails.vue')), 'group-work')
+const Borrow = r => require.ensure([], () => r(require('@/page/work/oa/borrow.vue')), 'group-work')
+const BorrowDetails = r => require.ensure([], () => r(require('@/page/work/oa/borrowDetails.vue')), 'group-work')
+const Reception = r => require.ensure([], () => r(require('@/page/work/oa/reception.vue')), 'group-work')
+const ReceptionDetails = r => require.ensure([], () => r(require('@/page/work/oa/receptionDetails.vue')), 'group-work')
+const Absence = r => require.ensure([], () => r(require('@/page/work/oa/absence.vue')), 'group-work')
+const AbsenceDetails = r => require.ensure([], () => r(require('@/page/work/oa/absenceDetails.vue')), 'group-work')
+const OaSearch = r => require.ensure([], () => r(require('@/page/work/oa/oaSearch.vue')), 'group-work')
+const CompanyWall = r => require.ensure([], () => r(require('@/page/work/companyWall.vue')), 'group-work')
+const CompanyWallList = r => require.ensure([], () => r(require('@/page/work/companyWallList.vue')), 'group-work')
+const Car = r => require.ensure([], () => r(require('@/page/work/oa/car.vue')), 'group-work')
+const Recruitment = r => require.ensure([], () => r(require('@/page/work/oa/recruitment.vue')), 'group-work')
+const ArticleDetails = r => require.ensure([], () => r(require('@/page/work/articleDetails.vue')), 'group-work')
 
 
 export default new Router({
@@ -690,6 +704,35 @@ export default new Router({
       meta: {keepAlive: true}
     },
     {
+      path:'/borrow', //借款
+      component:Borrow,
+      meta: {keepAlive: true}
+    },
+    {
+      path:'/borrowDetails', //借款详情
+      component:BorrowDetails,
+      meta: {keepAlive: true}
+    },
+    {
+      path:'/reception', //接待
+      component:Reception,
+      meta: {keepAlive: true}
+    },{
+      path:'/receptionDetails', //接待详情
+      component:ReceptionDetails,
+      meta: {keepAlive: true}
+    },
+    {
+      path:'/absence', //补卡
+      component:Absence,
+      meta: {keepAlive: true}
+    },
+    {
+      path:'/absenceDetails', //补卡详情
+      component:AbsenceDetails,
+      meta: {keepAlive: true}
+    },
+    {
       path:'/payApplyDetails', //付款详情
       component:PayApplyDetails,
       meta: {keepAlive: true}
@@ -707,6 +750,10 @@ export default new Router({
     {
       path:'/reimburseType', //报销详情
       component:ReimburseType,
+    },
+    {
+      path:'/oaSearch', //报销详情
+      component:OaSearch,
     },
     {
       path:'/searchMore', //搜索更多加载
@@ -732,6 +779,28 @@ export default new Router({
     },{
       path:'/waitPay', //待付款
       component:WaitPay,
+    },{
+      path:'/neatenWork',
+      component:NeatenWork
+    },
+    ,{
+      path:'/addWork',
+      component:AddWork
+    },{
+      path:'/companyWall',
+      component:CompanyWall
+    },{
+      path:'/companyWallList',
+      component:CompanyWallList
+    },{
+      path:'/car',//用车
+      component:Car
+    },{
+      path:'/recruitment',
+      component:Recruitment
+    },{
+      path:'/articleDetails',
+      component:ArticleDetails
     }
   ]
 })

@@ -111,7 +111,7 @@
                 that.items=obj
                 setTimeout(function () {
                   that.$refs.infiniteLoading.$emit('$InfiniteLoading:loaded');
-                }, 700)
+                }, 200)
               }
             }
         })

@@ -72,7 +72,6 @@
              v-on:removeApp = "removeApp"
              color="#0fc37c"
              :amount='amount'
-
              >
             </Approver>
 
@@ -97,7 +96,8 @@
             v-on:more='moreBtn'
             v-on:revocation="isDialog=true"
             v-on:resubmit="resubmit"
-            v-on:urge="urge"
+            v-on:urge="isBackout=true"
+            v-on:print="print"
             >
         </OaBtn>
         <div style="width:100%;height:0.15rem;background-color:#fff"></div>
@@ -120,8 +120,20 @@
           v-on:urge="urge"
           v-on:isShow="isShow=!isShow"
           :myself="myself"
+        v-on:print="print"
+
         >
         </MoreBtn>
+
+        <Dialog
+            lfText="确认"
+            rgText="取消"
+            content="是否提醒审批人审批？"
+            v-on:lfClick="urge"
+            v-on:rgClick="isBackout=false"
+            v-show="isBackout"
+            >
+        </Dialog>
 
 
     </section>
@@ -137,6 +149,8 @@
     import Copy  from '../../../components/oa/copyDetails.vue'  // 抄送人
     import OaBtn  from '../../../components/oa/oa_btn.vue'  // 动作按钮
     import MoreBtn  from '../../../components/oa/more_btn.vue'  // 更多弹窗
+    import Dialog  from '../../../components/oa/dialog.vue'    //弹窗
+
     export default {
         data(){
             return{
@@ -159,7 +173,8 @@
                 title:'',
                 myself:false,
                 out_work_details_id: {"isShow":true,"title":"签到记录",color:'#0fc37c'},
-              amount:0,
+                amount:0,
+                isBackout:false,
 
             }
         },
@@ -170,12 +185,13 @@
             Approver,
             Copy,
             OaBtn,
-            MoreBtn
+            MoreBtn,
+            Dialog
         },
         methods :{
         ...mapMutations(['change_man','approver_man']),
             refuse:function(){
-                 this.$router.push({path:'/opinion',query:{id:this.dataObj.outsideId,type:'outside',color:'#0fc37c'}})
+                 this.$router.push({path:'/opinion',query:{id:this.dataObj.outsideId,typeName:'goOutWork',applyType:3,color:'#0fc37c'}})
             },
             history_back_click:function(){
                     if(location.href.indexOf('goWork=0')>0){
@@ -187,12 +203,13 @@
             deliverTo(){ //转交
                 let newApprStr = this.appAndCopy(this.newAppr,'auditUserId')
                 let newCopy = this.appAndCopy(this.newCopy)
-                this.$router.push({path:'/imchoices',query:{id:this.dataObj.outsideId,careOf:true,type:'outside',auditerIds:newApprStr,num:1}})
+                this.$router.push({path:'/imchoices',query:{id:this.dataObj.outsideId,bgcolor:'#0fc37c', receiverIds:newCopy,careOf:true,typeName:'goOutWork',applyType:3,auditerIds:newApprStr,num:1}})
             },
             resubmit(){ //再次提交
-                this.$router.replace({path:'/goOutWork',query:{outsideId:this.dataObj.outsideId,resubmit:true}})
+                this.$router.replace({path:'/goOutWork',query:{outsideId:this.dataObj.outsideId,resubmit:1}})
             },
             urge(){ //催办
+                this.isBackout = false;
                 let that = this;
                 this.axios.post('/work/audit'+this.Service.queryString({
                     applyId:this.dataObj.outsideId,
@@ -207,17 +224,17 @@
                 })
             },
             approveBack(){ //退回
-                 this.$router.push({path:'/approveBack',query:{id:this.dataObj.outsideId,type:'outside',color:'#0fc37c'}})
+                 this.$router.push({path:'/approveBack',query:{id:this.dataObj.outsideId,typeName:'goOutWork',applyType:3,color:'#0fc37c'}})
             },
              moreBtn(){ //更多
                 this.isShow = true;
                 this.$forceUpdate();
             },
             consent:function(){
-              let that = this;
-               let copyStr =  this.appAndCopy(this.newCopy)
-               let apprStr = this.appAndCopy(this.newAppr,'auditUserId')
-                this.$router.push({path:'/opinion',query:{id:this.dataObj.outsideId,receiverIds:copyStr,auditerIds:apprStr,color:'#0fc37c',type:'outside',pageType:'consent'}})
+                let that = this;
+                let copyStr =  this.appAndCopy(this.newCopy)
+                let apprStr = this.appAndCopy(this.newAppr,'auditUserId')
+                this.$router.push({path:'/opinion',query:{id:this.dataObj.outsideId,receiverIds:copyStr,auditerIds:apprStr,color:'#0fc37c',typeName:'goOutWork',applyType:3,pageType:'consent'}})
             },
             appAndCopy:function(arr,type){
                 if(!type) type='userId'
@@ -256,6 +273,9 @@
                 let that = this;
                 let obj = {index_num: 0, data:[url],type:0}
                 window.location.href = "epipe://?&mark=imgdetail&url=" + JSON.stringify(obj);
+            },
+             print(){//打印
+                window.location.href = "epipe://?&mark=print&url="+location.href;
             },
              accessoryFors:function(datas){
                 if(!datas||datas.url==null) return false
@@ -307,8 +327,10 @@
         mounted:function(){
 
             let that = this;
-            this.outsideId = this.Util.getUrlValue('outsideId').slice(1)
-            this.axios.get('/outsign/task/infos?outsideId='+this.outsideId).then(function(res){
+            this.outsideId = this.$route.query.outsideId
+            let pusthId = this.$route.query.pushId
+            
+            this.axios.get('/outsign/task/infos?outsideId='+this.outsideId+'&pushId='+pusthId).then(function(res){
                 that.dataObj = res.data.b.data[0];
                 that.accessory = that.accessoryFors(that.dataObj.accessory)
                 that.title = that.dataObj.username+'的公出申请';
@@ -316,9 +338,7 @@
                 for(let i =0;i<that.dataObj.auditers.length;i++){
 
                         if(that.dataObj.auditers[i].status=='2'){
-                            that.refuseIndex = i+1;
                             that.leaveType = '0';  //已经拒绝
-                            return;
                         }
 
                          if(that.dataObj.auditers[i].status=='00'){
@@ -327,7 +347,7 @@
                             that.amount++;
                         }
 
-                        if(that.dataObj.auditers[i].accessory.fileName!=null){
+                        if(that.dataObj.auditers[i].accessory!=null){
                             that.dataObj.auditers[i].accessory = that.accessoryFors(that.dataObj.auditers[i].accessory)
                         }
                     }
@@ -335,8 +355,11 @@
                     that.newAppr = arr
                     that.approver_man(arr)
 
-                    if(that.dataObj.userId==that.dataObj.auditId){
+                    if(that.dataObj.userId==that.dataObj.auditUserId){
                         that.myself=true;
+                        if(that.dataObj.auditStatus==0&&that.dataObj.myselfApply!='00'){
+                            that.dataObj.myselfApply="0"
+                        }
                     }
 
                     if(that.dataObj.auditStatus=='4'){
@@ -349,14 +372,8 @@
                         return;
                     }
 
-                    if(that.dataObj.auditers[0].status!='0'&&that.dataObj.auditers[0].status!='00'){ //审批开始
-                        that.leaveType = '4';
-                        return;
-                    }
-
                     if(that.dataObj.auditStatus == '3'){ //已经撤销
                         that.leaveType = '2'
-                        that.refuseIndex = -2
                         return;
                     }
             })
@@ -382,25 +399,12 @@
                     return '已退回'
                 }
             },
-            stateName: function(value){
-                    return value=='0'?'审批中':value=='1'?'已同意':value=='2'?'已拒绝':'';
-            },
             nameFor:function(value){
                 if(!value) return ''
                 let arr = value.split('|')
 
                 return arr.join(',')
             },
-            fileSize:function(value){
-                value = value-0
-                if(value<5500){
-                    value = value/1024
-                    return value.toFixed(2)+'kb';
-                }
-                value = value/1024/1024
-                return value.toFixed(2)+'mb';
-            }
-
         },
         computed: mapState(["chosed_man_state","approver_man_state"])
     }

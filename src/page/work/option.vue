@@ -112,7 +112,12 @@ export default {
                 this.axios.get('/work/dimission/type').then(function(res){
                     if(res.data.h.code =200 ) that.data = res.data.b;
                 })
-          } 
+          }else if(this.type=='reception'){
+                this.title = '交通工具';
+                this.axios.get('/work/traffic/type').then(function(res){
+                    if(res.data.h.code =200 ) that.data = res.data.b;
+                })
+          }
           else{
            this.axios.get('/work/leave/type/list').then(function(res){
                 if(res.data.h.code =200 ) that.data = res.data.b.data;

@@ -1,313 +1,94 @@
 <template>
     <section>
-        <div v-for="item in leaveData" :key="item.applyId">
-
-            <div v-if="item.typecode == 1"  @click="leaveDetail(item.applyId,item.title)"  class="affairs_content" >
-                <div class="affirs_child">
-                    <div>
-                        <div class="affairs_title">
-                            <img :src="item.profileImg"/>
-                            <h2>{{item.title}}的请假审批</h2>
-                            <time >{{item.applyTime |timeFormat}}</time>
-                        </div>
-                        <div class="affairs_infor">
-                            <p>请假类型 :<span style="color:#609ef6">{{item.leaveType}}</span></p>
-                        
-                            <p >开始时间 :<span>{{item.beginTime |slice}}</span></p>
-                            <p >结束时间 :<span>{{item.endTime |slice}}</span></p>
-                        </div>
-                    </div>
-                    <div  class="skip" >
-                        查看详情
-                    </div>
-
-                </div>
-            </div>
-
-            <div v-else-if="item.typecode==2"  @click="letterDetail(item.applyId,item.title)" class="affairs_content">
-                <div class="affirs_child">
-                    <div>
-                        <div class="affairs_title">
-                            <img :src="item.profileImg"/>
-                            <h2>{{item.title}}的请示函</h2>
-                            <time >{{item.applyTime | timeFormat}}</time>
-                        </div>
-                        <div class="affairs_infor">
-                            <div class="request_infor lineHeight">
-                                <span>主&emsp;&emsp;题 :</span>
-                                <p class="line1"> {{item.theme}}</p>
-                            </div>
-                            <div class="request_infor margin10">
-                                <span>请示内容 :</span>
-                                <p class="line2" style="line-height:0.2rem;" v-html="item.content"></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div   class="skip" >
-                        查看详情
-                    </div>
-
-                </div>
-            </div>
-            <div  v-else-if="item.typecode==3"  @click="contractDetail(item.applyId,item.title)"  class="affairs_content">
-                    <div class="affirs_child">
-                        <div>
-                            <div class="affairs_title">
-                                <img :src="item.profileImg"/>
-                                <h2>{{item.title}}的合同审批</h2>
-                                <time >{{item.applyTime | timeFormat}}</time>
-                            </div>
-                            <div class="affairs_infor">
-                                <div class="request_infor lineHeight">
-                                    <span class="lesp">合同名称 :</span>
-                                    <p class="line1"> {{item.theme}}</p>
-                                </div>
-                                <div class="request_infor lineHeight">
-                                    <span>项目负责人 :</span>
-                                    <p class="line1"> {{item.title}}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div   class="skip" >
-                            查看详情
-                        </div>
-
-                    </div>
-            </div>
-            <div v-else-if="item.typecode == 4" @click="goOutWorkDetails(item.applyId,item.title)"   class="affairs_content" >
-                <div class="affirs_child">
-                        <div>
-                            <div class="affairs_title">
-                                <img :src="item.profileImg"/>
-                                <h2>{{item.title}}的公出审批</h2>
-                                <time >{{item.applyTime | timeFormat}}</time>
-                            </div>
-                            <div class="affairs_infor">
-                                <div class="request_infor lineHeight">
-                                    <span >公出事由 :</span>
-                                    <p class="line1" v-html="item.outsideReason"></p>
-                                </div>
-                                <div class="request_infor lineHeight">
-                                    <span >公出类型 :</span>
-                                    <p class="line1"> {{item.outsideType}}</p>
-                                </div>
-                                <div class="request_infor lineHeight">
-                                    <span >公出地点 :</span>
-                                    <p class="line1"> {{item.outsideAddress}}</p>
-                                </div>
-                                <div class="request_infor lineHeight">
-                                    <span >开始时间 :</span>
-                                    <p class="line1"> {{item.beginTime |slice}}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div  class="skip" tag="div">
-                            查看详情
-                        </div>
-                </div>
-            </div> 
-             <div v-else-if="item.typecode == 5" @click="tripDetails(item.applyId,item.title)"   class="affairs_content" >
-                <div class="affirs_child">
-                        <div>
-                            <div class="affairs_title">
-                                <img :src="item.profileImg"/>
-                                <h2>{{item.title}}的出差审批</h2>
-                                <time >{{item.applyTime | timeFormat}}</time>
-                            </div>
-                            <div class="affairs_infor">
-                                <div class="request_infor lineHeight">
-                                    <span >标&emsp;&emsp;题 :</span>
-                                    <p class="line1"> {{item.theme}}</p>
-                                </div>
-                                <div class="request_infor lineHeight">
-                                    <span >出差地点 :</span>
-                                    <p class="line1"> {{item.outsideAddress}}</p>
-                                </div>
-                                <div class="request_infor lineHeight">
-                                    <span >开始时间 :</span>
-                                    <p class="line1"> {{item.beginTime |slice}}</p>
-                                </div>
-                                <div class="request_infor lineHeight">
-                                    <span >结束时间 :</span>
-                                    <p class="line1"> {{item.endTime |slice}}</p>
-                                </div>
-                                <div class="request_infor margin10">
-                                    <span>出差事由 :</span>
-                                    <p class="line2" style="line-height:0.2rem;" v-html="item.content"></p>
-                                </div>
-                            </div>
-                        </div>
-                        <div  class="skip" tag="div">
-                            查看详情
-                        </div>
-                </div>
-            </div> 
-            <div v-else-if="item.typecode == 6" @click="stampDetails(item.applyId,item.title)"   class="affairs_content" >
-                <div class="affirs_child">
-                        <div>
-                            <div class="affairs_title">
-                                <img :src="item.profileImg"/>
-                                <h2>{{item.title}}的用印申请</h2>
-                                <time >{{item.applyTime | timeFormat}}</time>
-                            </div>
-                            <div class="affairs_infor">
-                                <div class="request_infor lineHeight">
-                                    <span >文件名称 :</span>
-                                    <p class="line1"> {{item.sealFileName}}</p>
-                                </div>
-                                <div class="request_infor lineHeight">
-                                    <span >文件类别 :</span>
-                                    <p class="line1"> {{item.fileCategory}}</p>
-                                </div>
-                                <div class="request_infor lineHeight">
-                                    <span >文件数量 :</span>
-                                    <p class="line1"> {{item.fileQuantity }}</p>
-                                </div>
-                                <div class="request_infor lineHeight">
-                                    <span >印章名称 :</span>
-                                    <p class="line1"> {{item.sealName }}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div  class="skip" tag="div">
-                            查看详情
-                        </div>
-                </div>
-            </div>
-            <div v-else-if="item.typecode == 7" @click="reimburseDetails(item.applyId,item.title)"   class="affairs_content" >
-                <div class="affirs_child">
-                        <div>
-                            <div class="affairs_title">
-                                <img :src="item.profileImg"/>
-                                <h2>{{item.title}}的费用报销申请</h2>
-                                <time >{{item.applyTime | timeFormat}}</time>
-                            </div>
-                            <div class="affairs_infor">
-                                <div class="request_infor lineHeight">
-                                    <span >报销金额 : </span>
-                                    <p class="line1">{{item.reimburseAmount}} 元</p>
-                                </div>
-                                <div class="request_infor lineHeight">
-                                    <span >日&emsp;&emsp;期 :</span>
-                                    <p class="line1"> {{item.reimburseDate | slice}}</p>
-                                </div>
-                                <div class="request_infor lineHeight">
-                                    <span >报销类别 :</span>
-                                    <p class="line1">{{item.reimburseType}} </p>
-                                </div>
-                                <div class="request_infor lineHeight">
-                                    <span >费用明细 :</span>
-                                    <p class="line1">{{item.reimburseDesc}}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div  class="skip" tag="div">
-                            查看详情
-                        </div>
-                </div>
-
-            </div>
-            <div v-else-if="item.typecode == 8" @click="payApplyDetails(item.applyId,item.title)"   class="affairs_content" >
-                <div class="affirs_child">
-                        <div>
-                            <div class="affairs_title">
-                                <img :src="item.profileImg"/>
-                                <h2>{{item.title}}的付款申请</h2>
-                                <time >{{item.applyTime | timeFormat}}</time>
-                            </div>
-                            <div class="affairs_infor">
-                                <div class="request_infor lineHeight">
-                                    <span >付款金额 : </span>
-                                    <p class="line1">{{item.payAmount}} 元</p>
-                                </div>
-                                <div class="request_infor lineHeight">
-                                    <span>付款方式 :</span>
-                                    <p class="line1"> {{item.payType}}</p>
-                                </div>
-                                <div class="request_infor lineHeight">
-                                    <span >付款日期 :</span>
-                                    <p class="line1">{{item.payDate |slice }} </p>
-                                </div>
-                                <div class="request_infor lineHeight">
-                                    <span>收款人全称 :</span>
-                                    <p class="line1">{{item.receiverName}}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div  class="skip" tag="div">
-                            查看详情
-                        </div>
-                </div>
-                
-            </div>
-            <div v-else-if="item.typecode == 9" @click="dimissionDetails(item.applyId,item.title)"   class="affairs_content" >
-                <div class="affirs_child">
-                        <div>
-                            <div class="affairs_title">
-                                <img :src="item.profileImg"/>
-                                <h2>{{item.title}}的离职申请</h2>
-                                <time >{{item.applyTime | timeFormat}}</time>
-                            </div>
-                            <div class="affairs_infor">
-                                <div class="request_infor lineHeight">
-                                    <span >职&emsp;&emsp;务 : </span>
-                                    <p class="line1">{{item.position}} </p>
-                                </div>
-                                <div class="request_infor lineHeight">
-                                    <span>入职日期 :</span>
-                                    <p class="line1"> {{item.hireDate |slice}}</p>
-                                </div>
-                                <div class="request_infor lineHeight">
-                                    <span >合同到期日 :</span>
-                                    <p class="line1">{{item.contractEndDate |slice }} </p>
-                                </div>
-                                <div class="request_infor lineHeight">
-                                    <span>最后工作日 :</span>
-                                    <p class="line1">{{item.dimissionDate |slice }}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div  class="skip" tag="div">
-                            查看详情
-                        </div>
-                </div>
-            </div>  
+        <div class="nav">
+            <a :class="active==1?'active':''" @click="active=1">待办 <span v-if="count">{{count}}</span></a>
+            <a :class="active==2?'active':''" @click="active=2">已办</a>
+            <a :class="active==3?'active':''" @click="active=3">抄送 <span v-if="copyCount">{{copyCount}}</span></a>
         </div>
-        <infinite-loading  spinner="bubbles" :on-infinite="onInfinite" ref="infiniteLoading">
-            <span slot="no-more" class="no-more">
-            暂无更多加载
-            </span>
-            <span slot="no-results" class="no-results">
-            暂无更多加载
-            </span>
-        </infinite-loading>
-    </section>
 
+        <div>
+            <div v-show="active==1">
+                <OaTemplate v-on:goDetails="goDetails" v-for="(item,index) in leaveData" :item=item :key="item.applyId"></OaTemplate>
+                <infinite-loading  spinner="bubbles" :on-infinite="onInfinite" ref="infiniteLoading">
+                    <span slot="no-more" class="no-more">
+                        暂无更多加载
+                    </span>
+                    <span slot="no-results" class="no-results">
+                        暂无更多加载
+                    </span>
+                </infinite-loading>
+            </div>
+            <div v-show="active==2">
+                <OaTemplate v-on:goDetails="goDetails" v-for="(item,index) in finishData" :item=item :key="item.applyId"></OaTemplate>
+                <infinite-loading  spinner="bubbles" :on-infinite="onInfiniter" ref="infiniteLoadingr">
+                    <span slot="no-more" class="no-more">
+                        暂无更多加载
+                    </span>
+                    <span slot="no-results" class="no-results">
+                        暂无更多加载
+                    </span>
+                </infinite-loading>
+                <div v-if="!finishData.length" class="footLine" style="margin-top:2rem;font-size:0.16rem;">
+                    <span style="width:auto">未找到相关结果</span>
+                </div>
+            </div>
+            <div v-show="active==3">
+                <OaTemplate v-on:goDetails="goCopyDetails" v-for="(item,index) in copyData" :isCopy='true' :item=item :key="item.applyId"></OaTemplate>
+                <infinite-loading  spinner="bubbles" :on-infinite="onInfinites" ref="infiniteLoadings">
+                    <span slot="no-more" class="no-more">
+                        暂无更多加载
+                    </span>
+                    <span slot="no-results" class="no-results">
+                            暂无更多加载
+                    </span>
+                </infinite-loading>
+                <div v-if="!copyData.length" class="footLine" style="margin-top:2rem;font-size:0.16rem;">
+                    <span style="width:auto">未找到相关结果</span>
+                </div>
+            </div>
+        </div>
+
+    </section>
 </template>
 
 
 <script>
-import InfiniteLoading from 'vue-infinite-loading';
+    import InfiniteLoading from 'vue-infinite-loading';
+    import OaTemplate  from '../../../components/oa/oa_template.vue' 
 export default {
         data(){
             return{
-                leaveData:[],
-                pageNo:1,
+                leaveData : [],
+                finishData:[],
+                copyData:[],
+                pageNo : 1,
+                pageNos : 1,
+                pageNoss: 1,
+                active : 1,
+                count:0,
+                copyCount:0,
+
             }
         },
          components: {
-            InfiniteLoading
+            InfiniteLoading,
+            OaTemplate
         },
         mounted:function(){
             let that = this;
 
+             this.axios.get('/work/copy/list').then(function(res){
+                       that.copyData = that.dataForCopy(res.data.b.data)
+                       that.copyCount = res.data.b.data[0].count
+            })
             this.axios.get(this.Service.affairsList).then(function(res){
-                        that.leaveData = that.dataFor(res.data.b.data);
+                       that.dataForsss(res.data.b.data);
+                       that.count = res.data.b.data[0].count
                  })
         },
         methods:{
             dataFor(arr){
-                let data = [],res=[];
+                let data = []
                 for(let i= 0;i<arr.length;i++){
                     let obj = {};
                     for(let j = 0;j<arr[i].extend.length;j++){
@@ -318,65 +99,133 @@ export default {
 
                 data.forEach(item=>{
                     if(item.auditStatus=='0'){
-                        res.push(item)
+                        this.leaveData.push(item)
+                    }
+                })
+            },
+            dataForsss(arr){
+                let data = []
+                for(let i= 0;i<arr.length;i++){
+                    let obj = {};
+                    for(let j = 0;j<arr[i].extend.length;j++){
+                        obj[arr[i].extend[j].key] = arr[i].extend[j].value
+                    }
+                    data.push(obj)
+                }
+
+                data.forEach(item=>{
+                    if(item.auditStatus=='0'){
+                        this.leaveData.push(item)
+                    }else if(item.auditStatus!='00'&&item.auditStatus!='0'){
+                        this.finishData.push(item)
                     }
                 })
 
-                return res;
             },
-            leaveDetail(id,name){
-                window.location.href = "epipe://?&mark=leaveDetails&_id="+id+'&data='+JSON.stringify({text:0});
+            dataForss(arr){
+                let data = []
+                for(let i= 0;i<arr.length;i++){
+                    let obj = {};
+                    for(let j = 0;j<arr[i].extend.length;j++){
+                        obj[arr[i].extend[j].key] = arr[i].extend[j].value
+                    }
+                    data.push(obj)
+                }
+
+                data.forEach(item=>{
+                     if(item.auditStatus!='00'&&item.auditStatus!='0'){
+                        this.finishData.push(item)
+                    }
+                })
+
+                return data
             },
-            letterDetail(id,name){
-                window.location.href = "epipe://?&mark=leOfReDetails&_id="+id+'&data='+JSON.stringify({text:0});
+            dataForCopy(arr){
+                let data = []
+                for(let i= 0;i<arr.length;i++){
+                    let obj = {};
+                    for(let j = 0;j<arr[i].extend.length;j++){
+                        obj[arr[i].extend[j].key] = arr[i].extend[j].value
+                    }
+                    data.push(obj)
+                }
+                return data
             },
-            contractDetail(id){
-                window.location.href = "epipe://?&mark=contractDetails&_id="+id+'&data='+JSON.stringify({text:0});
+            goDetails(item,type){
+                window.location.href = "epipe://?&mark="+type+"Details&_id="+item.applyId+'&data='+JSON.stringify({text:0});
             },
-            goOutWorkDetails(id){
-                window.location.href = "epipe://?&mark=goOutWorkDetails&_id="+id+'&data='+JSON.stringify({text:0});
-            },
-            tripDetails(id){
-                window.location.href = "epipe://?&mark=tripDetails&_id="+id+'&data='+JSON.stringify({text:0});
-            },
-            stampDetails(id){
-                window.location.href = "epipe://?&mark=stampDetails&_id="+id+'&data='+JSON.stringify({text:0});
-            },
-            reimburseDetails(id){
-                window.location.href = "epipe://?&mark=reimburseDetails&_id="+id+'&data='+JSON.stringify({text:0});
-            },
-            payApplyDetails(id){
-                window.location.href = "epipe://?&mark=payApplyDetails&_id="+id+'&data='+JSON.stringify({text:0});
-            },
-            dimissionDetails(id){
-                window.location.href = "epipe://?&mark=dimissionDetails&_id="+id+'&data='+JSON.stringify({text:0});
+            goCopyDetails(item,type){
+                if(item.readFlag=='0'){
+                    console.log(1111)
+                    window.location.href = "epipe://?&mark="+type+"Details&_id="+item.applyId+'&data='+JSON.stringify({text:0,pushId:item.pushId});
+                    return;
+                }
+                window.location.href = "epipe://?&mark="+type+"Details&_id="+item.applyId+'&data='+JSON.stringify({text:0});
             },
             onInfinite(){
                 let that = this;
-                //供需
+                    //供需
                 this.axios.get(this.Service.affairsList,{
                     params:{
                         pageNo:this.pageNo+1,
                     }
                 }).then(function(res){
-
-                        setTimeout(() => {
-                                if (res.data.b.data.length == 0) {
-                                    that.$refs.infiniteLoading.$emit('$InfiniteLoading:complete');
-                                } else if (res.data.b.data) {
-                                    let arr = that.dataFor(res.data.b.data)
-                                    that.leaveData = that.leaveData.concat(arr)
-                                    that.pageNo++;
-                                    that.$refs.infiniteLoading.$emit('$InfiniteLoading:loaded');
-                                }
-                        }, 200);
-
-
-                    }).catch(function (error) {
-                        console.log(error);
-                    });
-                    
-                }
+                    setTimeout(() => {
+                            if (res.data.b.data.length == 0) {
+                                that.$refs.infiniteLoading.$emit('$InfiniteLoading:complete');
+                            } else if (res.data.b.data) {
+                                let arr = that.dataFor(res.data.b.data,1)
+                                that.pageNo++;
+                                that.$refs.infiniteLoading.$emit('$InfiniteLoading:loaded');
+                            }
+                    }, 200);
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+            onInfiniter(){
+                let that = this;
+                    //供需
+                this.axios.get(this.Service.affairsList,{
+                    params:{
+                        pageNo:this.pageNos+1,
+                    }
+                }).then(function(res){
+                    setTimeout(() => {
+                            if (res.data.b.data.length == 0) {
+                                that.$refs.infiniteLoadingr.$emit('$InfiniteLoading:complete');
+                            } else if (res.data.b.data) {
+                                let arr = that.dataForss(res.data.b.data,2)
+                                that.pageNos++;
+                                that.$refs.infiniteLoadingr.$emit('$InfiniteLoading:loaded');
+                            }
+                    }, 200);
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+            onInfinites(){
+                let that = this;
+                    //供需
+                this.axios.get('/work/copy/list',{
+                    params:{
+                        pageNo:this.pageNoss+1,
+                    }
+                }).then(function(res){
+                    setTimeout(() => {
+                            if (res.data.b.data.length == 0) {
+                                that.$refs.infiniteLoadings.$emit('$InfiniteLoading:complete');
+                            } else if (res.data.b.data) {
+                                let arr = that.dataForCopy(res.data.b.data)
+                                that.copyData = that.copyData.concat(arr)
+                                that.pageNoss++;
+                                that.$refs.infiniteLoadings.$emit('$InfiniteLoading:loaded');
+                            }
+                    }, 200);
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            }
         },
         filters : {
             timeFormat : function(value) {
@@ -396,132 +245,59 @@ export default {
                     return value.slice(0,10)
                 }
             },
-            
-            slice : function(value){
-                return value.slice(0,-3)
-            },
         }
 }
 </script>
 
 
 <style lang="stylus" scoped>
-    .lesp{
-        letter-spacing 3px;
-    }
-    .affirs_child{
-        padding  0.15rem;
-        padding-bottom 0;
-        background-color #fff;
-    }
+     .nav{
+         display flex;
+         height 0.48rem;
+         background-color #fff;
 
-    .affairs_content{
-        margin-top: 0.15rem;
-        padding 0 0.15rem;
-        overflow hidden;
-    }
+         a{
+             flex 1
+             text-align center
+             line-height 0.48rem;
+             color #333
+             font-size 0.16rem;
+             position relative
 
-    .affairs_title{
-        display: flex;
-        height :0.32rem;
-        line-height 0.32rem;
-        margin-bottom:0.1rem;
+             span{
+                 position absolute 
+                 width 0.17rem;
+                 height 0.17rem;
+                 top 0.05rem;
+                 text-align center
+                 font-size 0.12rem;
+                 line-height 0.17rem;
+                 background-color #fd545c;
+                 color #fff
+                 border-radius 50%
+             }
+         }
 
-        img{
-            width: 0.32rem;
-            height: 0.32rem;
-            border-radius: 50%;
-            margin-right :0.1rem;
-        }
+         .active{
+             font-weight bold
+             position relative
+         }
 
-        h2{
-            flex 1;
-            font-size:0.16rem;
-            font-weight:bold;
-            color:#333;
-        }
+         .active:after{
+             content:'';
+             position absolute;
+             width 0.25rem;
+             height 0.01rem;
+             left 0;
+             right 0;
+             bottom 0;
+             margin auto;
+             background-color #fd545c;
 
-        time{
-            font-size:0.14rem;
-            color:#999;
-            font-weight:bold;
-        }
-    }
+         }
+     }
 
-    .affairs_infor{
-        font-size:0.15rem;
-        color:#333;
-        padding-left:0.42rem;
-
-        p{
-            margin 0.1rem 0;
-            line-height 1.2em;
-        }
-
-        span{
-            margin-left:0.15rem;
-        }
-
-        .result{
-            font-size:0.14rem;
-            color:#fd545c;
-            margin 0.15rem 0;
-        }
-    }
-
-    .skip{
-        height 0.39rem;
-        line-height 0.4rem;
-        font-size:0.14rem;
-        text-align center;
-        color #666;
-        border-top: 0.01rem solid  #e6e6e6;
-    }   
-
-     .line1{
-        overflow: hidden;
-        text-overflow:ellipsis;
-        white-space: nowrap;
-    }
-
-    .line2{
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2;
-        overflow: hidden;
-    }
-
-    .request_infor{
-        display flex;
-        font-size 0.15rem;
-        margin-bottom 0.03rem;
-
-        span{
-            margin-right 0.15rem;
-            margin-left 0;
-        }
-
-
-        p{
-            flex 1;
-            color #333;
-            width:2.4rem;
-            word-wrap:break-word;
-            word-break: break-all;
-            margin 0
-        }
-    }
-
-    .lineHeight{
-        line-height : 0.15rem;
-        margin-bottom 0.1rem;
-    }
-
-    .margin10{
-        margin-bottom 0.1rem;
-    }
-
-.footLine{
+     .footLine{
        height 0.13rem;
        font-size:0.13rem;
        position relative;
@@ -529,7 +305,7 @@ export default {
        color #999;
        padding 0 0.15rem;
        margin-bottom:0.3rem;
-       margin-top:0.35rem;
+       margin-top:0.25rem;
 
        span{
            position absolute;
@@ -542,29 +318,5 @@ export default {
            background-color #f5f5f5;
        }
     }
-
-    .marginBot{
-        margin-bottom 0.8rem;
-    }
-
-    .footLine:after{
-        position absolute;         
-        content '';
-        z-index 1;
-        height 0.01rem;
-        width calc(100% - 0.3rem)
-        left 0;
-        right 0;
-        top:0;
-        bottom 0;
-        margin auto;
-        background-color #e6e6e6;       
-    }
-
-    .no-results,.no-more{
-        display:block;
-        margin:0.15rem 0;
-    }
-
     
 </style>

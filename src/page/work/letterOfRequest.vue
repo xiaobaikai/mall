@@ -132,7 +132,7 @@ let save_leave = (index,text,that) =>{
                 data:{
                     Id :that.id, // id
                     theme:that.theme,//主题
-                    content:encodeURI(that.content), //请示函内容
+                    content:that.content, //请示函内容
                     Url : urlStr, //附件
                     fileName:fileNameStr, 
                     fileSize:fileSizeStr,
@@ -167,7 +167,11 @@ let save_leave = (index,text,that) =>{
                 if(index){
                     that.$toast('已保存至草稿箱!')
                     setTimeout(()=>{
-                        window.location.href = "epipe://?&mark=history_back";
+                       if(that.$route.query.letterId){
+                             window.location.href = "epipe://?&mark=goWork"
+                        }else{
+                            window.location.href = "epipe://?&mark=history_back" 
+                        }
                     },700)
                 }else{
                     that.$toast('提交成功！')
@@ -388,7 +392,13 @@ export default {
 
             let that = this;
             if(this.$route.query.letterId){
-                  this.axios.get('/work/letter/info?letterId='+this.$route.query.letterId).then(function(res){
+                  
+            this.axios.get('/work/letter/info',{
+                params:{
+                    type:that.$route.query.resubmit,
+                    letterId:this.$route.query.letterId
+                }
+            }).then(function(res){
                        let data = res.data.b.data[0];
                        if(!that.$route.query.resubmit){
                             that.id = data.letterId;

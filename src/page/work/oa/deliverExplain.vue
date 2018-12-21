@@ -39,7 +39,7 @@
                     </div>
                 </div>
              </div>
-            <a class="btn" @click="affirm()">
+            <a class="btn" @click="submits()">
                 确认
             </a>
         </div>
@@ -57,51 +57,42 @@ export default {
             textVal : '',
             id : '',  
             accessory:[], 
-            accessoryData:{}, //格式化后附件数据
             color:'#fd545c'
         }
     },
      methods : {
             affirm : function(){
-                this.accessoryData = this.accessoryFor();
-                
-                if(this.$route.query.type=='contract'){
-                    this.submits(2,'contractDetails')
-                }else if(this.$route.query.type=="outside"){
-                    this.submits(3,'goOutWorkDetails')
-                }else if(this.$route.query.type=="letter"){
-                    this.submits(1,'leOfReDetails')
-                }else if(this.$route.query.type=="leave"){
-                    this.submits(0,'leaveDetails')
-                }else if(this.$route.query.type=="trip"){
-                    this.submits(4,'tripDetails')
-                }else if(this.$route.query.type=="stamp"){
-                    this.submits(5,'stampDetails')
-                }else if(this.$route.query.type=="reimburse"){
-                    this.submits(6,'reimburseDetails')
-                }else if(this.$route.query.type=="payApply"){
-                    this.submits(7,'payApplyDetails')
-                }else if(this.$route.query.type=="dimission"){
-                    this.submits(8,'dimissionDetails')
-                }
+             
             },
-            submits:function(apType,details){
+            submits:function(){
                  let that = this;
+
+                 let urlStr = '',fileSizeStr = '',fileNameStr = '';//附件
+                    for(let i=0;i<this.accessory.length;i++){
+                        urlStr+='|'+this.accessory[i].url;
+                        fileSizeStr+='|'+this.accessory[i].fileSize;
+                        fileNameStr+='|'+this.accessory[i].fileName;  
+                    }
+                    urlStr = urlStr.slice(1)
+                    fileSizeStr = fileSizeStr.slice(1)
+                    fileNameStr = fileNameStr.slice(1)
+
                  this.axios.post('/work/audit'+that.Service.queryString({
                     applyId:this.id,
                     type:4,
-                    applyType:apType,
-                    url:this.accessoryData.url,
-                    fileSize:this.accessoryData.fileSize,
-                    fileName:this.accessoryData.fileName,
+                    applyType:this.$route.query.applyType,
+                    url:urlStr,
+                    fileSize:fileSizeStr,
+                    fileName:fileNameStr,
                     reason:encodeURI(this.textVal),
                     auditerIds:this.$route.query.userId+'|'+this.$route.query.auditerIds,
+                    receiverIds:this.$route.query.receiverIds
                 })).then(function(res){
                     if(res.data.h.code==200){
                         that.$toast('转交成功!')
                         window.location.href = "epipe://?&mark=workUpdate";
                         setTimeout(()=>{
-                            window.location.href = "epipe://?&mark="+details+"&_id="+that.id+'&data='+JSON.stringify({text:1});
+                            window.location.href = "epipe://?&mark="+that.$route.query.typeName+"Details&_id="+that.id+'&data='+JSON.stringify({text:1});
                         },500)      
                     }else{
                         that.$toast(res.data.h.msg)
@@ -115,8 +106,7 @@ export default {
                     var p = str.lastIndexOf(".");
                     var strPostfix=str.substring(p,str.length) + '|';        
                     strPostfix = strPostfix.toLowerCase();
-                    if(strFilter.indexOf(strPostfix)>-1)
-                    {
+                    if(strFilter.indexOf(strPostfix)>-1){
                         return true;
                     }
                 }        
@@ -146,7 +136,6 @@ export default {
             window.location.href = "epipe://?&mark=addAccessory"
         },
          accessoryFor:function(){
-
                 let urlStr = '',fileSizeStr = '',fileNameStr = '';
 
                 for(let i=0;i<this.accessory.length;i++){
@@ -176,6 +165,18 @@ export default {
                     }
                     value = value/1024/1024
                     return value.toFixed(2)+'mb';
+            }
+        },
+        created() {
+            let that = this;
+            window["epipe_camera_callback"] = (url,fileSize,fileName) => {
+                    var obj = {
+                            url,
+                            fileSize,
+                            fileName
+                    }
+                    that.isImg(url)?obj.isImg=true:obj.isImg=false;
+                    that.accessory.push(obj)
             }
         },
         mounted:function(){
