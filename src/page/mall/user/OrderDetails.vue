@@ -123,13 +123,14 @@
       </div>
       <div class="price-line">
         <span class="price-title">运费</span>
-        <span class="price-amount">+￥0</span>
+        <span class="price-amount">+￥{{objData.shippingFee}}</span>
       </div>
       <div class="price-line">
         <span class="price-title">优惠</span>
         <span class="price-amount">-￥{{objData.discount}}</span>
       </div>
       <div class="price-sub"><span class="sub-title">实付金额:</span><span class="price-amount">￥{{objData.orderAmount}}</span></div>
+      <div class="price-sub price-sub-refound" v-if="objData.returnRefundState"><span class="sub-title">退款金额:</span><span class="price-amount">￥{{refundAmount}}</span></div>
     </section>
     <div class="dialog" v-if="showDialog" @touchmove.prevent>
       <div class="dialog_box">
@@ -167,7 +168,8 @@
         statusTitle: "",
         isNotApp:false,
         formUrl:'',
-	      showDialog:false
+	      showDialog:false,
+	      refundAmount:''
       }
     },
     created(){
@@ -220,6 +222,7 @@
           console.log("订单详情",res);
           if(res.data.h.code === 200){
             this.objData = res.data.b.order;
+            this.refundAmount = res.data.b.refundAmount;
             this.invoice = res.data.b.order.invoice.split("&nbsp;&nbsp;");
             if(res.data.b.orderInvoice){
               this.orderInvoice = res.data.b.orderInvoice;
@@ -510,6 +513,9 @@
     justify-content flex-end;
     align-items center;
     margin-top 25px;
+  }
+  .price-sub-refound{
+    margin-top 10px;
   }
   .price-title{
     color: #333;

@@ -38,8 +38,6 @@ Vue.prototype.mallToken = mallToken;
 Vue.prototype.isApp = isApp;
 Vue.prototype.mallType = mallType;
 
-import FastClick from 'fastclick'
-FastClick.attach(document.body);
 
 //  提示框
 import {Alert, Confirm, Prompt, Toast} from "wc-messagebox";
@@ -50,9 +48,16 @@ Vue.use(Confirm);
 Vue.use(Toast);
 Vue.use(Alert);
 Vue.use(wcSwiper);
+
+
+
 //日历插件
 import Calendar from 'vue-mobile-calendar'
 Vue.use(Calendar);
+
+import FastClick from 'fastclick';
+FastClick.attach(document.body)
+
 window.eventBus = new Vue();
 /* eslint-disable no-new */
 new Vue({

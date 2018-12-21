@@ -75,7 +75,7 @@
     </div>
     <div class="total-price" v-if="cartList[0].list[0].priceNegotiable === 0">
       <div><span>商品金额</span><span>￥{{priceInfo.goodsAmount}}</span></div>
-      <div><span>运　　费</span><span>￥0.00</span></div>
+      <div><span>运　　费</span><span>￥{{priceInfo.transportAmount}}</span></div>
       <div><span>优　　惠</span><span>￥{{priceInfo.discount}}</span></div>
       <div><span></span><span><i>付款金额：</i>￥{{priceInfo.goodsTotalPrice}}</span></div>
     </div>
