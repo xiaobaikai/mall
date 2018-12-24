@@ -14,7 +14,7 @@
                             <use xlink:href="#icon-cloud-document"></use>
                         </svg>
                     </div>
-                    <div class="text">
+                    <div class="text line1">
                         {{item.resTitle}}
                     </div>
                     <div class="look">
@@ -31,7 +31,7 @@
                             <use xlink:href="#icon-cloud-document"></use>
                         </svg>
                     </div>
-                    <div class="text">
+                    <div class="text line1">
                         {{item.title}}
                     </div>
                     <div class="look">
@@ -48,7 +48,7 @@
                             <use xlink:href="#icon-cloud-document"></use>
                         </svg>
                     </div>
-                    <div class="text">
+                    <div class="text line1">
                         {{item.name}}
                     </div>
                     <div class="look">
@@ -183,6 +183,14 @@
 
 <style scoped lang="stylus">
 
+.line1{
+        white-space: nowrap;
+             overflow: hidden;
+             text-overflow: ellipsis;
+             width 90%;
+    }
+
+
 .footLine{
        height 0.13rem;
        font-size:0.13rem;
@@ -241,7 +249,6 @@
             svg{
                 position relative
                 top 0.02rem;
-
             }
         }
 

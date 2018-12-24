@@ -1,5 +1,16 @@
 <template>
-    <div>
+  <div class="mask" v-if="mask"></div>
+    <div v-else>
+        <div class="no-network" v-if="noNetwork">
+            <div class="no-network-content">
+                <img :src="logo" alt="无网络">
+                <div class="tips">
+                <p style="font-size: 0.16rem;">您的手机网络不太顺畅~</p>
+                <p>请检查网络设置</p>
+                </div>
+                <div class="btn-refresh" @click="reload()">刷新</div>
+            </div>
+            </div>
         <section class="back">
             <div class="infor">
 
@@ -11,6 +22,7 @@
                 <div class="infor-msg">
                     <div>
                         <p class="infor-advertising">{{slogans.firstLine}}</p>
+                        {{token}}
                         <p class="infor-date">{{dateString}}</p>
                     </div>
 
@@ -24,8 +36,8 @@
             <div class="menu">
                 <div class="menu-lf">
                     <p class="h-title">今日考勤</p>
-                    <p class="menu-lf-date">{{toDayCheck.length?toDayCheck[0]:'未打卡'}}</p>
-                    <a>去打卡</a>
+                    <p class="menu-lf-date">{{toDayCheck!=''?toDayCheck:'未打卡'}}</p>
+                    <a @click="go_record">去打卡</a>
                     <span>不要忘记打下班卡哦</span>
                 </div>
 
@@ -65,7 +77,6 @@
                     </li>
                     <li v-for="(c,i) in workData[0].apps" :key="i" >
                         <img :src="c.icon"/>
-                        
                         <span>{{c.name}}</span>
                     </li>
                     <li @click="go_neatenWork" v-if="workData[0].apps.length<4">
@@ -77,10 +88,10 @@
                     </li>
                 </ul>
             </div>
-            <div class="menu-item" v-for="(item,index) in workData" :key="index" v-if="item.id>-1">
+            <div class="menu-item" v-for="(item,index) in workData" :key="index" v-if="item.id>-1&&item.hideFlag!='1'">
                 <p class="item-title"> <i></i> <span>{{item.name}}</span></p>
                 <ul>
-                    <li v-for="(c,i) in item.apps" :key="i" @click="go_jump(c)">
+                    <li v-for="(c,i) in item.apps" :key="i" @click="go_jump(c)" v-if="c.delFlag!='1'">
                         <img :src="c.icon"/>
                         <span>{{c.name}}</span>
                     </li>
@@ -108,29 +119,33 @@
                slogans:{}, //标语
                userData:{}, //用户信息
                signTotal:{}, //考勤统计
-               toDayCheck:[], //今日考勤
+               toDayCheck:'', //今日考勤
                token:'',
                payShow:false,
-               mask:false,
+               mask:true,
+               noNetwork:false,
+                logo: require("../../assets/no_wifi.png"),
             }
         },
         created() {
-            window.location.href = "epipe://?&mark=1111111";
-            
+            let that = this;
+
+             window["workUpdate"] = () => {
+                that.get_work();
+                that.getTotal();//获取考勤总次数
+                that.today();//获取今日考勤
+            }
 
             this.setToken(this.Service.getCookie('auth_token'))
             this.token = this.Service.getCookie('auth_token')
-            this.organization();
-            let _this = this;
-            this.slogan();
-            this.getInfor();
-            this.getUserInfor();
-            this.getTotal();
-            this.today();
 
-            this.axios.get('/work/app/list').then(res=>{
-                _this.workData = res.data.b.appCategorys;
-            })
+            this.organization(); //获取是否有组织
+            this.slogan(); // 获取标语
+            this.getInfor(); //
+            this.getUserInfor(); //获取用户名等信息
+            this.getTotal();//获取考勤总次数
+            this.today();//获取今日考勤
+            this.get_work();//获取工作台图标
         },
         computed: mapState(["token"]),
         methods:{
@@ -141,10 +156,22 @@
                 window.location.href = obj.url;
             },
             manage(){ //管理
-                this.$router.push('/neatenWork')
+                // this.$router.push('/neatenWork')
+                 window.location.href = "epipe://?&mark=neatenWork";
+            },
+            get_work(){
+                let _this = this;
+
+                this.axios.get('/work/app/list').then(res=>{
+                    _this.workData = res.data.b.appCategorys;
+                })
             },
             go_neatenWork(){
-                this.$router.push({path:'/addWork'})
+                // this.$router.push({path:'/addWork'})
+                 window.location.href = "epipe://?&mark=addWork";
+            },
+            go_record(){
+                 window.location.href = "epipe://?&mark=record";
             },
             companyWall(){ //跳转公司墙
                  window.location.href = "epipe://?&mark=companyWall";
@@ -158,6 +185,13 @@
                 }
                 });
             },
+             reload(){ //刷新
+                this.mask = true;
+                this.noNetwork = false;
+                setTimeout(() =>{
+                window.location.reload();
+                },0);
+            },
             getUserInfor(){  //用户信息
                 this.axios.get('/user/info').then(res =>{
                     this.userData = res.data.b
@@ -167,10 +201,11 @@
                     let that = this;
                     this.axios.get('/check/sign/record', {
                             params: {
-                                staticDate: date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate(),
+                                checkDate: date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate(),
                             }
-                        }).then(function (res){
-                            this.toDayCheck = res.data.b.data;
+                        }).then(res=>{
+                            let str = res.data.b.data[res.data.b.data.length - 1].signTime;
+                            that.toDayCheck = str.slice(10)
                         })
             },
             getTotal(){ //考勤统计
@@ -184,14 +219,14 @@
                     })
             },
             getInfor(){
-                const userToken = this.Service.getCookie("auth_token");
-                if(userToken){
-                this.axios.get('/user/info/by/token',{params: {token:userToken}}).then(res =>{
-                    if(res.data.h.code === 200 && res.data.b.centerGroupId){
-                        // this.getFactory(res.data.b.centerGroupId);
-                    }
-                });
-                }
+                // const userToken = this.Service.getCookie("auth_token");
+                // if(userToken){
+                // this.axios.get('/user/info/by/token',{params: {token:userToken}}).then(res =>{
+                //     if(res.data.h.code === 200 && res.data.b.centerGroupId){
+                //         // this.getFactory(res.data.b.centerGroupId);
+                //     }
+                // });
+                // }
             },
             //判断用户是否有组织
             organization(){
@@ -226,6 +261,16 @@
 </script>
 
 <style scoped lang="stylus">
+
+.mask{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    z-index: 9;
+  }
 
     .back{
         background-color #42a653
@@ -406,5 +451,41 @@
             }
         }
     }
+
+    .no-network{
+    z-index: 99;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    background: white;
+    .no-network-content{
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      transform: translateY(-50%);
+    }
+    img{
+      width: 1.5rem;
+    }
+    .tips{
+      margin-top: 10px;
+      color: #969696;
+    }
+    .btn-refresh{
+      display inline-block;
+      width: 0.8rem;
+      height: 0.3rem;
+      margin-top: 0.2rem;
+      line-height 0.3rem;
+      text-align: center;
+      background: #499844;
+      color: white;
+      border-radius: 2px;
+    }
+  }
 
 </style>

@@ -15,12 +15,12 @@
             <div v-for="(item,index) in list" :key="index" style="margin-top:0.15rem;background-color:#fff;">
                 <div class="title">
                     <i></i>
-                    <span>{{item.firstCategory.name}}</span>
+                    <span class="line1">{{item.firstCategory.name}}</span>
                 </div>
                 <div class="list">
                     <div class="list-li" v-for="(items,ind) in item.secondCategory" :key="ind" @click="go_articleorthirdcategory(items)">
                         <img :src="items.pic" style="width:0.27rem;height:0.27rem;"/>
-                        {{items.name}}
+                        {{items.name |textFor}}
                     </div>
                 </div>
             </div>
@@ -60,6 +60,12 @@
             collect(){
                 this.$router.push({path:'/companyWallList',query:{id:'',title:'我的收藏',isCollect:true}})
             }
+        },
+        filters:{
+            textFor(value){
+                console.log(value.length)
+                return value.length>6?value.slice(0,7)+'...':value
+            }
         }
     }
 </script>
@@ -76,6 +82,13 @@
 
     .main{
         margin-top 0.15rem;
+    }
+
+    .line1{
+        white-space: nowrap;
+             overflow: hidden;
+             text-overflow: ellipsis;
+             width 90%;
     }
 
     .title{

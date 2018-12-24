@@ -5,6 +5,7 @@
             title ='全部应用'
             :is_relative_approva="is_relative_approva"
             v-on:show_edit='compile'
+            native="native"
         ></TopHead>
 
         <div style="margin-top:0.59rem">
@@ -12,14 +13,21 @@
             <div class="menu-item">
                     <p class="item-title"> <i></i> <span>常用应用</span>  </p>
                     <ul>
-                        <li v-for="(c,i) in workData[0].apps" :key="i" @click="go_jump(c)">
+                         <li>
+                         <svg style="font-size: 0.33rem;"  class="icon img" aria-hidden="false">
+                            <use xlink:href="#icon-jiyao"></use>
+                        </svg>
+                        <span>我的审批</span>
+                    </li>
+                    <li>
+                         <svg style="font-size: 0.33rem;"  class="icon img" aria-hidden="false">
+                            <use xlink:href="#icon-gongzuohuibao"></use>
+                        </svg>
+                        <span>工作汇报</span>
+                    </li>
+                        <li v-for="(c,i) in workData[0].apps" :key="i"  v-if="c.delFlag!='1'">
                             <img :src="c.icon"/>
                             <span>{{c.name}}</span>
-                        </li>
-                        <li>
-                            <svg style="font-size: 0.33rem;margin-top: 0.085rem" class="icon" aria-hidden="false">
-                                <use xlink:href="#icon-tianjiarenyuan"></use>
-                            </svg>
                         </li>
                     </ul>
             </div>
@@ -126,8 +134,6 @@
                 if(listId!='') arr.push({ids:listId.slice(0,-1),type:'2'})
 
                 let str = JSON.stringify(arr)
-                console.log(arr)
-                // return;
                  that.axios({
                         method:"post",
                         url:"/work/app/set",
@@ -196,7 +202,7 @@
             }
         }
 
-        img{
+        img,.img{
             display block;
             width 0.27rem;
             height 0.27rem;

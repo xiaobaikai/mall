@@ -10,7 +10,7 @@
             <div class="styles input_group">
                 <div class="bor_bottom">
                     <span class="title">文件标题</span>
-                    <input placeholder="请输入标题"  v-model="borrowTitle" />
+                    <input placeholder="请输入标题"  v-model="employeeTitle" />
                 </div>
                   <div>
                     <span class="title">申请人</span>
@@ -24,17 +24,17 @@
             <div class="styles input_group">
                 <div class="bor_bottom">
                     <span class="title">招聘岗位</span>
-                    <input style="color:#666" v-model="borrowerAmount" placeholder="请输入招聘岗位名称"/>
+                    <input style="color:#666" v-model="position" placeholder="请输入招聘岗位名称"/>
                 </div>
                 <div class="bor_bottom">
                     <span class="title">需求人数</span>
-                    <input style="color:#666" v-model="borrowerAmount" placeholder="请输入需求人数"/>
+                    <input style="color:#666" v-model="num" placeholder="请输入需求人数"/>
                 </div>
     
                  <div class="bor_bottom choose" @click="getTime(0)">
                      <span class="title">希望到岗日期</span>
                     <p>
-                        <span class="nullValue">{{useDate}}</span>
+                        <span class="nullValue">{{arrivalDate}}</span>
                         <svg class="icon icon-back" aria-hidden="false">
                                 <use xlink:href="#icon-right"></use>
                         </svg>
@@ -44,7 +44,71 @@
 
             <div class="styles" style="padding:0 0.15rem;">
                 <p class="title">申请理由</p>
-                <textarea v-model.trim="borrowReason" name="" maxlength="1000" id="" cols="30" rows="10" placeholder="请输入申请理由,限定1000字">
+                <textarea v-model.trim="employeeReason" name="" maxlength="1000" id="" cols="30" rows="10" placeholder="请输入申请理由,限定1000字">
+
+                </textarea>
+                <div class="record_box">
+                        <span>{{textNum}}/1000</span>
+                </div>
+            </div>
+            <p>应聘条件</p>
+            <div class="styles input_group">
+                <div class="bor_bottom">
+                    <span class="title">性别</span>
+                    <input placeholder="请选择"  v-model="sex" />
+                </div>
+                  <div>
+                    <span class="title">婚姻</span>
+                    <input placeholder="亲选择"  v-model="marriage" disabled/>
+                </div>
+                <div class="bor_bottom">
+                    <span class="title">年龄</span>
+                    <input placeholder="请输入年龄范围"  v-model="age" disabled/>
+                </div>
+                <div class="bor_bottom">
+                    <span class="title">学历</span>
+                    <input placeholder="请输入学历要求"  v-model="education" disabled/>
+                </div>
+                <div class="bor_bottom">
+                    <span class="title">专业</span>
+                    <input placeholder="请输入专业要求"  v-model="major" disabled/>
+                </div>
+                <div class="bor_bottom">
+                    <span class="title">职业资格证</span>
+                    <input placeholder="请输入详细职业资格证要求"  v-model="qualifications" disabled/>
+                </div>
+                <div class="bor_bottom">
+                    <span class="title">计算机</span>
+                    <input placeholder="请输入计算机水平要求"  v-model="computerLevel" disabled/>
+                </div>
+                <div class="bor_bottom">
+                    <span class="title">外语水平</span>
+                    <input placeholder="请输入外语水平要求"  v-model="foreignLevel" disabled/>
+                </div>
+                <div class="bor_bottom">
+                    <span class="title">经验与技能</span>
+                    <input placeholder="请输入经验与技能要求"  v-model="skill" disabled/>
+                </div>
+                <div class="bor_bottom">
+                    <span class="title">公文写作</span>
+                    <input placeholder="请输入公文写作能力要求"  v-model="writings" disabled/>
+                </div>
+                <div class="bor_bottom">
+                    <span class="title">必要条件</span>
+                    <input placeholder="请输入必要条件"  v-model="condition" disabled/>
+                </div>
+                <div class="bor_bottom">
+                    <span class="title">优先录用</span>
+                    <input placeholder="请输入优先录用要求"  v-model="priority" disabled/>
+                </div>
+                <div class="bor_bottom">
+                    <span class="title">其他要求</span>
+                    <input placeholder="请输入其他要求"  v-model="other" disabled/>
+                </div>
+            </div>
+            <div class="styles" style="padding:0 0.15rem;">
+                <p class="title">工作职责</p>
+                <textarea v-model.trim="responsibility" name="" maxlength="1000" id="" cols="30" rows="10" placeholder="请输入详细工作职责">
 
                 </textarea>
                 <div class="record_box">
@@ -104,21 +168,15 @@ let reg = /^[\u4e00-\u9fa5]+$/;
 var regs =/^[1-9]+\d*$/;
 let rule = /^[A-Za-z0-9]+$/;
 let save_leave = (index,text,that) =>{
-    if(that.borrowTitle== ''){
+    if(that.employeeTitle== ''){
         that.$toast('文件标题不能为空')
-    }else if(that.borrowTitle.length>30 ||that.borrowTitle.length<6){
+    }else if(that.employeeTitle.length>30 ||that.employeeTitle.length<6){
         that.$toast('文件标题不能低于6个或超过30个字符')
-    }else if(that.useDate == '请选择使用日期'){
-        that.$toast('请选择使用日期')
-    }else if(that.returnDate == '请选择预计归还日期'){
-        that.$toast('请选择预计归还日期')
-    }else if(that.borrowerAmount == ''){
-        that.$toast('请输入借款金额')
-    }else if(isNaN(that.borrowerAmount)){
-        that.$toast('借款金额为数字')
-    }else if(that.borrowerAmount.length>8){
-        that.$toast('借款金额不能大于8位数')
-    }else if(that.borrowerName == ''){
+    }else if(that.arrivalDate == '请选择到岗日期'){
+        that.$toast('请选择到岗日期')
+    }else if(isNaN(that.num)){
+        that.$toast('需求人数为数字')
+    }else if(that.position == ''){
         that.$toast('请输入收款人姓名')
     }else if(that.borrowerName.length<2||that.borrowerName>30){
         that.$toast('收款人不能低于2个或超过30个字符')
@@ -134,7 +192,7 @@ let save_leave = (index,text,that) =>{
         that.$toast('银行账户必须为数字')
     }else if(that.borrowerAccount.length<2||that.borrowerAccount.length>20){
         that.$toast('银行账户不能少于2个或超过20个字符')
-    }else if(that.borrowReason == ''){
+    }else if(that.employeeReason == ''){
         that.$toast('借款事由不能为空')
     }else if(that.borrowReason.length>1000||that.borrowReason.length<6){
         that.$toast('借款事由不能少于6个或超过1000字符')
@@ -182,14 +240,27 @@ let save_leave = (index,text,that) =>{
                 },
                 data:{
                     Id :that.id, // id
-                    borrowTitle:that.borrowTitle,//标题
-                    borrowReason:that.borrowReason, //付款说明
-                    borrowAmount:that.borrowerAmount, //付款金额
-                    borrowerBank:that.borrowerBank,
-                    useDate:that.useDate,//付款时间
-                    returnDate:that.returnDate,//付款时间
-                    borrowerAccount:that.borrowerAccount,
-                    borrowerName:that.borrowerName, //收款人
+                    employeeTitle:that.employeeTitle,//标题
+                    employeeReason:that.employeeReason, //申请理由
+                    position:that.position, //招聘岗位
+                    num:that.num, //招聘人数
+                    arrivalDate:that.arrivalDate,//到岗时间
+
+                    sex:that.sex,//性别
+                    marriage:that.marriage,//婚姻
+                    age:that.age,//年龄
+                    education:that.education, //学历
+                    major:that.major,//专业
+                    qualifications:that.qualifications,//证书
+                    computerLevel:that.computerLevel,//计算机水平
+                    foreignLevel:that.foreignLevel, //外语水平
+                    skill:that.skill,//特殊技能
+                    writings:that.writings, //写作
+                    condition:that.condition, //必要条件
+                    priority:that.priority, //优先录用
+                    other:that.other, //其他要求
+                    responsibility:that.responsibility, //工作职责
+
                     urls : urlStr, //附件
                     fileNames:fileNameStr, 
                     fileSizes:fileSizeStr,
@@ -244,21 +315,37 @@ export default {
         data(){
             return{
                 id:'',
-                borrowTitle : '', // 标题
+                employeeTitle : '', // 标题
                 departmentName : '',//用印部门
-                borrowerAmount : '', //付款金额
-                useDate:'请选择使用日期', //
+                position : '', //招聘岗位
+                num:'',//招聘人数
+                arrivalDate:'请选择到岗日期', //到岗日期
                 returnDate:'请选择预计归还日期', //
                 userName : '',//用印承办人
                 borrowerName:'',//收款人
                 borrowerAccount:'', //银行账户
                 borrowerBank:'',//开户行
-                borrowReason : '',//用印说明
+                employeeReason : '',//申请理由
                 chosed_list : [], //抄送人
                 approver_list : [], //审批人
                 accessory : [],
                 isDraftFlag : 0, //判断是不是草稿
                 isShow:false,
+                textNum:0,
+                sex:'',//性别
+                marriage:'',//婚姻
+                age:'',//年龄
+                education:'', //学历
+                major:'',//专业
+                qualifications:'',//证书
+                computerLevel:'',//计算机水平
+                foreignLevel:'', //外语水平
+                skill:'',//特殊技能
+                writings:'', //写作
+                condition:'', //必要条件
+                priority:'', //优先录用
+                other:'', //其他要求
+                responsibility:'', //工作职责
             }
         },
         components: {
@@ -369,10 +456,9 @@ export default {
                 }
 
             },
-            getTime(num){ //获取原生时间
+        getTime(){ //获取原生时间
                 let that = this;
                 window.location.href = "epipe://?&mark=getLeaveTime";
-
                 window["epipe_leavetime_callback"] = str => {
                         let flag = false; 
                         let date = null;
@@ -383,31 +469,7 @@ export default {
                     }else{
                         date = new Date(str)
                     }
-
-                    if(!num){
-                    if(that.returnDate!='请选择预计归还日期'){
-                        let endDate = that.tiemF(that.returnDate)
-                        if(date.getTime()>endDate.getTime()||date.getTime()==endDate.getTime()){
-                            that.$toast('开始时间不能大于等于结束时间')
-                        }else{
-                           that.useDate = flag?str[0]+'-'+str[1]+'-'+str[2]+' '+str[3]+':'+str[4]:str; 
-                        }
-                    }else{
-                        that.useDate = flag?str[0]+'-'+str[1]+'-'+str[2]+' '+str[3]+':'+str[4]:str;
-                    }
-                }else{            
-                    if(that.useDate!='请选择使用日期'){
-                        let beginDate = that.tiemF(that.useDate);
-                        if(date.getTime()<beginDate.getTime()||date.getTime()==beginDate.getTime()){
-                            that.$toast('归还时间不能小于等于使用时间')
-                        }else{
-                            that.returnDate = flag?str[0]+'-'+str[1]+'-'+str[2]+' '+str[3]+':'+str[4]:str;
-                        }
-                    }else{
-                        that.returnDate = flag?str[0]+'-'+str[1]+'-'+str[2]+' '+str[3]+':'+str[4]:str;
-                    }  
-                }
-
+                    that.arrivalDate = flag?str[0]+'-'+str[1]+'-'+str[2]+' '+str[3]+':'+str[4]:str; 
                 }
             },
              tiemF(timeStr){ //传入原生的时间格式化
@@ -417,16 +479,17 @@ export default {
              },
         },
          watch:{
-            borrowReason : function(){
-                if(this.borrowReason.length>1000){
+            employeeReason : function(){
+                if(this.employeeReason.length>1000){
                     this.$toast("最多输入1000字~")
-                    this.borrowReason = this.borrowReason.slice(0,1000)
+                    this.employeeReason = this.employeeReason.slice(0,1000)
                     return
                 }
-                this.textNum = this.borrowReason.length
+                this.textNum = this.employeeReason.length
             }
         },
         activated(){
+            console.log(11)
             this.approver_list = this.approver_man_state
             this.chosed_list = this.chosed_man_state
          },
@@ -479,17 +542,18 @@ export default {
                         }
                         that.isDraftFlag = 1;
                         that.accessoryFor(data)
-                        that.borrowTitle = data.borrowTitle;
-                        that.borrowerAmount = data.borrowAmount;
+                        that.employeeTitle = data.employeeTitle;
+                        that.position = data.position;
+                        that.num = data.num;
                         that.borrowType = data.borrowTypeCode
                         that.borrowName = data.borrowType;
                         that.borrowerName = data.borrowerName
-                        that.borrowReason = data.borrowReason;
-                        that.useDate = data.useDate;
+                        that.employeeReason = data.employeeReason;
+                        that.arrivalDate = data.arrivalDate;
                         that.returnDate = data.returnDate;
                         that.borrowerAccount = data.borrowerAccount;
                         that.borrowerBank=data.borrowerBank;
-                        that.textNum = data.borrowReason.length
+                        that.textNum = data.employeeReason.length
                         that.chosed_list = data.receivers;
                         that.change_man(that.chosed_list);
                         that.approver_list = data.auditers;

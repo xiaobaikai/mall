@@ -69,6 +69,7 @@ const ClassSearch = r => require.ensure([], () => r(require('@/page/mall/class/C
 const GoodsDetail = r => require.ensure([], () => r(require('@/page/mall/goods/GoodsDetail.vue')), 'group-mall')
 const TestDetail = r => require.ensure([], () => r(require('@/page/mall/goods/TestDetail.vue')), 'group-mall')
 const MallSearch = r => require.ensure([], () => r(require('@/page/mall/home/MallSearch.vue')), 'group-mall')
+const Login = r => require.ensure([], () => r(require('@/page/home/login.vue')), 'group-foo')
 
 const ShopList = r => require.ensure([], () => r(require('@/page/mall/shop/ShopList.vue')), 'group-mall')
 const InquiryList = r => require.ensure([], () => r(require('@/page/mall/shop/InquiryList.vue')), 'group-mall')
@@ -802,5 +803,9 @@ export default new Router({
       path:'/articleDetails',
       component:ArticleDetails
     }
+    ,{
+      path:'/login',
+      component:Login
+    },
   ]
 })

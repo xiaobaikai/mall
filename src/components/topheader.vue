@@ -29,6 +29,12 @@
       text-align: right;
       padding-right: 0.1rem;
   }
+
+  .line{
+    white-space: nowrap;
+             overflow: hidden;
+             text-overflow: ellipsis;
+  }
 </style>
 <template>
   <div v-if="show!='pro'">
@@ -39,7 +45,7 @@
           <use xlink:href="#icon-zuoyoujiantou"></use>
         </svg>
       </li>
-      <li style="flex: 3">{{title}}</li>
+      <li class="line" style="flex: 3">{{title}}</li>
       <li @click="show_edit">
         <svg v-if="is_button" style="font-size: 0.17rem;color: #fff" class="icon"
              aria-hidden="false">
