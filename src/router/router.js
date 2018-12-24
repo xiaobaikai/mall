@@ -794,7 +794,8 @@ export default new Router({
       component:CompanyWallList
     },{
       path:'/car',//用车
-      component:Car
+      component:Car,
+		  meta: {keepAlive: true}
     },{
       path:'/recruitment',
       component:Recruitment
