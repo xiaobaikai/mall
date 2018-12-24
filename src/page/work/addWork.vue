@@ -3,6 +3,7 @@
         <TopHead
             :bgcolor = color
             title ='全部应用'
+            native="native"
             :is_relative_approva="is_relative_approva"
             v-on:show_edit='compile'
         ></TopHead>
@@ -40,7 +41,7 @@
                     </ul>
             </div>
 
-            <div class="menu-item" v-for="(item,index) in workData" :key="index" v-if="item.id>-1">
+            <div class="menu-item" v-for="(item,index) in workData" :key="index" v-if="item.id>-1&&item.apps.length">
                     <p class="item-title"> <i></i> <span>{{item.name}}</span> <a class="manage"></a></p>
                     <ul :class="item.hideFlag==='1'?'opacity':''">
                         <li v-for="(c,i) in item.apps" :key="i" @click="go_jump(c)"  v-if="c.delFlag!='1'">

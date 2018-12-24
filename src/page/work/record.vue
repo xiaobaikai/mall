@@ -235,9 +235,6 @@
                   {{item.absenceApplyState | absenceState}}
                 </a>
                 
-                <span style="margin-right:0.05rem;" v-if="item.absenceApplyState!='申请补卡'">
-                  申请补卡 ·
-                </span>
 
                 <span style="color:#609ef7">
                   {{item.absenceApplyState}} >

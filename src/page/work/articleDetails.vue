@@ -67,8 +67,9 @@
     h2{
         text-align center;
         font-size 0.21rem;
-        color #333;
         line-height 0.25rem;
+        color #333;
+        padding  0.25rem 0;
     }
 
 </style>

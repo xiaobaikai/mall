@@ -497,6 +497,94 @@
                 <div  class="skip" tag="div">
                         查看详情
                 </div>
+            </div>
+            <div v-else-if="item.typecode == 13" @click="go_Apply(item,'car')"   class="affairs_item" >
+                <div class="item_infor">
+                    <div class="select" v-if="redactState">
+                             <svg v-if="item.isDel" class="icon" style="font-size:0.16rem;color:#f80" aria-hidden="false">
+                                <use xlink:href="#icon-xuanzhong2"></use>
+                            </svg>
+                            <svg v-else  class="icon" style="font-size:0.16rem;" aria-hidden="false">
+                                <use xlink:href="#icon-meiyouxuanzhong"></use>
+                            </svg>
+                    </div>
+                    <div class="affirs_child">
+                        <div>
+                            <div class="affairs_title">
+                                <img :src="item.profileImg"/>
+                                <h2>{{item.title}}的用车申请</h2>
+                                <time >{{item.applyTime | timeFormat}}</time>
+                            </div>
+                            <div class="affairs_infor">
+                                <div class="request_infor lineHeight">
+                                    <span >车辆类型 : </span>
+                                    <p class="line1">{{item.carType}} </p>
+                                </div>
+                               <div class="request_infor lineHeight">
+                                    <span >数量（辆） : </span>
+                                    <p class="line1">{{item.carNum}} </p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span>开始时间 :</span>
+                                    <p class="line1"> {{item.beginTime |timeSlice }}</p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span >结束时间 :</span>
+                                    <p class="line1">{{item.endTime|timeSlice }} </p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span>用车事由 :</span>
+                                    <p class="line1">{{item.content}} 元</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div  class="skip" tag="div">
+                        查看详情
+                </div>
+            </div> 
+            <div v-else-if="item.typecode == 14" @click="go_Apply(item,'recruitment')"   class="affairs_item" >
+                <div class="item_infor">
+                    <div class="select" v-if="redactState">
+                             <svg v-if="item.isDel" class="icon" style="font-size:0.16rem;color:#f80" aria-hidden="false">
+                                <use xlink:href="#icon-xuanzhong2"></use>
+                            </svg>
+                            <svg v-else  class="icon" style="font-size:0.16rem;" aria-hidden="false">
+                                <use xlink:href="#icon-meiyouxuanzhong"></use>
+                            </svg>
+                    </div>
+                    <div class="affirs_child">
+                        <div>
+                            <div class="affairs_title">
+                                <img :src="item.profileImg"/>
+                                <h2>{{item.title}}的用人申请</h2>
+                                <time >{{item.applyTime | timeFormat}}</time>
+                            </div>
+                            <div class="affairs_infor">
+                               <div class="request_infor lineHeight">
+                                    <span >招聘岗位 : </span>
+                                    <p class="line1">{{item.employeePosition}} </p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span>需求人数 :</span>
+                                    <p class="line1"> {{item.employeeNum }}</p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span >到岗日期 :</span>
+                                    <p class="line1">{{item.employeeArrivDate|timeSlice }} </p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span>申请理由 :</span>
+                                    <p class="line1">{{item.content}} 元</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div  class="skip" tag="div">
+                        查看详情
+                </div>
             </div> 
   
          </div>   

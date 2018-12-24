@@ -83,7 +83,7 @@
                     {key:'抄送',status:0,value:3,arr:[1,3,4]}],
                 type:[{key:'全部',value:''},{key:'请假',value:0},
                 {key:'补卡',value:11},{key:'出差',value:4},{key:'公出',value:3},{key:'请示函',value:1},{key:'合同',value:2},{key:'报销',value:6},
-                {key:'付款',value:7},{key:'用印',value:5},{key:'离职',value:8},{key:'借款',value:9},{key:'接待',value:10},
+                {key:'付款',value:7},{key:'用印',value:5},{key:'离职',value:8},{key:'借款',value:9},{key:'接待',value:10},{key:'用车',value:12},{key:'用人',value:13},
                 ],
                 oaType:'',
                 oaState:'',
