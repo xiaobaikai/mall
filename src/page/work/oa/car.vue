@@ -28,7 +28,7 @@
                 </div>
                 <div class="bor_bottom">
                     <span class="title">数量（辆）</span>
-                    <input style="color:#666" v-model="carNum" placeholder="请输入车辆数量"/>
+                    <input style="color:#666" v-model="carNum" placeholder="请输入车辆数量" type="number"/>
                 </div>
     
                  <div class="bor_bottom choose" @click="getTime(0)">
@@ -124,12 +124,18 @@ let save_leave = (index,text,that) =>{
         that.$toast('文件标题不能低于6个或超过30个字符')
     }else if(that.carType == ''){
 	    that.$toast('车辆类型不能为空')
+    }else if(that.carType.length>30 ||that.carType.length<1){
+	    that.$toast('文件标题不能低于1个或超过30个字符')
     }else if(that.carNum == ''){
 	    that.$toast('车辆数量不能为空')
+    }else if(!regs.test(that.carNum)){
+	    that.$toast('车辆数量不能为0')
     }else if(that.useDate == '请选择使用日期'){
         that.$toast('请选择使用日期')
     }else if(that.returnDate == '请选择预计归还日期'){
         that.$toast('请选择预计归还日期')
+    }else if(that.followPerson.length>30){
+	    that.$toast('随行人员不能超过30个字符')
     }else if(that.carReason == ''){
         that.$toast('用车事由不能为空')
     }else if(that.carReason.length>1000||that.carReason.length<6){

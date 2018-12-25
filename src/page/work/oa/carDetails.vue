@@ -199,7 +199,7 @@
 		methods :{
 			...mapMutations(['change_man','approver_man']),
 			refuse:function(){
-				this.$router.push({path:'/opinion',query:{id:this.dataObj.carApplyId,typeName:'goOutWork',applyType:3,color:'#0fc37c'}})
+				this.$router.push({path:'/opinion',query:{id:this.dataObj.carApplyId,typeName:'goOutWork',applyType:12,color:'#0fc37c'}})
 			},
 			history_back_click:function(){
 				if(location.href.indexOf('goWork=0')>0){
@@ -211,7 +211,7 @@
 			deliverTo(){ //转交
 				let newApprStr = this.appAndCopy(this.newAppr,'auditUserId')
 				let newCopy = this.appAndCopy(this.newCopy)
-				this.$router.push({path:'/imchoices',query:{id:this.dataObj.carApplyId,bgcolor:'#0fc37c', receiverIds:newCopy,careOf:true,typeName:'goOutWork',applyType:3,auditerIds:newApprStr,num:1}})
+				this.$router.push({path:'/imchoices',query:{id:this.dataObj.carApplyId,bgcolor:'#0fc37c', receiverIds:newCopy,careOf:true,typeName:'goOutWork',applyType:12,auditerIds:newApprStr,num:1}})
 			},
 			resubmit(){ //再次提交
 				this.$router.replace({path:'/goOutWork',query:{carApplyId:this.dataObj.carApplyId,resubmit:1}})
@@ -222,7 +222,7 @@
 				this.axios.post('/work/audit'+this.Service.queryString({
 					applyId:this.dataObj.carApplyId,
 					type:6,
-					applyType:3,
+					applyType:12,
 				})).then(function(res){
 					if(res.data.h.code==200){
 						that.$toast('催办成功!')
@@ -232,7 +232,7 @@
 				})
 			},
 			approveBack(){ //退回
-				this.$router.push({path:'/approveBack',query:{id:this.dataObj.carApplyId,typeName:'goOutWork',applyType:3,color:'#0fc37c'}})
+				this.$router.push({path:'/approveBack',query:{id:this.dataObj.carApplyId,typeName:'goOutWork',applyType:12,color:'#0fc37c'}})
 			},
 			moreBtn(){ //更多
 				this.isShow = true;
@@ -242,7 +242,7 @@
 				let that = this;
 				let copyStr =  this.appAndCopy(this.newCopy)
 				let apprStr = this.appAndCopy(this.newAppr,'auditUserId')
-				this.$router.push({path:'/opinion',query:{id:this.dataObj.carApplyId,receiverIds:copyStr,auditerIds:apprStr,color:'#0fc37c',typeName:'goOutWork',applyType:3,pageType:'consent'}})
+				this.$router.push({path:'/opinion',query:{id:this.dataObj.carApplyId,receiverIds:copyStr,auditerIds:apprStr,color:'#0fc37c',typeName:'goOutWork',applyType:12,pageType:'consent'}})
 			},
 			appAndCopy:function(arr,type){
 				if(!type) type='userId'
@@ -259,7 +259,7 @@
 				this.axios.post('/work/audit'+this.Service.queryString({
 					applyId:this.dataObj.carApplyId,
 					type:1,
-					applyType:3,
+					applyType:12,
 				})).then(function(res){
 					if(res.data.h.code!=200){
 						that.$toast(res.data.h.msg)
