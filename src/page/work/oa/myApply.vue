@@ -398,11 +398,11 @@
                                 </div>
                                 <div class="request_infor lineHeight">
                                     <span >开始时间 :</span>
-                                    <p class="line1">{{item.beginTime|timeSlice }} </p>
+                                    <p class="line1">{{item.beginTime }} </p>
                                 </div>
                                 <div class="request_infor lineHeight">
                                     <span >结束时间 :</span>
-                                    <p class="line1">{{item.endTime|timeSlice }} </p>
+                                    <p class="line1">{{item.endTime }} </p>
                                 </div>
                                 <div class="request_infor lineHeight">
                                     <span>用车事由 :</span>
@@ -415,7 +415,7 @@
                         </div>
                 </div>
             </div> 
-            <div v-else-if="item.typecode == 14" @click="goDetails(item.applyId,item.fianlStatus,'recruitment')"   class="affairs_item" >
+            <div v-else-if="item.typecode == 14" @click="goDetails(item.applyId,item.fianlStatus,'employee')"   class="affairs_item" >
                 <div class="affirs_child">
                         <div>
                             <div class="affairs_title">
@@ -425,15 +425,15 @@
                             </div>
                             <div class="affairs_infor">
                                 <div class="request_infor lineHeight">
-                                    <span>招聘岗位 :</span><p class="line1">{{item.employeePosition}} </p>
+                                    <span>招聘岗位 :</span><p class="line1">{{item.position}} </p>
                                 </div>
                                 <div class="request_infor lineHeight">
                                     <span>需求人数 :</span>
-                                    <p class="line1">{{item.employeeNum }}</p>
+                                    <p class="line1">{{item.num }}</p>
                                 </div>
                                 <div class="request_infor lineHeight">
                                     <span >到岗日期 :</span>
-                                    <p class="line1">{{item.employeeArrivDate|timeSlice }} </p>
+                                    <p class="line1">{{item.hireDate |timeSlice }} </p>
                                 </div>
                                 <div class="request_infor lineHeight">
                                     <span>申请理由 :</span>

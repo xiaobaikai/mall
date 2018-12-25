@@ -32,12 +32,6 @@
                                 <use xlink:href="#icon-shanchu1"></use>
                             </svg>
                         </li>
-                        <li v-if="addData.length<6">
-                            <svg style="font-size: 0.33rem;" class="icon img" aria-hidden="false">
-                                <use xlink:href="#icon-tianjiarenyuan"></use>
-                            </svg>
-                            添加
-                        </li>
                     </ul>
             </div>
 

@@ -162,7 +162,8 @@ const OaSearch = r => require.ensure([], () => r(require('@/page/work/oa/oaSearc
 const CompanyWall = r => require.ensure([], () => r(require('@/page/work/companyWall.vue')), 'group-work')
 const CompanyWallList = r => require.ensure([], () => r(require('@/page/work/companyWallList.vue')), 'group-work')
 const Car = r => require.ensure([], () => r(require('@/page/work/oa/car.vue')), 'group-work')
-const Recruitment = r => require.ensure([], () => r(require('@/page/work/oa/recruitment.vue')), 'group-work')
+const Employee = r => require.ensure([], () => r(require('@/page/work/oa/employee.vue')), 'group-work')
+const EmployeeDetails = r => require.ensure([], () => r(require('@/page/work/oa/employeeDetails.vue')), 'group-work')
 const ArticleDetails = r => require.ensure([], () => r(require('@/page/work/articleDetails.vue')), 'group-work')
 
 
@@ -797,8 +798,13 @@ export default new Router({
       path:'/car',//用车
       component:Car
     },{
-      path:'/recruitment',
-      component:Recruitment
+      path:'/employee',
+      component:Employee,
+      meta: {keepAlive: true}
+    },{
+      path:'/employeeDetails',
+      component:EmployeeDetails,
+      meta: {keepAlive: true}
     },{
       path:'/articleDetails',
       component:ArticleDetails

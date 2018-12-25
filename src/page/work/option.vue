@@ -117,6 +117,16 @@ export default {
                 this.axios.get('/work/traffic/type').then(function(res){
                     if(res.data.h.code =200 ) that.data = res.data.b;
                 })
+          }else if(this.type=='sex'){
+              this.title = '性别选择';
+                this.axios.get('/work/sex/type').then(function(res){
+                    if(res.data.h.code =200 ) that.data = res.data.b;
+                })
+          }else if(this.type=='marriage'){
+                this.title = '婚姻状况';
+                this.axios.get('/work/marriage/type').then(function(res){
+                    if(res.data.h.code =200 ) that.data = res.data.b;
+                })
           }
           else{
            this.axios.get('/work/leave/type/list').then(function(res){

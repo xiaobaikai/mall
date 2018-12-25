@@ -63,17 +63,29 @@
             <div class="menu-item"  :key="index">
                 <p class="item-title"> <i></i> <span>常用应用</span>  <a class="manage" @click="manage">管理</a> </p>
                 <ul>
-                    <li  @click="go_jump(c)">
+                    <li  @click="a()">
                          <svg style="font-size: 0.33rem;"  class="icon img" aria-hidden="false">
                             <use xlink:href="#icon-jiyao"></use>
                         </svg>
                         <span>我的审批</span>
                     </li>
-                    <li @click="go_jump(c)">
+                    <li @click="b()">
                          <svg style="font-size: 0.33rem;"  class="icon img" aria-hidden="false">
                             <use xlink:href="#icon-gongzuohuibao"></use>
                         </svg>
-                        <span>工作汇报</span>
+                        <span>我的申请</span>
+                    </li>
+                     <li  @click="c()">
+                         <svg style="font-size: 0.33rem;"  class="icon img" aria-hidden="false">
+                            <use xlink:href="#icon-jiyao"></use>
+                        </svg>
+                        <span>用车</span>
+                    </li>
+                    <li @click="d()">
+                         <svg style="font-size: 0.33rem;"  class="icon img" aria-hidden="false">
+                            <use xlink:href="#icon-gongzuohuibao"></use>
+                        </svg>
+                        <span>用人</span>
                     </li>
                     <li v-for="(c,i) in workData[0].apps" :key="i" >
                         <img :src="c.icon"/>
@@ -152,6 +164,18 @@
             ...mapMutations([
                 'setToken',
             ]),
+            a(){
+                 window.location.href = "epipe://?&mark=unfinishAffair";
+            },
+            b(){
+                 window.location.href = "epipe://?&mark=myApply";
+            },
+            c(){
+                 window.location.href = "epipe://?&mark=car";
+            },
+            d(){
+                 window.location.href = "epipe://?&mark=employee";
+            },
             go_jump(obj){ //应用跳转
                 window.location.href = obj.url;
             },
