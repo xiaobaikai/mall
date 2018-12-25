@@ -10,7 +10,7 @@
             <div class="styles input_group">
                 <div class="bor_bottom">
                     <span class="title">文件标题</span>
-                    <input placeholder="请输入标题"  v-model="borrowTitle" />
+                    <input placeholder="请输入标题"  v-model="carTitle" />
                 </div>
                   <div>
                     <span class="title">用车人</span>
@@ -24,11 +24,11 @@
             <div class="styles input_group">
                 <div class="bor_bottom">
                     <span class="title">车辆类型</span>
-                    <input style="color:#666" v-model="borrowerAmount" placeholder="请输入所需车辆类型"/>
+                    <input style="color:#666" v-model="carType" placeholder="请输入所需车辆类型"/>
                 </div>
                 <div class="bor_bottom">
                     <span class="title">数量（辆）</span>
-                    <input style="color:#666" v-model="borrowerAmount" placeholder="请输入车辆数量"/>
+                    <input style="color:#666" v-model="carNum" placeholder="请输入车辆数量" type="number"/>
                 </div>
     
                  <div class="bor_bottom choose" @click="getTime(0)">
@@ -51,14 +51,14 @@
                 </div>
                 <div class="bor_bottom">
                     <span class="title">随行人员</span>
-                    <input style="color:#666" v-model="borrowerAmount" placeholder="请输入随行人员"/>
+                    <input style="color:#666" v-model="followPerson" placeholder="请输入随行人员(多个用逗号隔开)"/>
                 </div>
            
             </div>
 
             <div class="styles" style="padding:0 0.15rem;">
                 <p class="title">用车事由</p>
-                <textarea v-model.trim="borrowReason" name="" maxlength="1000" id="" cols="30" rows="10" placeholder="请输入用车事由,限定1000字">
+                <textarea v-model.trim="carReason" name="" maxlength="1000" id="" cols="30" rows="10" placeholder="请输入用车事由,限定1000字">
 
                 </textarea>
                 <div class="record_box">
@@ -118,40 +118,28 @@ let reg = /^[\u4e00-\u9fa5]+$/;
 var regs =/^[1-9]+\d*$/;
 let rule = /^[A-Za-z0-9]+$/;
 let save_leave = (index,text,that) =>{
-    if(that.borrowTitle== ''){
+    if(that.carTitle== ''){
         that.$toast('文件标题不能为空')
-    }else if(that.borrowTitle.length>30 ||that.borrowTitle.length<6){
+    }else if(that.carTitle.length>30 ||that.carTitle.length<6){
         that.$toast('文件标题不能低于6个或超过30个字符')
+    }else if(that.carType == ''){
+	    that.$toast('车辆类型不能为空')
+    }else if(that.carType.length>30 ||that.carType.length<1){
+	    that.$toast('文件标题不能低于1个或超过30个字符')
+    }else if(that.carNum == ''){
+	    that.$toast('车辆数量不能为空')
+    }else if(!regs.test(that.carNum)){
+	    that.$toast('车辆数量不能为0')
     }else if(that.useDate == '请选择使用日期'){
         that.$toast('请选择使用日期')
     }else if(that.returnDate == '请选择预计归还日期'){
         that.$toast('请选择预计归还日期')
-    }else if(that.borrowerAmount == ''){
-        that.$toast('请输入借款金额')
-    }else if(isNaN(that.borrowerAmount)){
-        that.$toast('借款金额为数字')
-    }else if(that.borrowerAmount.length>8){
-        that.$toast('借款金额不能大于8位数')
-    }else if(that.borrowerName == ''){
-        that.$toast('请输入收款人姓名')
-    }else if(that.borrowerName.length<2||that.borrowerName>30){
-        that.$toast('收款人不能低于2个或超过30个字符')
-    }else if(that.borrowerBank == ''){
-        that.$toast('请输入开户行')
-    }else if(!reg.test(that.borrowerBank)){
-        that.$toast('开户行必须为中文')
-    }else if(that.borrowerBank.length<4||that.borrowerBank.length>30){
-        that.$toast('开户行不能少于4个或超过30个字符')
-    }else if(that.borrowerAccount == ''){
-        that.$toast('请输入银行账户')
-    }else if(!regs.test(that.borrowerAccount)){
-        that.$toast('银行账户必须为数字')
-    }else if(that.borrowerAccount.length<2||that.borrowerAccount.length>20){
-        that.$toast('银行账户不能少于2个或超过20个字符')
-    }else if(that.borrowReason == ''){
-        that.$toast('借款事由不能为空')
-    }else if(that.borrowReason.length>1000||that.borrowReason.length<6){
-        that.$toast('借款事由不能少于6个或超过1000字符')
+    }else if(that.followPerson.length>30){
+	    that.$toast('随行人员不能超过30个字符')
+    }else if(that.carReason == ''){
+        that.$toast('用车事由不能为空')
+    }else if(that.carReason.length>1000||that.carReason.length<6){
+        that.$toast('用车事由不能少于6个或超过1000字符')
     }else if(that.approver_list.length == 0){
         that.$toast('请选择审批人')
     }else{
@@ -188,24 +176,23 @@ let save_leave = (index,text,that) =>{
         urlStr = urlStr.slice(1)
         fileSizeStr = fileSizeStr.slice(1)
         fileNameStr = fileNameStr.slice(1)
-        // let contDesc = that.borrowReason.replace(/\n|\r\n/g,"<br>")
+        // let contDesc = that.carReason.replace(/\n|\r\n/g,"<br>")
         // https://blog.csdn.net/xiaobao5214/article/details/68923023/
         that.axios({
                 method:"post",
-                url:"/work/borrow/save",
+                url:"/work/car/save",
                 headers:{
                     'Content-type': 'application/x-www-form-urlencoded'
                 },
                 data:{
                     Id :that.id, // id
-                    borrowTitle:that.borrowTitle,//标题
-                    borrowReason:that.borrowReason, //付款说明
-                    borrowAmount:that.borrowerAmount, //付款金额
-                    borrowerBank:that.borrowerBank,
-                    useDate:that.useDate,//付款时间
-                    returnDate:that.returnDate,//付款时间
-                    borrowerAccount:that.borrowerAccount,
-                    borrowerName:that.borrowerName, //收款人
+                    carTitle:that.carTitle,//申请主题
+	                  carReason:that.carReason, //申请原因
+	                  carType: that.carType,  //车型
+                    carNum: that.carNum,  //用车数量
+	                  beginTime: that.useDate,  //使用时间
+                    endTime: that.returnDate,  //返还时间
+	                  peerNames: that.followPerson.replace(',','|'),  //同行人员姓名
                     urls : urlStr, //附件
                     fileNames:fileNameStr, 
                     fileSizes:fileSizeStr,
@@ -260,21 +247,23 @@ export default {
         data(){
             return{
                 id:'',
-                borrowTitle : '', // 标题
-                departmentName : '',//用印部门
-                borrowerAmount : '', //付款金额
-                useDate:'请选择使用日期', //
-                returnDate:'请选择预计归还日期', //
-                userName : '',//用印承办人
-                borrowerName:'',//收款人
-                borrowerAccount:'', //银行账户
-                borrowerBank:'',//开户行
-                borrowReason : '',//用印说明
+	              carTitle : '', // 标题
+	              userName : '',//用车人
+                departmentName : '',//用车部门
+	              carType: '',  //车辆类型
+                carNum: '',  //数量
+                //useDate:'请选择使用日期',
+	              useDate:  '2018-12-24 15:26:52',
+                //returnDate:'请选择预计归还日期',
+	              returnDate: '2018-12-25 16:00:00',
+                followPerson: '',  //随行人员
+	              carReason : '',//用车理由
                 chosed_list : [], //抄送人
                 approver_list : [], //审批人
                 accessory : [],
                 isDraftFlag : 0, //判断是不是草稿
                 isShow:false,
+	              textNum: 0
             }
         },
         components: {
@@ -433,13 +422,13 @@ export default {
              },
         },
          watch:{
-            borrowReason : function(){
-                if(this.borrowReason.length>1000){
+	          carReason : function(){
+                if(this.carReason.length>1000){
                     this.$toast("最多输入1000字~")
-                    this.borrowReason = this.borrowReason.slice(0,1000)
+                    this.carReason = this.carReason.slice(0,1000)
                     return
                 }
-                this.textNum = this.borrowReason.length
+                this.textNum = this.carReason.length
             }
         },
         activated(){
@@ -482,35 +471,32 @@ export default {
                 that.oldData = JSON.parse(JSON.stringify(that.$data))
             })
 
-            if(this.$route.query.borrowId){
-                  this.axios.get('/work/borrow/info',{
+            if(this.$route.query.carApplyId){
+                  this.axios.get('/work/car/info',{
                     params:{
                         type:that.$route.query.resubmit,
-                        borrowApplyId:this.$route.query.borrowId
+	                      carApplyId:this.$route.query.carApplyId
                     }
                 }).then(function(res){
                    let data = res.data.b;
                        if(!that.$route.query.resubmit){
-                                that.id = data.borrowApplyId;
-                        }
-                        that.isDraftFlag = 1;
-                        that.accessoryFor(data)
-                        that.borrowTitle = data.borrowTitle;
-                        that.borrowerAmount = data.borrowAmount;
-                        that.borrowType = data.borrowTypeCode
-                        that.borrowName = data.borrowType;
-                        that.borrowerName = data.borrowerName
-                        that.borrowReason = data.borrowReason;
-                        that.useDate = data.useDate;
-                        that.returnDate = data.returnDate;
-                        that.borrowerAccount = data.borrowerAccount;
-                        that.borrowerBank=data.borrowerBank;
-                        that.textNum = data.borrowReason.length
-                        that.chosed_list = data.receivers;
-                        that.change_man(that.chosed_list);
-                        that.approver_list = data.auditers;
-                        that.approver_man(that.approver_list);
-                        that.oldData = JSON.parse(JSON.stringify(that.$data))
+                                that.id = data.carApplyId;
+                       }
+                      that.isDraftFlag = 1;
+                      that.accessoryFor(data)
+                      that.carTitle = data.carTitle;
+                      that.carType = data.carType;
+                      that.carNum = data.carNum;
+                      that.carReason = data.carReason;
+                      that.useDate = data.beginTime;
+                      that.returnDate = data.endTime;
+                      that.followPerson = data.peerNames.replace('|',',');
+                      that.textNum = data.carReason.length
+                      that.chosed_list = data.receivers;
+                      that.change_man(that.chosed_list);
+                      that.approver_list = data.auditers;
+                      that.approver_man(that.approver_list);
+                      that.oldData = JSON.parse(JSON.stringify(that.$data))
                     })
                     return
             }

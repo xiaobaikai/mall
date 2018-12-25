@@ -162,8 +162,13 @@ const OaSearch = r => require.ensure([], () => r(require('@/page/work/oa/oaSearc
 const CompanyWall = r => require.ensure([], () => r(require('@/page/work/companyWall.vue')), 'group-work')
 const CompanyWallList = r => require.ensure([], () => r(require('@/page/work/companyWallList.vue')), 'group-work')
 const Car = r => require.ensure([], () => r(require('@/page/work/oa/car.vue')), 'group-work')
+<<<<<<< HEAD
 const Employee = r => require.ensure([], () => r(require('@/page/work/oa/employee.vue')), 'group-work')
 const EmployeeDetails = r => require.ensure([], () => r(require('@/page/work/oa/employeeDetails.vue')), 'group-work')
+=======
+const CarDetails = r => require.ensure([], () => r(require('@/page/work/oa/carDetails.vue')), 'group-work')
+const Recruitment = r => require.ensure([], () => r(require('@/page/work/oa/recruitment.vue')), 'group-work')
+>>>>>>> 9b1409218bdcc0d08d37c3e5c43b67b555a631a9
 const ArticleDetails = r => require.ensure([], () => r(require('@/page/work/articleDetails.vue')), 'group-work')
 
 
@@ -696,7 +701,7 @@ export default new Router({
       meta: {keepAlive: true}
     },
     {
-      path:'/reimburseDetails', //报销详情
+	    path:'/reimburseDetails', //报销详情
       component:ReimburseDetails,
       meta: {keepAlive: true}
     },
@@ -796,8 +801,10 @@ export default new Router({
       component:CompanyWallList
     },{
       path:'/car',//用车
-      component:Car
+      component:Car,
+		  meta: {keepAlive: true}
     },{
+<<<<<<< HEAD
       path:'/employee',
       component:Employee,
       meta: {keepAlive: true}
@@ -805,6 +812,14 @@ export default new Router({
       path:'/employeeDetails',
       component:EmployeeDetails,
       meta: {keepAlive: true}
+=======
+		  path:'/carDetails',//用车详情
+		  component:CarDetails,
+		  meta: {keepAlive: true}
+	  },{
+      path:'/recruitment',
+      component:Recruitment
+>>>>>>> 9b1409218bdcc0d08d37c3e5c43b67b555a631a9
     },{
       path:'/articleDetails',
       component:ArticleDetails
