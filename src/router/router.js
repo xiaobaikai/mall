@@ -67,6 +67,7 @@ const MallHome = r => require.ensure([], () => r(require('@/page/mall/home/MallH
 const GoodsClassification = r => require.ensure([], () => r(require('@/page/mall/class/GoodsClassification.vue')), 'group-mall')
 const ClassSearch = r => require.ensure([], () => r(require('@/page/mall/class/ClassSearch.vue')), 'group-mall')
 const GoodsDetail = r => require.ensure([], () => r(require('@/page/mall/goods/GoodsDetail.vue')), 'group-mall')
+const HWphone = r => require.ensure([], () => r(require('@/page/mall/goods/HWphone.vue')), 'group-mall')
 const TestDetail = r => require.ensure([], () => r(require('@/page/mall/goods/TestDetail.vue')), 'group-mall')
 const MallSearch = r => require.ensure([], () => r(require('@/page/mall/home/MallSearch.vue')), 'group-mall')
 const Login = r => require.ensure([], () => r(require('@/page/home/login.vue')), 'group-foo')
@@ -162,13 +163,9 @@ const OaSearch = r => require.ensure([], () => r(require('@/page/work/oa/oaSearc
 const CompanyWall = r => require.ensure([], () => r(require('@/page/work/companyWall.vue')), 'group-work')
 const CompanyWallList = r => require.ensure([], () => r(require('@/page/work/companyWallList.vue')), 'group-work')
 const Car = r => require.ensure([], () => r(require('@/page/work/oa/car.vue')), 'group-work')
-<<<<<<< HEAD
 const Employee = r => require.ensure([], () => r(require('@/page/work/oa/employee.vue')), 'group-work')
 const EmployeeDetails = r => require.ensure([], () => r(require('@/page/work/oa/employeeDetails.vue')), 'group-work')
-=======
 const CarDetails = r => require.ensure([], () => r(require('@/page/work/oa/carDetails.vue')), 'group-work')
-const Recruitment = r => require.ensure([], () => r(require('@/page/work/oa/recruitment.vue')), 'group-work')
->>>>>>> 9b1409218bdcc0d08d37c3e5c43b67b555a631a9
 const ArticleDetails = r => require.ensure([], () => r(require('@/page/work/articleDetails.vue')), 'group-work')
 
 
@@ -431,6 +428,10 @@ export default new Router({
       path: '/goodsdetail',  //商品详情
       component: GoodsDetail,
     },
+	  {
+		  path: '/HWphone',  //商品详情
+		  component: HWphone,
+	  },
     {
       path: '/testdetail',  //商品详情测试
       component: TestDetail,
@@ -789,8 +790,7 @@ export default new Router({
     },{
       path:'/neatenWork',
       component:NeatenWork
-    },
-    ,{
+    },{
       path:'/addWork',
       component:AddWork
     },{
@@ -804,23 +804,18 @@ export default new Router({
       component:Car,
 		  meta: {keepAlive: true}
     },{
-<<<<<<< HEAD
       path:'/employee',
       component:Employee,
       meta: {keepAlive: true}
     },{
-      path:'/employeeDetails',
-      component:EmployeeDetails,
-      meta: {keepAlive: true}
-=======
+		  path: '/employeeDetails',
+		  component: EmployeeDetails,
+		  meta: {keepAlive: true}
+	  },{
 		  path:'/carDetails',//用车详情
 		  component:CarDetails,
 		  meta: {keepAlive: true}
 	  },{
-      path:'/recruitment',
-      component:Recruitment
->>>>>>> 9b1409218bdcc0d08d37c3e5c43b67b555a631a9
-    },{
       path:'/articleDetails',
       component:ArticleDetails
     }
