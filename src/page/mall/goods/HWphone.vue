@@ -13,8 +13,8 @@
       </router-link>
     </div>
     <div class="break-lowprice"><img src="./HWphoneImg/03.png" alt="突破底价"></div>
-    <div class="lowprice-goods" v-for="(obj,index) in lowpriceList" :key="index">
-      <div v-for="(oneObj,index) in obj" :key="oneObj.goodsId" class="one-good" :class="index == 0 ? 'one-good-l' : 'one-good-r'">
+    <div class="lowprice-goods" v-for="(obj,index1) in lowpriceList" :key="index1">
+      <div v-for="(oneObj,index2) in obj" :key="oneObj.goodsId" class="one-good" :class="index2 == 0 ? 'one-good-l' : 'one-good-r'">
         <router-link :to="{path:'/GoodsDetail',query:{goodsId:oneObj.goodsId}}">
           <div class="good-pic"><img :src="oneObj.goodsImage" :alt="oneObj.goodsName"></div>
           <div class="good-desc">{{oneObj.goodsName}}</div>
