@@ -92,6 +92,8 @@
           line-height .23rem;
           overflow hidden;
         .one-purchase-lb
+          height .35rem;
+          line-height .35rem;
           font-size .23rem;
           color #cd212f;
           font-weight bold;
@@ -147,7 +149,7 @@
         position absolute;
         left .305rem;
         bottom 0;
-        font-size .18rem;
+        font-size .16rem;
         color #e4ca89;
         font-weight bold;
         margin-left .25rem;
