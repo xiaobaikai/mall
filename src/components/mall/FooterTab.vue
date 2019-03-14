@@ -12,14 +12,14 @@
       </div>
       <p class="tab-title">分类</p>
     </router-link>
-    <router-link v-if="this.mallType.type === '2b' " to="inquirylist" tag="div" class="footer-tab-item" :class="{'tab-active': category===4}">
-      <div class="icon-container">
-        <i class="iconfont icon-car" :class="category===4 ? 'icon-xunjiadan':'icon-xunjiadan-weixuanzhong'">
-          <div class="goods-number" v-if="inquiryGoodsNum>0">{{inquiryGoodsNum}}</div>
-        </i>
-      </div>
-      <p class="tab-title">待询价单</p>
-    </router-link>
+    <!--<router-link v-if="this.mallType.type === '2b' " to="inquirylist" tag="div" class="footer-tab-item" :class="{'tab-active': category===4}">-->
+      <!--<div class="icon-container">-->
+        <!--<i class="iconfont icon-car" :class="category===4 ? 'icon-xunjiadan':'icon-xunjiadan-weixuanzhong'">-->
+          <!--<div class="goods-number" v-if="inquiryGoodsNum>0">{{inquiryGoodsNum}}</div>-->
+        <!--</i>-->
+      <!--</div>-->
+      <!--<p class="tab-title">待询价单</p>-->
+    <!--</router-link>-->
     <router-link to="shoplist" tag="div" class="footer-tab-item" :class="{'tab-active': category===2}">
       <div class="icon-container">
         <i class="iconfont icon-car" :class="category===2 ? 'icon-gouwuche-xuanzhongicon':'icon-gouwucheicon'">

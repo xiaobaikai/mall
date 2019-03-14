@@ -74,6 +74,7 @@
       width: 100%;
       max-height 100%;
       vertical-align: middle;
+      display block;
     }
   }
   .floor-banner{

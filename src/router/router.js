@@ -64,6 +64,8 @@ const ForgetPassword = r => require.ensure([], () => r(require('@/page/mall/logi
 const Register = r => require.ensure([], () => r(require('@/page/mall/login/Register.vue')), 'group-mall')
 const MallAgreement = r => require.ensure([], () => r(require('@/page/mall/login/MallAgreement.vue')), 'group-mall')
 const MallHome = r => require.ensure([], () => r(require('@/page/mall/home/MallHome.vue')), 'group-mall')
+const SupplyDemandList = r => require.ensure([], () => r(require('@/page/mall/home/SupplyDemandList.vue')), 'group-mall')
+const SupplyDemandDetail = r => require.ensure([], () => r(require('@/page/mall/home/SupplyDemandDetail.vue')), 'group-mall')
 const GoodsClassification = r => require.ensure([], () => r(require('@/page/mall/class/GoodsClassification.vue')), 'group-mall')
 const ClassSearch = r => require.ensure([], () => r(require('@/page/mall/class/ClassSearch.vue')), 'group-mall')
 const GoodsDetail = r => require.ensure([], () => r(require('@/page/mall/goods/GoodsDetail.vue')), 'group-mall')
@@ -297,7 +299,6 @@ export default new Router({
     },
     {
       path: '/outputcount',  //产出统计
-      component: OutputCount,
     },
     {
       path: '/outputdaily',  //产出看板
@@ -416,6 +417,14 @@ export default new Router({
       path: '/mallhome',  //商城首页
       component: MallHome,
     },
+	  {
+		  path: '/supplydemandlist',  //供需列表
+		  component: SupplyDemandList,
+	  },
+	  {
+		  path: '/supplydemanddetail',  //供需详情
+		  component: SupplyDemandDetail,
+	  },
     {
       path: '/goodsclassification',  //分类
       component: GoodsClassification,
