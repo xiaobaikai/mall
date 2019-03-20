@@ -18,25 +18,25 @@
       </swiper>
     </div>
     <div class="nav-part-2b" v-if="mallType.type === '2b'">
-      <router-link to="" tag="div" class="nav-part-2b-item">
+      <router-link to="/plasticlist" tag="div" class="nav-part-2b-item">
         <div class="icon-container">
           <img src="../../../assets/suliao.png" alt="塑料会">
         </div>
         <p class="tab-title">塑料会</p>
       </router-link>
-      <router-link to="" tag="div" class="nav-part-2b-item">
+      <router-link to="/conduitlist" tag="div" class="nav-part-2b-item">
         <div class="icon-container">
           <img src="../../../assets/guandao.png" alt="管道城">
         </div>
         <p class="tab-title">管道城</p>
       </router-link>
-      <router-link to="" tag="div" class="nav-part-2b-item">
+      <router-link to="/HWphone" tag="div" class="nav-part-2b-item">
         <div class="icon-container">
           <img src="../../../assets/huawei.png" alt="华为专场">
         </div>
         <p class="tab-title">华为专场</p>
       </router-link>
-      <router-link to="" tag="div" class="nav-part-2b-item">
+      <router-link to="/hardwarelist" tag="div" class="nav-part-2b-item">
         <div class="icon-container">
           <img src="../../../assets/yingjian.png" alt="智能硬件">
         </div>

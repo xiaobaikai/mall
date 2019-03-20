@@ -23,9 +23,9 @@
       </div>
     </div>
     <div class="back-home">
-      <router-link :to="{path:'/mallhome'}">
-        <img src="./HWphoneImg/05.png" alt="返回首页">
-      </router-link>
+      <!--<router-link :to="{path:'/mallhome'}">-->
+        <!--<img src="./HWphoneImg/05.png" alt="返回首页">-->
+      <!--</router-link>-->
     </div>
   </div>
 </template>
@@ -158,7 +158,7 @@
     .one-good-r
       float right;
   .back-home
-    height .8rem;
+    height .4rem;
     background url("./HWphoneImg/00.png") repeat-y;
     overflow hidden;
     a

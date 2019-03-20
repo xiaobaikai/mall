@@ -62,7 +62,7 @@
       <p>哎呦，您的询价单空空如也～</p>
       <div class="goToShop"><a href="#/mallhome">去逛逛</a></div>
     </div>
-    <footer-tab :category="4" ref="footertab"></footer-tab>
+    <footer-tab :category="3" ref="footertab"></footer-tab>
   </div>
 </template>
 <script>

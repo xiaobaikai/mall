@@ -18,7 +18,7 @@
           <!--<div class="goods-number" v-if="inquiryGoodsNum>0">{{inquiryGoodsNum}}</div>-->
         <!--</i>-->
       <!--</div>-->
-      <!--<p class="tab-title">待询价单</p>-->
+      <!--<p class="tab-title">待询价单</p>`-->
     <!--</router-link>-->
     <router-link to="shoplist" tag="div" class="footer-tab-item" :class="{'tab-active': category===2}">
       <div class="icon-container">

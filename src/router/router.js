@@ -64,6 +64,9 @@ const ForgetPassword = r => require.ensure([], () => r(require('@/page/mall/logi
 const Register = r => require.ensure([], () => r(require('@/page/mall/login/Register.vue')), 'group-mall')
 const MallAgreement = r => require.ensure([], () => r(require('@/page/mall/login/MallAgreement.vue')), 'group-mall')
 const MallHome = r => require.ensure([], () => r(require('@/page/mall/home/MallHome.vue')), 'group-mall')
+const PlasticList = r => require.ensure([], () => r(require('@/page/mall/home/PlasticList.vue')), 'group-mall')
+const ConduitList = r => require.ensure([], () => r(require('@/page/mall/home/ConduitList.vue')), 'group-mall')
+const HardwareList = r => require.ensure([], () => r(require('@/page/mall/home/HardwareList.vue')), 'group-mall')
 const SupplyDemandList = r => require.ensure([], () => r(require('@/page/mall/home/SupplyDemandList.vue')), 'group-mall')
 const SupplyDemandDetail = r => require.ensure([], () => r(require('@/page/mall/home/SupplyDemandDetail.vue')), 'group-mall')
 const GoodsClassification = r => require.ensure([], () => r(require('@/page/mall/class/GoodsClassification.vue')), 'group-mall')
@@ -418,6 +421,18 @@ export default new Router({
       component: MallHome,
     },
 	  {
+	  	path: '/plasticlist', //塑料汇
+		  component: PlasticList,
+	  },
+	  {
+		  path: '/conduitlist', //管道城
+		  component: ConduitList,
+	  },
+	  {
+		  path: '/hardwarelist', //智能硬件
+		  component: HardwareList,
+	  },
+	  {
 		  path: '/supplydemandlist',  //供需列表
 		  component: SupplyDemandList,
 	  },
@@ -438,7 +453,7 @@ export default new Router({
       component: GoodsDetail,
     },
 	  {
-		  path: '/HWphone',  //商品详情
+		  path: '/HWphone',  //华为专场
 		  component: HWphone,
 	  },
     {
