@@ -22,7 +22,7 @@
   }
 </script>
 <style>
-  #app {
-    /*height: 100%;*/
+  body,#app{
+    height: 100%;
   }
 </style>

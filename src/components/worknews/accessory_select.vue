@@ -53,7 +53,7 @@
             //  颜色  选中的联系人数据  
             ],
         methods:{
-              go_fildDetails: function (url,name) { //查看图片详情
+            go_fildDetails: function (url,name) { //查看图片详情
                 let that = this;
                 let obj = {index_num: 0, data:[url],type:0,name}
                 window.location.href = "epipe://?&mark=imgdetail&url=" + JSON.stringify(obj);
@@ -62,7 +62,7 @@
                 this.accessory.splice(index,1)
             },
             addAccessory:function(){
-            let that = this;
+                let that = this;
                 window.location.href = "epipe://?&mark=addAccessory"
             },
             isImg:function(str){

@@ -231,10 +231,10 @@
             <div class="record_wordcon_div">
               <div style="flex: 1"></div>
               <div class="record_con_div3 lackCard" @click="go_absence(item)">
+                
                 <a v-if="item.absenceApplyState!='申请补卡'" :class="item.absenceApplyState=='已通过'?'success':''">
                   {{item.absenceApplyState | absenceState}}
                 </a>
-                
 
                 <span style="color:#609ef7">
                   {{item.absenceApplyState}} >
@@ -368,13 +368,14 @@
         this.topdate = myyear + '年' + mymonth + '月'
       },
       go_absence(item){
-          if(item.type==='0'){
+        console.log(11)
+          if(item.applyType==='0'){
                 window.location.href = "epipe://?&mark=leaveDetails&_id="+item.applyId
-          }else if(item.type==='3'){//公出
+          }else if(item.applyType==='3'){//公出
                 window.location.href = "epipe://?&mark=goOutWorkDetails&_id="+item.applyId
-          }else if(item.type === '4'){ //出差
+          }else if(item.applyType === '4'){ //出差
                 window.location.href = "epipe://?&mark=tripDetails&_id="+item.applyId
-          }else if(item.type === '11'){ //补卡
+          }else if(item.applyType === '11'){ //补卡
               if(item.applyId){
                 window.location.href = "epipe://?&mark=absenceDetails&_id="+item.applyId
               }else{
@@ -389,6 +390,10 @@
       mydate = new Date()
       this.dateArrray = commonways(mydate)
       this.topdate = myyear + '年' + mymonth + '月'
+
+      window["recordUpdate"] = () => {
+        get_record(that, new Date())
+      }
       get_record(that, new Date())
     },
     filters:{

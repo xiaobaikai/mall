@@ -1,9 +1,19 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+
+import homerouters from "./homeRouter.js"
+import workrouters from "./workRouter.js"
+import oarouters from "./oaRouter.js"
+
+let routeData = new Set([...workrouters,...homerouters,...oarouters]);
+
+// console.log(...routeData)
+
 Vue.use(Router)
 const Home = r => require.ensure([], () => r(require('@/page/home/home.vue')), 'group-foo')
 const Work = r => require.ensure([], () => r(require('@/page/work/works.vue')), 'group-foo')
-const NeatenWork = r => require.ensure([], () => r(require('@/page/work/neatenWork.vue')), 'group-foo')
+
+// const NeatenWork = r => require.ensure([], () => r(require('@/page/work/neatenWork.vue')), 'group-foo')
 const AddWork = r => require.ensure([], () => r(require('@/page/work/addWork.vue')), 'group-foo')
 const Find = r => require.ensure([], () => r(require('@/page/find/find.vue')), 'group-foo')
 const User = r => require.ensure([], () => r(require('@/page/user/User.vue')), 'group-foo')
@@ -17,6 +27,7 @@ const Newsdetail = r => require.ensure([], () => r(require('@/page/home/newsdeta
 const Nologin = r => require.ensure([], () => r(require('@/page/work/nologin.vue')), 'group-foo')
 const Agreement = r => require.ensure([], () => r(require('@/page/user/registertext.vue')), 'group-foo')
 const Registertext = r => require.ensure([], () => r(require('@/page/user/agreement.vue')), 'group-foo')
+
 const Help = r => require.ensure([], () => r(require('@/page/user/help.vue')), 'group-foo')
 const Footprint = r => require.ensure([], () => r(require('@/page/work/footprint.vue')), 'group-work')
 const Checkmap = r => require.ensure([], () => r(require('@/page/work/checkmap.vue')), 'group-work')
@@ -105,10 +116,6 @@ const StoreClass = r => require.ensure([], () => r(require('@/page/mall/store/St
 const StoreInfo = r => require.ensure([], () => r(require('@/page/mall/store/StoreInfo.vue')), 'mall-store')
 
 const Affairs = r => require.ensure([], () => r(require('@/page/work/affairs.vue')), 'group-work')
-const Leave = r => require.ensure([], () => r(require('@/page/work/leave.vue')), 'group-work')
-const LeaveDetails = r => require.ensure([], () => r(require('@/page/work/leaveDetails.vue')), 'group-work')
-const LetterOfRequest = r => require.ensure([], () => r(require('@/page/work/letterOfRequest.vue')), 'group-work')
-const LeOfReDetails = r => require.ensure([], () => r(require('@/page/work/leOfReDetails.vue')), 'group-work')
 const Option= r => require.ensure([], () => r(require('@/page/work/option.vue')), 'group-work')
 const Opinion = r => require.ensure([], () => r(require('@/page/work/opinion.vue')), 'group-work')
 const Market = r => require.ensure([], () => r(require('@/page/home/market.vue')), 'group-foo')
@@ -162,14 +169,13 @@ const OaSearch = r => require.ensure([], () => r(require('@/page/work/oa/oaSearc
 const CompanyWall = r => require.ensure([], () => r(require('@/page/work/companyWall.vue')), 'group-work')
 const CompanyWallList = r => require.ensure([], () => r(require('@/page/work/companyWallList.vue')), 'group-work')
 const Car = r => require.ensure([], () => r(require('@/page/work/oa/car.vue')), 'group-work')
-<<<<<<< HEAD
 const Employee = r => require.ensure([], () => r(require('@/page/work/oa/employee.vue')), 'group-work')
 const EmployeeDetails = r => require.ensure([], () => r(require('@/page/work/oa/employeeDetails.vue')), 'group-work')
-=======
 const CarDetails = r => require.ensure([], () => r(require('@/page/work/oa/carDetails.vue')), 'group-work')
-const Recruitment = r => require.ensure([], () => r(require('@/page/work/oa/recruitment.vue')), 'group-work')
->>>>>>> 9b1409218bdcc0d08d37c3e5c43b67b555a631a9
 const ArticleDetails = r => require.ensure([], () => r(require('@/page/work/articleDetails.vue')), 'group-work')
+const Agenda = r => require.ensure([], () => r(require('@/page/work/schedule/agenda.vue')), 'group-work')
+
+
 
 
 export default new Router({
@@ -556,16 +562,6 @@ export default new Router({
       component: Affairs
     },
     {
-      path: '/leave',  //请假
-      component: Leave,
-      meta: {keepAlive: true}
-    },
-    {
-      path: '/leaveDetails',  //请假详情
-      component: LeaveDetails,
-      meta: {keepAlive: true}
-    },
-    {
       path: '/opinion',  //拒绝理由
       component: Opinion
     },
@@ -608,16 +604,6 @@ export default new Router({
     {
       path:'/myCollection', //我的收藏
       component : MyCollection
-    },
-    {
-      path:'/letterOfRequest', //请示函
-      component : LetterOfRequest,
-      meta: {keepAlive: true}
-    },
-    {
-      path:'/leOfReDetails', //请示函详情
-      component : LeOfReDetails,
-      meta: {keepAlive: true}
     },
     {
       path:'/deliverExplain',//转交备注
@@ -786,10 +772,11 @@ export default new Router({
     },{
       path:'/waitPay', //待付款
       component:WaitPay,
-    },{
-      path:'/neatenWork',
-      component:NeatenWork
     },
+    // {
+    //   path:'/neatenWork',
+    //   component:NeatenWork
+    // },
     ,{
       path:'/addWork',
       component:AddWork
@@ -804,29 +791,28 @@ export default new Router({
       component:Car,
 		  meta: {keepAlive: true}
     },{
-<<<<<<< HEAD
-      path:'/employee',
+      path:'/employee',//用人
       component:Employee,
       meta: {keepAlive: true}
     },{
       path:'/employeeDetails',
       component:EmployeeDetails,
       meta: {keepAlive: true}
-=======
-		  path:'/carDetails',//用车详情
+    },{
+      path:'/carDetails',//用车详情
 		  component:CarDetails,
 		  meta: {keepAlive: true}
 	  },{
-      path:'/recruitment',
-      component:Recruitment
->>>>>>> 9b1409218bdcc0d08d37c3e5c43b67b555a631a9
-    },{
       path:'/articleDetails',
       component:ArticleDetails
-    }
-    ,{
+    },{
       path:'/login',
       component:Login
+    },{
+      path:'/agenda',
+      component:Agenda,
     },
-  ]
+    ...routeData
+  ],
 })
+

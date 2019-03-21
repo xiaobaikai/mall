@@ -4,6 +4,7 @@
         :bgcolor = colors
         title='审批意见'
         ></TopHead>
+        <div style="height:0.59rem;"></div>
         <div class="main">
             <div class="content">
                 <textarea :placeholder="placeholder" v-model="textVal" maxlength="500"></textarea>
@@ -97,7 +98,9 @@ export default {
                     }],
                 }).then((res)=>{ 
                         if(res.data.h.code==200){
+                            
                             window.location.href = "epipe://?&mark=workUpdate";
+
                             if(that.$route.query.pageType=='consent'){
                                 that.$toast('审批通过!')
                             }else{
@@ -105,7 +108,8 @@ export default {
                             }
                             setTimeout(()=>{
                                 window.location.href = "epipe://?&mark="+that.$route.query.typeName+"Details&_id="+that.id+'&data='+JSON.stringify({text:1});
-                            },500) 
+                            },200) 
+
                         }else{
                             that.$toast(res.data.h.msg)
                         }
@@ -139,7 +143,6 @@ export default {
 
 <style lang="stylus" scoped>
     .main{
-        margin-top 0.59rem;
         padding 0 0.15rem;
     }
     .content{

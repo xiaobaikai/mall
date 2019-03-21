@@ -11,13 +11,31 @@
         <div style="margin-top:0.59rem">
 
             <div class="menu-item">
-                    <p class="item-title"> <i></i> <span>常用应用</span>  </p>
+                    <p class="item-title"> <i></i> <span>常用应用</span> <a class="manage" @click="addWork">添加</a> </p>
                     <ul>
-                         <li>
+                        <li >
                          <svg style="font-size: 0.33rem;"  class="icon img" aria-hidden="false">
-                            <use xlink:href="#icon-jiyao"></use>
+                            <use xlink:href="#icon-daibanshiyi"></use>
                         </svg>
-                        <span>我的审批</span>
+                        <span>待办事宜</span>
+                    </li>
+                    <li>
+                         <svg style="font-size: 0.33rem;"  class="icon img" aria-hidden="false">
+                            <use xlink:href="#icon-yiban"></use>
+                        </svg>
+                        <span>已办事宜</span>
+                    </li>
+                    <li >
+                         <svg style="font-size: 0.33rem;"  class="icon img" aria-hidden="false">
+                            <use xlink:href="#icon-chaosong"></use>
+                        </svg>
+                        <span>我的抄送</span>
+                    </li>
+                     <li>
+                         <svg style="font-size: 0.33rem;"  class="icon img" aria-hidden="false">
+                            <use xlink:href="#icon-wodeshenqing-mian"></use>
+                        </svg>
+                        <span>我的申请</span>
                     </li>
                     <li>
                          <svg style="font-size: 0.33rem;"  class="icon img" aria-hidden="false">
@@ -32,7 +50,7 @@
                     </ul>
             </div>
 
-            <div class="menu-item" v-for="(item,index) in workData" :key="index" v-if="item.id>-1">
+            <div class="menu-item" v-for="(item,index) in workData" :key="index" v-if="index!=0&&item.apps.length&&item.show=='show'">
                     <p class="item-title"> <i></i> <span>{{item.name}}</span> <a class="manage" @click="hide(item)" v-if="isRedact">{{item.hideFlag=='0'?'隐藏':'显示'}}</a></p>
                     <ul :class="item.hideFlag==='1'?'opacity':''">
                         <li v-for="(c,i) in item.apps" :key="i" @click="go_jump(c)"  v-if="c.delFlag!='1'">
@@ -81,6 +99,7 @@
                 _this.workData = res.data.b.appCategorys;
                 _this.oldData = JSON.parse(JSON.stringify(this.workData))
                 _this.delData = res.data.b.delApps;
+                _this.isHide();
             })
         },
 
@@ -103,6 +122,8 @@
             delApps(arr,item,index){
                 item.delFlag = '1';
                 this.delData.push(item)
+                this.isHide();
+
             },
             addApps(data,index){
                 this.workData.forEach(element => {
@@ -112,8 +133,18 @@
                             }
                         })
                 });
-
                 this.delData.splice(index,1)
+                this.isHide();
+            },
+            isHide(){
+                this.workData.forEach(el=>{
+                    el.show = 'hide'
+                    el.apps.forEach(item=>{
+                        if(item.delFlag=='0'){
+                            el.show = 'show'
+                        }
+                    })
+                })
             },
             finish(){
                 // let arr = [];
@@ -151,6 +182,9 @@
                 }).then((res)=>{ 
                     console.log(res)
                 })
+            },
+            addWork(){
+                this.$router.push({path:'/addWork',query:{type:'add'}})
             }
 
         },

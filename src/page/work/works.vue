@@ -20,10 +20,18 @@
                 </div>
 
                 <div class="infor-msg">
-                    <div>
+                    <div style="display:flex">
+                        <div style="flex:1">
                         <p class="infor-advertising">{{slogans.firstLine}}</p>
-                        {{token}}
-                        <p class="infor-date">{{dateString}}</p>
+                            <p class="infor-date">{{dateString}}</p>
+                            {{token}}
+                        </div>
+                        <div class="msg-box" @click="message">
+                            <svg style="width: 0.27rem;height: 0.27rem" class="icon" aria-hidden="false">
+                                <use xlink:href="#icon-gonggao"></use>
+                            </svg>
+                            <span>公告</span>
+                        </div>
                     </div>
 
                     <div>
@@ -34,73 +42,117 @@
             </div>
 
             <div class="menu">
-                <div class="menu-lf">
+                <div class="menu-lf" @click="go_record">
                     <p class="h-title">今日考勤</p>
                     <p class="menu-lf-date">{{toDayCheck!=''?toDayCheck:'未打卡'}}</p>
-                    <a @click="go_record">去打卡</a>
+                    <a >去打卡</a>
                     <span>不要忘记打下班卡哦</span>
                 </div>
 
                 <div class="menu-rg">
-                    <div class="menu-rg-work">
-                        <div>
-                            <span>{{signTotal}}</span>
-                            <p>本月出勤</p>
+                    <div>
+                        <div  @click="businessCircle" class="menu-rg-work">
+                            <svg style="width: 0.27rem;height: 0.27rem;margin-top:0.15rem;" class="icon" aria-hidden="false">
+                                <use xlink:href="#icon-qiyequan"></use>
+                            </svg>
+                            <p>企业圈</p>
+                        </div>
+
+                        <div @click="agenda" style="border-right:none">
+                            <svg style="width: 0.27rem;height: 0.27rem;margin-top:0.15rem;" class="icon" aria-hidden="false">
+                                <use xlink:href="#icon-richeng1"></use>
+                            </svg>
+                            <p>日程{{bbbb}}</p>
+                        </div>
+                    </div>
+                    <div >
+                        <div class="menu-rg-company" @click="companyWall" style="border-bottom:none;">
+                            <svg style="width: 0.27rem;height: 0.27rem;margin-top:0.15rem;" class="icon" aria-hidden="false">
+                                <use xlink:href="#icon-gongsiqiang"></use>
+                            </svg>
+                        <span class="num company-num" v-if="companyCount">{{companyCount}}</span>
+
+                            <p>公司墙</p>
+                        </div>
+                        <div @click="exercise" style="border-right:none;border-bottom:none;">
+                            <svg style="width: 0.27rem;height: 0.27rem;margin-top:0.15rem;" class="icon" aria-hidden="false">
+                                <use xlink:href="#icon-yundong"></use>
+                            </svg>
+                            <p>运动</p>
                         </div>
                     </div>
 
-                    <div class="menu-rg-company" @click="companyWall">
-                        <svg style="width: 0.27rem;height: 0.27rem;margin-top:0.15rem;" class="icon" aria-hidden="false">
-                            <use xlink:href="#icon-gongsiqiang1"></use>
-                        </svg>
-                        <p>公司墙</p>
-                    </div>
                 </div>
             </div>
         </section>
 
         <div class="menu-list">
             <div class="menu-item"  :key="index">
-                <p class="item-title"> <i></i> <span>常用应用</span>  <a class="manage" @click="manage">管理</a> </p>
+                <p class="item-title"> <i></i> <span>测试</span>  <a class="manage" @click="manage">管理</a> </p>
                 <ul>
-                    <li  @click="a()">
-                         <svg style="font-size: 0.33rem;"  class="icon img" aria-hidden="false">
-                            <use xlink:href="#icon-jiyao"></use>
-                        </svg>
-                        <span>我的审批</span>
-                    </li>
-                    <li @click="b()">
+                    <li @click="meal()">
                          <svg style="font-size: 0.33rem;"  class="icon img" aria-hidden="false">
                             <use xlink:href="#icon-gongzuohuibao"></use>
+                        </svg>
+                        <span>加班</span>
+                    </li>
+                    <li @click="document()">
+                         <svg style="font-size: 0.33rem;"  class="icon img" aria-hidden="false">
+                            <use xlink:href="#icon-gongzuohuibao"></use>
+                        </svg>
+                        <span>调岗</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="menu-item"  :key="index">
+                <p class="item-title"> <i></i> <span>常用应用</span>  <a class="manage" @click="manage">管理</a> </p>
+                <ul>
+                    <li  @click="unfinishAffair()">
+                         <svg style="font-size: 0.33rem;"  class="icon img" aria-hidden="false">
+                            <use xlink:href="#icon-daibanshiyi"></use>
+                        </svg>
+                        <span class="num" v-if="oaCount">{{oaCount}}</span>
+                        <span>待办事宜</span>
+                    </li>
+                    <li  @click="finishAffair()">
+                         <svg style="font-size: 0.33rem;"  class="icon img" aria-hidden="false">
+                            <use xlink:href="#icon-yiban"></use>
+                        </svg>
+                        <span>已办事宜</span>
+                    </li>
+                    <li  @click="copy()">
+                         <svg style="font-size: 0.33rem;"  class="icon img" aria-hidden="false">
+                            <use xlink:href="#icon-chaosong"></use>
+                        </svg>
+                        <span class="num" v-if="copyCount">{{copyCount}}</span>
+                        <span>我的抄送</span>
+                    </li>
+                    <li @click="myApply()">
+                         <svg style="font-size: 0.33rem;"  class="icon img" aria-hidden="false">
+                            <use xlink:href="#icon-wodeshenqing-mian"></use>
                         </svg>
                         <span>我的申请</span>
                     </li>
-                     <li  @click="c()">
-                         <svg style="font-size: 0.33rem;"  class="icon img" aria-hidden="false">
-                            <use xlink:href="#icon-jiyao"></use>
-                        </svg>
-                        <span>用车</span>
-                    </li>
-                    <li @click="d()">
+                     <li @click="workReport()">
                          <svg style="font-size: 0.33rem;"  class="icon img" aria-hidden="false">
                             <use xlink:href="#icon-gongzuohuibao"></use>
                         </svg>
-                        <span>用人</span>
+                        <span>工作汇报</span>
                     </li>
-                    <li v-for="(c,i) in workData[0].apps" :key="i" >
+             
+                    <li v-for="(c,i) in workData[0].apps" @click="go_jump(c)" :key="i" >
                         <img :src="c.icon"/>
                         <span>{{c.name}}</span>
                     </li>
-                    <li @click="go_neatenWork" v-if="workData[0].apps.length<4">
+                    <li @click="go_neatenWork" v-if="workData[0].apps.length<3">
                          <svg style="font-size: 0.33rem;"  class="icon img" aria-hidden="false">
                             <use xlink:href="#icon-tianjiarenyuan"></use>
                         </svg>
-                        
                         添加
                     </li>
                 </ul>
             </div>
-            <div class="menu-item" v-for="(item,index) in workData" :key="index" v-if="item.id>-1&&item.hideFlag!='1'">
+            <div class="menu-item" v-for="(item,index) in workData" :key="index" v-if="index!=0&&item.hideFlag!='1'&&item.apps.length&&item.show=='show'">
                 <p class="item-title"> <i></i> <span>{{item.name}}</span></p>
                 <ul>
                     <li v-for="(c,i) in item.apps" :key="i" @click="go_jump(c)" v-if="c.delFlag!='1'">
@@ -114,6 +166,7 @@
 </template>
 
 <script>
+let aaaa =1,bbbb=1;
     function escape2Html(str){
         if(str==''||!str) return ''
         var arrEntities={'lt':'<','gt':'>','nbsp':' ','amp':'&','quot':'"','ldquo':'"','rdquo':'"','mdash':'_'};
@@ -133,6 +186,9 @@
                signTotal:{}, //考勤统计
                toDayCheck:'', //今日考勤
                token:'',
+               oaCount:0,
+               copyCount:0,
+               companyCount:0,
                payShow:false,
                mask:true,
                noNetwork:false,
@@ -143,9 +199,12 @@
             let that = this;
 
              window["workUpdate"] = () => {
+                that.getCount()
                 that.get_work();
                 that.getTotal();//获取考勤总次数
                 that.today();//获取今日考勤
+                that.getCompanyCount();
+                that.token = that.Service.getCookie('auth_token')
             }
 
             this.setToken(this.Service.getCookie('auth_token'))
@@ -154,6 +213,8 @@
             this.organization(); //获取是否有组织
             this.slogan(); // 获取标语
             this.getInfor(); //
+            that.getCount()
+            that.getCompanyCount();
             this.getUserInfor(); //获取用户名等信息
             this.getTotal();//获取考勤总次数
             this.today();//获取今日考勤
@@ -164,30 +225,82 @@
             ...mapMutations([
                 'setToken',
             ]),
-            a(){
+            unfinishAffair(){
                  window.location.href = "epipe://?&mark=unfinishAffair";
             },
-            b(){
+            finishAffair(){
+                 window.location.href = "epipe://?&mark=finishAffair";
+            },
+            copy(){
+                 window.location.href = "epipe://?&mark=copy";
+            },
+            myApply(){
                  window.location.href = "epipe://?&mark=myApply";
             },
-            c(){
-                 window.location.href = "epipe://?&mark=car";
+            meal(){
+                 window.location.href = "epipe://?&mark=overtime";
             },
-            d(){
-                 window.location.href = "epipe://?&mark=employee";
+            document(){
+                 window.location.href = "epipe://?&mark=changeposition";
+            },
+            workReport(){
+                 window.location.href = "epipe://?&mark=workReport";
+            },
+            agenda(){
+                 window.location.href = "epipe://?&mark=agenda";
+            },
+            businessCircle(){
+                window.location.href = "epipe://?&mark=enterprise"
+            },
+            exercise(){
+                 window.location.href = "epipe://?&mark=exercise";
+            },
+            getCount(){
+                let that = this;
+                this.axios.get('/work/wait/list').then(function(res){
+                    that.oaCount = res.data.b.data[0].count 
+                 }).catch(function(error){
+                    //  that.token = error
+                 })
+
+                //  this.axios.get('/work/copy/list').then(function(res){
+                //     that.copyCount = res.data.b.data[0].count 
+                //  })
+
+            },
+            getCompanyCount(){
+                let that = this;
+                this.axios.get('/wall/articleorthirdcategory/totalunread').then(function(res){
+                    that.companyCount = res.data.b 
+
+                 })
             },
             go_jump(obj){ //应用跳转
-                window.location.href = obj.url;
+                if(obj.url.indexOf('token=')>-1){
+                    window.location.href = obj.url+this.token;
+                    return;
+                }else if(obj.url.indexOf('mark=landscape')>-1){
+                    window.location.href = obj.url
+                    return;
+                }
+                window.location.href = obj.url+'&data='+JSON.stringify({displayType:obj.displayType,shareFlag:obj.shareFlag,collectFlag:obj.collectFlag,name:obj.name});
+            },
+            total(){
+                 window.location.href = "epipe://?&mark=total";
             },
             manage(){ //管理
                 // this.$router.push('/neatenWork')
                  window.location.href = "epipe://?&mark=neatenWork";
+            },
+            message(){
+                 window.location.href = "epipe://?&mark=message";
             },
             get_work(){
                 let _this = this;
 
                 this.axios.get('/work/app/list').then(res=>{
                     _this.workData = res.data.b.appCategorys;
+                    _this.isHide()
                 })
             },
             go_neatenWork(){
@@ -208,6 +321,16 @@
                     this.slogans.secondLine = escape2Html(res.data.b.secondLine);
                 }
                 });
+            },
+            isHide(){
+                this.workData.forEach(el=>{
+                    el.show = 'hide'
+                    el.apps.forEach(item=>{
+                        if(item.delFlag=='0'){
+                            el.show = 'show'
+                        }
+                    })
+                })
             },
              reload(){ //刷新
                 this.mask = true;
@@ -260,14 +383,14 @@
                 if(res.data.h.code == 200){
                     let obj = res.data.b;
                     if(obj.type == 1 || obj.type == 2){  //待审核，跳转到待审核页面
-                    this.$router.push({path:'/pending'});
+                        this.$router.push({path:'/pending'});
                     }else if(obj.type == 3){  //无组织，跳转到申请加入组织页面
-                    this.$router.push({path:'/Nologin'});
+                        this.$router.push({path:'/Nologin'});
                     }
                     if(obj.menuType.indexOf('1')>-1){ //显示e付款
-                    this.payShow = true;
+                        this.payShow = true;
                     }
-                    this.mask = false;  //有组织，展示工作台
+                        this.mask = false;  //有组织，展示工作台
             
                 }else{
                     this.mask = false;
@@ -285,6 +408,42 @@
 </script>
 
 <style scoped lang="stylus">
+
+
+ .num{
+    width 0.16rem;
+    color #fff !important;
+    height 0.16rem;
+    line-heigth 0.15rem;
+    text-algin center;
+    position: absolute;
+    top: -0.1rem;
+    right: 0;
+    font-size 0.1rem
+    background-color: #fd545c;
+    border-radius 50%;
+    color #fff;
+    padding 0.01rem;
+}
+
+.company-num{
+     top:0.05rem;
+     right:0.05rem;
+ }
+
+.msg-box{
+    padding-right 0.02rem;
+    float:right;
+
+    svg{
+        display:block;
+    }
+
+    span{
+            font-size: 0.12rem;
+            color: #cfe5db;
+    }
+}
 
 .mask{
     position: fixed;
@@ -312,7 +471,7 @@
 
     .infor{
         color #fff
-        padding-left 0.15rem;
+        padding 0 0.15rem;
         padding-top 0.35rem;
 
         &-user{
@@ -335,7 +494,7 @@
 
         &-advertising{
             font-size 0.17rem;
-            letter-spacing 0.02rem;
+            letter-spacing 0.01rem;
             margin-bottom 0.07rem;
         }
 
@@ -350,7 +509,8 @@
         height 1.7rem;
         box-sizing border-box;
         background-color #fff
-        border-radius 0.08rem;
+        border-top-left-radius 0.08rem;
+        border-top-right-radius 0.08rem;
         display flex;
         text-align center
         position absolute 
@@ -361,7 +521,7 @@
 
         &-lf{
             border-right 0.01rem solid #e6e6e6;
-            width 1.95rem;
+            width 1.75rem;
 
             .h-title{
                 margin-top 0.2rem;
@@ -401,19 +561,26 @@
             flex-direction:column;
 
             >div{
-                width 100%;
+                display flex
                 flex 1;
+                width 100%;
+
+                >div{
+                    flex 1;
+                    border-bottom 0.01rem solid #e6e6e6;
+                    border-right 0.01rem solid #e6e6e6;
+                    position relative;
+                }
             }
 
             &-work{
-                border-bottom 0.01rem solid #e6e6e6;
 
                 span{
                     display inline-block
                     font-size 0.22rem;
                     color #1bb36f;
                     font-weight bold;
-                    margin-top 0.2rem;
+                    margin-top:0.15rem;
                 }
             }
         }
@@ -421,6 +588,7 @@
 
     .menu-list{
         margin-top 1.2rem;
+        padding-bottom 0.2rem;
     }
 
     .menu-item{
@@ -467,10 +635,11 @@
                 width 25%;
                 text-align center;
                 margin-top 0.15rem;
+                position relative
             }
 
             span{
-                fon-size 0.14rem;
+                font-size 0.14rem;
                 color #333
             }
         }

@@ -363,31 +363,10 @@
         //   hasOwnProperty
             this.datalist[index].offices[num].open = !this.datalist[index].offices[num].open 
       },
-      fors(){
-   
-            for (let i = 0; i < this.datalist.offices.length; i++) {
-                    if(this.datalist.offices[i].offices.length!=0){
-                        
-                        for (let j = 0; j < this.datalist.offices[i].offices.length; j++) {
-                      
-                            for (let a = 0; a < this.datalist.offices[i].staff.length; a++) {
-                              
-                               firstF(this.datalist.offices[i].offices[j].staff[a])
-                            }
-                        }
-                        
-                    }else{
-
-                      for (let a = 0; a < this.datalist.offices[i].staff.length; a++) {
-
-                            secondF(this.datalist.offices[i].staff[a])
-                    }
-                  }  
-              }
-      },
       chose_child(index,num,el,c){     
         let array = []
     
+
         this.datalist[index].offices[num].staff[c].mark_chose = !this.datalist[index].offices[num].staff[c].mark_chose  //设置这个人是否被选中
       
           
@@ -401,12 +380,15 @@
                         }
                     }
               }
-
             this.peerData = array;
             this.peerData_man({
               index:this.peArrIndex,
               array:this.peerData,
             })
+
+            if(this.$route.query.back){
+              window.history.back(-1)
+            }
       },
       open_all(){
         this.all_bool = !this.all_bool
@@ -476,6 +458,10 @@
             that.is_search = false
             that.seach_list_man = []
           }, 300)
+
+          if(this.$route.query.back){
+              window.history.back(-1)
+            }
         }else{
           that.seach_list_man[index].mark_chose = false;
         }
@@ -516,7 +502,7 @@
       // this.axios.get('https://apps.epipe.cn/member/v3/organ/addressbook',{
       this.axios.get('/organ/addressbook',{
         params:{
-          showGroup : true,
+          showGroup : false,
         }
       }).then(function (data) {
         if(data.data.h.code == 200) {

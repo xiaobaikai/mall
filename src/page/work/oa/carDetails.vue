@@ -5,8 +5,6 @@
       bgcolor = '#0fc37c'
       :title=title
       v-on:history_back="history_back_click"
-      :is_relative_approva = out_work_details_id
-      v-on:show_edit = "getOutWorkList"
     ></TopHead>
     <div class="base-content">
       <div class="content">
@@ -42,7 +40,7 @@
             <p>{{dataObj.carType}}</p>
           </div>
           <div class="infor-box">
-            <span>数量（量）</span>
+            <span>数量（辆）</span>
             <p>{{dataObj.carNum}}</p>
           </div>
           <div class="infor-box">
@@ -54,19 +52,12 @@
             <p>{{dataObj.endTime}}</p>
           </div>
           <div class="infor-box" v-if="dataObj.peerNames">
-            <span>同行人员</span>
+            <span>随行人员</span>
             <p>{{dataObj.peerNames|nameFor}}</p>
           </div>
           <div class="infor-box">
             <span>用车事由</span>
             <p>{{dataObj.carReason}}</p>
-          </div>
-        </div>
-        
-        <div class="styles" v-if="dataObj.applyContent!=''">
-          <div class="infor-box">
-            <span class="contractDescTitle">附加内容</span>
-            <p style="margin-top:0.1rem;" v-html="dataObj.applyContent"></p>
           </div>
         </div>
         
@@ -180,7 +171,6 @@
 				isShow:false,
 				title:'',
 				myself:false,
-				out_work_details_id: {"isShow":true,"title":"签到记录",color:'#0fc37c'},
 				amount:0,
 				isBackout:false,
 				
@@ -199,7 +189,7 @@
 		methods :{
 			...mapMutations(['change_man','approver_man']),
 			refuse:function(){
-				this.$router.push({path:'/opinion',query:{id:this.dataObj.carApplyId,typeName:'goOutWork',applyType:12,color:'#0fc37c'}})
+				this.$router.push({path:'/opinion',query:{id:this.dataObj.carApplyId,typeName:'car',applyType:12,color:'#0fc37c'}})
 			},
 			history_back_click:function(){
 				if(location.href.indexOf('goWork=0')>0){
@@ -211,10 +201,10 @@
 			deliverTo(){ //转交
 				let newApprStr = this.appAndCopy(this.newAppr,'auditUserId')
 				let newCopy = this.appAndCopy(this.newCopy)
-				this.$router.push({path:'/imchoices',query:{id:this.dataObj.carApplyId,bgcolor:'#0fc37c', receiverIds:newCopy,careOf:true,typeName:'goOutWork',applyType:12,auditerIds:newApprStr,num:1}})
+				this.$router.push({path:'/imchoices',query:{id:this.dataObj.carApplyId,bgcolor:'#0fc37c', receiverIds:newCopy,careOf:true,typeName:'car',applyType:12,auditerIds:newApprStr,num:1}})
 			},
 			resubmit(){ //再次提交
-				this.$router.replace({path:'/goOutWork',query:{carApplyId:this.dataObj.carApplyId,resubmit:1}})
+				this.$router.replace({path:'/car',query:{carId:this.dataObj.carApplyId,resubmit:1}})
 			},
 			urge(){ //催办
 				this.isBackout = false;
@@ -232,7 +222,7 @@
 				})
 			},
 			approveBack(){ //退回
-				this.$router.push({path:'/approveBack',query:{id:this.dataObj.carApplyId,typeName:'goOutWork',applyType:12,color:'#0fc37c'}})
+				this.$router.push({path:'/approveBack',query:{id:this.dataObj.carApplyId,typeName:'car',applyType:12,color:'#0fc37c'}})
 			},
 			moreBtn(){ //更多
 				this.isShow = true;
@@ -242,7 +232,7 @@
 				let that = this;
 				let copyStr =  this.appAndCopy(this.newCopy)
 				let apprStr = this.appAndCopy(this.newAppr,'auditUserId')
-				this.$router.push({path:'/opinion',query:{id:this.dataObj.carApplyId,receiverIds:copyStr,auditerIds:apprStr,color:'#0fc37c',typeName:'goOutWork',applyType:12,pageType:'consent'}})
+				this.$router.push({path:'/opinion',query:{id:this.dataObj.carApplyId,receiverIds:copyStr,auditerIds:apprStr,color:'#0fc37c',typeName:'car',applyType:12,pageType:'consent'}})
 			},
 			appAndCopy:function(arr,type){
 				if(!type) type='userId'
@@ -269,7 +259,7 @@
 						
 						setTimeout(()=>{
 							//   location.reload()
-							window.location.href = "epipe://?&mark=goOutWorkDetails&_id="+that.dataObj.carApplyId+'&data='+JSON.stringify({text:1});;
+							window.location.href = "epipe://?&mark=carDetails&_id="+that.dataObj.carApplyId+'&data='+JSON.stringify({text:1});;
 						},500)
 					}
 				})
@@ -316,15 +306,6 @@
 			go_user(id){
 				window.location.href = "epipe://?&mark=userinfo&_id="+id;
 			},
-			unScroll(){
-				var top = $(document).scrollTop();
-				$(document).on('scroll.unable',function (e) {
-					$(document).scrollTop(top);
-				})
-			},
-			removeUnScroll(){
-				$(document).unbind("scroll.unable");
-			},
 			getOutWorkList(){
 				this.$router.push({ path:'footprint', query: { hasHead: true, taskId: this.carApplyId,color:'#0fc37c'}})
 			}
@@ -335,7 +316,7 @@
 		mounted:function(){
 			
 			let that = this;
-			this.carApplyId = this.$route.query.carApplyId
+			this.carApplyId = this.$route.query.carId
 			let pusthId = this.$route.query.pushId
 			
 			this.axios.get('/work/car/info?carApplyId='+this.carApplyId+'&pushId='+pusthId).then(function(res){

@@ -4,6 +4,7 @@
         :bgcolor=color
         title='退回'
         ></TopHead>
+      <div style="height:0.59rem;"></div>
         <div class="main">
             <div class="content">
                 <div class="input" style="margin-bottom:0.3rem" @click="selectType=5">
@@ -91,7 +92,7 @@ export default {
                         window.location.href = "epipe://?&mark=workUpdate";
                         setTimeout(()=>{
                              window.location.href = "epipe://?&mark=goWork"
-                        },200)      
+                        },300)      
                     }else{
                         that.$toast(res.data.h.msg)
                     }
@@ -117,7 +118,6 @@ export default {
 
 <style lang="stylus" scoped>
     .main{
-        margin-top 0.59rem;
         padding 0 0.15rem;
     }
     .content{

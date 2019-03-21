@@ -2,7 +2,7 @@
     <section class="reimburse">
         <TopHead
         mark='mark'
-        bgcolor = '#0fc37c'
+        bgcolor = '#609df6'
         :title=title
         v-on:history_back="history_back_click"
          ></TopHead>
@@ -57,6 +57,8 @@
                     <p>{{dataObj.employeeReason}}</p>
                 </div>
             </div>
+            <p class="content-title">应聘条件</p>
+
             <div class="styles infor">
                 <div class="infor-box">
                     <span>性&emsp;&emsp;别 </span>
@@ -78,15 +80,15 @@
                     <span>专&emsp;&emsp;业 </span>
                     <p>{{dataObj.major}}</p>
                 </div>
-                <div class="infor-box">
+                <div v-if="dataObj.qualifications" class="infor-box">
                     <span>资格证书 </span>
                     <p>{{dataObj.qualifications}}</p>
                 </div>
-                <div class="infor-box" >
+                <div v-if="dataObj.computerLevel" class="infor-box" >
                     <span style="letter-spacing:0.05rem">计算机 </span>
                     <p>{{dataObj.computerLevel}}</p>
                 </div>
-                <div class="infor-box">
+                <div v-if="dataObj.foreignLevel" class="infor-box">
                     <span>外语水平 </span>
                     <p>{{dataObj.foreignLevel}}</p>
                 </div>
@@ -94,7 +96,7 @@
                     <span>经验技能 </span>
                     <p>{{dataObj.skill}}</p>
                 </div>
-                <div class="infor-box">
+                <div v-if="dataObj.writings" class="infor-box">
                     <span>公文写作 </span>
                     <p>{{dataObj.writings}}</p>
                 </div>
@@ -102,11 +104,11 @@
                     <span>必要条件 </span>
                     <p>{{dataObj.condition}}</p>
                 </div>
-                <div class="infor-box">
+                <div v-if="dataObj.priority" class="infor-box">
                     <span>优先录用 </span>
                     <p>{{dataObj.priority}}</p>
                 </div>
-                <div class="infor-box">
+                <div v-if="dataObj.other" class="infor-box">
                     <span>其他要求 </span>
                     <p>{{dataObj.other}}</p>
                 </div>
@@ -125,7 +127,7 @@
              :refuseIndex = refuseIndex
              :newAppr = newAppr
              v-on:removeApp = "removeApp"
-             color="#0fc37c"
+             color="#609df6"
              :amount='amount'
 
              >
@@ -135,7 +137,7 @@
              :dataObj = dataObj
              :newCopy = newCopy
              v-on:remove = "removeCopy"
-             color="#0fc37c"
+             color="#609df6"
 
             >
             </Copy>
@@ -245,7 +247,7 @@
         methods :{
         ...mapMutations(['change_man','approver_man']),
             refuse:function(){
-                 this.$router.push({path:'/opinion',query:{id:this.dataObj.employeeApplyId,typeName:'employee',applyType:13,color:'#0fc37c'}})
+                 this.$router.push({path:'/opinion',query:{id:this.dataObj.employeeApplyId,typeName:'employee',applyType:13,color:'#609df6'}})
             },
             history_back_click:function(){
                     if(location.href.indexOf('goWork=0')>0){
@@ -257,17 +259,17 @@
             deliverTo(){ //转交
                 let newApprStr = this.appAndCopy(this.newAppr,'auditUserId')
                 let newCopy = this.appAndCopy(this.newCopy)
-                this.$router.push({path:'/imchoices',query:{id:this.dataObj.employeeApplyId,receiverIds:newCopy,careOf:true,typeName:'employee',applyType:13,bgcolor:'#0fc37c',auditerIds:newApprStr,num:1}})
+                this.$router.push({path:'/imchoices',query:{id:this.dataObj.employeeApplyId,receiverIds:newCopy,careOf:true,typeName:'employee',applyType:13,bgcolor:'#609df6',auditerIds:newApprStr,num:1}})
             },
             approveBack(){ //退回
-                 this.$router.push({path:'/approveBack',query:{id:this.dataObj.employeeApplyId,typeName:'employee',applyType:13,color:'#0fc37c'}})
+                 this.$router.push({path:'/approveBack',query:{id:this.dataObj.employeeApplyId,typeName:'employee',applyType:13,color:'#609df6'}})
             },
             consent:function(){
               let that = this;
                let copyStr =  this.appAndCopy(this.newCopy)
                let apprStr = this.appAndCopy(this.newAppr,'auditUserId')
 
-            this.$router.push({path:'/opinion',query:{id:this.dataObj.employeeApplyId,receiverIds:copyStr,auditerIds:apprStr,color:'#0fc37c',typeName:'employee',applyType:13,pageType:'consent'}})
+            this.$router.push({path:'/opinion',query:{id:this.dataObj.employeeApplyId,receiverIds:copyStr,auditerIds:apprStr,color:'#609df6',typeName:'employee',applyType:13,pageType:'consent'}})
                
             },
             resubmit(){ //再次提交
@@ -347,7 +349,7 @@
                 return arrs
             },
             go_imchoice:function(num){
-                this.$router.push({path: 'imchoices', query: {bgcolor:'#0fc37c',num:num}})
+                this.$router.push({path: 'imchoices', query: {bgcolor:'#609df6',num:num}})
             },
             removeCopy:function(index){
                 this.newCopy.splice(index, 1);
@@ -367,12 +369,12 @@
             let that = this;
             this.employeeId = this.$route.query.employeeId;
             let pushId = this.$route.query.pushId
-            
+
             this.axios.get('/work/employee/info?employeeApplyId='+this.employeeId+'&pushId='+pushId).then(function(res){
                 that.dataObj = res.data.b;
                 let arr=[];
                 that.accessory = that.accessoryFors(that.dataObj.accessory)
-                that.title = that.dataObj.username+'的借款申请'
+                that.title = that.dataObj.username+'的人员需求申请'
                 for(let i =0;i<that.dataObj.auditers.length;i++){   
                         if(that.dataObj.auditers[i].status=='2'){
                             that.leaveType = '0';  //已经拒绝
@@ -625,5 +627,10 @@
 
     body{
         background-color:#f80;
+    }
+    .content-title{
+        // text-indent:0.15rem;
+        margin-bottom:0.05rem;
+        color #609ef7
     }
 </style>

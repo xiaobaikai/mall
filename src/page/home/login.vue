@@ -81,15 +81,32 @@ function checkPhone(phone){
                 let that = this;
                 let keys = setInterval(res=>{
 
-                    if(that.s<1){
+                    if(that.s<2){
                         that.isGET = false;
+                        that.s=59;
                         clearInterval(keys)
+                        return;
                     }
                     that.s--;
 
                 },1000)
             },
             login(){
+
+                if(this.mobile==''){
+                    this.$toast('请输入手机号码')
+                    return
+                }else if(this.code==''){
+                    this.$toast('请输入验证码')
+                    return
+                }else if(this.password==''){
+                    this.$toast('请输入密码')
+                    return
+                }else if(!checkPhone(this.mobile)){
+                    this.$toast('请输入正确的手机号码')
+                    return
+                }
+
                 let that = this;
                 this.axios.post('/user/registry'+this.Service.queryString({
                     mobile:this.mobile,
@@ -98,17 +115,21 @@ function checkPhone(phone){
                     chkagreement:true,
                 })).then(res=>{
                     if(res.data.h.code==200){
-                        window.location.href = "epipe://?&mark=login"
+                        that.$toast('注册成功')
+                        setTimeout(()=>{
+                            window.location.href = "epipe://?&mark=go_login&_id="+that.mobile
+                        },700)
                     }else{
                         that.$toast(res.data.h.msg)
                     }
                 })
             },
             go_agreement(){
-                window.location.href = "epipe://?&mark=agreement"
+                window.location.href = "epipe://?&mark=registertext"
             },
             go_registertext(){
-                window.location.href = "epipe://?&mark=registertext"
+                window.location.href = "epipe://?&mark=agreement"
+
             },
         },
     }
@@ -180,7 +201,6 @@ function checkPhone(phone){
             -webkit-transform-origin: 0 0;
             transform-origin: 0 0;
         }
-
 
     h3{
         font-size 0.23rem;

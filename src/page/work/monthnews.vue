@@ -58,8 +58,8 @@
         v-on:text_change="text_change"
         :is_input=!has_journal
         maxlength="5000"
-        :work_value="journal_detail.workSummary?journal_detail.workSummary:''"
-        :work_text="journal_detail.workSummary?journal_detail.workSummary:''"
+        :work_value="journal_detail.workSummary?journal_detail.workSummary:work_value"
+        :work_text="journal_detail.workSummary?journal_detail.workSummary:work_value"
       ></WorkInput>
       <WorkInput
         placeholder="请在此处输入您的下月工作计划,限定5000字"
@@ -68,8 +68,8 @@
         v-on:text_change="text_change"
         :is_input=!has_journal
         maxlength="5000"
-        :work_value="journal_detail.nextPlan?journal_detail.nextPlan:''"
-        :work_text="journal_detail.nextPlan?journal_detail.nextPlan:''"
+        :work_value="journal_detail.nextPlan?journal_detail.nextPlan:next_work_value"
+        :work_text="journal_detail.nextPlan?journal_detail.nextPlan:next_work_value"
       ></WorkInput>
       <WorkInput
         v-on:text_change="text_change"
@@ -78,8 +78,8 @@
         maxlength="40"
         color="#0fc37c"
         placeholder="请输入您的备注~"
-        :work_value="journal_detail.remarks?journal_detail.remarks:''"
-        :work_text="journal_detail.remarks?journal_detail.remarks:''"
+        :work_value="journal_detail.remarks?journal_detail.remarks:mark_value"
+        :work_text="journal_detail.remarks?journal_detail.remarks:mark_value"
       ></WorkInput>
       <div class="accessory" v-if="!has_journal">
           <Accessory
@@ -102,6 +102,7 @@
         :data_list=chosed_list
         v-on:remove_item="remove_item"
         :types = '2'
+        hint =1
       ></CopeMan>
       <WorkButton
         v-if="!has_journal"
@@ -163,9 +164,9 @@
                 'Content-type': 'application/x-www-form-urlencoded'
             },
             data:{
-               workSummary: that.work_value,
-                nextPlan: that.next_work_value,
-                remarks: that.mark_value,
+               workSummary: that.work_value.replace(/\n/g, '<br/>'),
+                nextPlan: that.next_work_value.replace(/\n/g, '<br/>'),
+                remarks: that.mark_value.replace(/\n/g, '<br/>'),
                 reportType: 3,
                 id: that.journal_detail.id ? that.journal_detail.id : "",
                 reportTimeStr: that.reportTimeStr,
@@ -211,9 +212,10 @@
         that.URL = []
         that.work_value = ''
         that.mark_value = ''
-        if (window.localStorage.chosed_list) {
-          that.chosed_list = JSON.parse(window.localStorage.chosed_list)
-        }
+        that.chosed_list =[]
+        // if (window.localStorage.chosed_list) {
+        //   that.chosed_list = JSON.parse(window.localStorage.chosed_list)
+        // }
         that.has_journal = true
         that.accessory = [];
         that.journal_detail = {}
@@ -299,19 +301,19 @@
           if (data.length >= 5000) {
             this.$toast("最多输入5000字~")
           }
-          this.work_value = data.replace(/\n/g, '<br/>')
+          this.work_value = data
         } else if (title == "下月工作计划") {
           window.sessionStorage.next_work_value = data
           if (data.length >= 5000) {
             this.$toast("最多输入5000字~")
           }
-          this.next_work_value = data.replace(/\n/g, '<br/>')
+          this.next_work_value = data
         } else {
           window.sessionStorage.mark_value = data
           if (data.length >= 40) {
             this.$toast("最多输入40字~")
           }
-          this.mark_value = data.replace(/\n/g, '<br/>')
+          this.mark_value = data
         }
       },
       accessoryFor:function(datas){
@@ -333,7 +335,9 @@
             },
       isUpdate(){
             let data = this.$data;
-            if(!this.oldData) return
+            if(!this.oldData) return false;
+            if(this.oldData['reportTime']!=this.reportTime) return false;
+
             for(let key in data){
                if(key=='chosed_list_two'||key=='chosed_list'||key=='URL'){
                     if(data[key].length!=this.oldData[key].length){
@@ -352,7 +356,7 @@
                     let obj = data[key]
                     for(let keys in obj ){
                         if(obj[keys]!=this.oldData[key][keys]){
-                          console.log(this.oldData[key][keys])
+                          return true
                         }
                     }
                 }else if(key!='oldData'&&key!='accessory'){

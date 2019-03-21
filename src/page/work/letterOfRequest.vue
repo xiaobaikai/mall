@@ -123,14 +123,27 @@ let save_leave = (index,text,that) =>{
         fileSizeStr = fileSizeStr.slice(1)
         fileNameStr = fileNameStr.slice(1)
 
+        let params = {
+                    Id :that.id, // id
+                    theme:that.theme,//主题
+                    content:that.content, //请示函内容
+                    Url : urlStr, //附件
+                    fileName:fileNameStr, 
+                    fileSize:fileSizeStr,
+                    auditUserIds: approver_id, //审批人
+                    receiverIds: chosed_id, //抄送人
+                    draftFlag : index, //草稿还是发送
+            }
+
+        // that.Util.oaAxios(that,params,'letter')
+
         that.axios({
                 method:"post",
                 url:"/work/letter/save",
                 headers:{
                     'Content-type': 'application/x-www-form-urlencoded'
                 },
-                data:{
-                    Id :that.id, // id
+                data:{Id :that.id, // id
                     theme:that.theme,//主题
                     content:that.content, //请示函内容
                     Url : urlStr, //附件
@@ -149,18 +162,7 @@ let save_leave = (index,text,that) =>{
                     }],
                 }).then((res)=>{                    
 
-        // that.axios.post('/work/letter/save' + that.Service.queryString({
-        //   Id :that.id, // id
-        //   theme:that.theme,//主题
-        // //   content:encodeURI(that.content), //请示函内容
-        //   content:encodeURI(that.content), //请示函内容
-        //   Url : urlStr, //附件
-        //   fileName:fileNameStr, 
-        //   fileSize:fileSizeStr,
-        //   auditUserIds: approver_id, //审批人
-        //   receiverIds: chosed_id, //抄送人
-        //   draftFlag : index, //草稿还是发送
-        // })).then(function (res){
+      
             if(res.data.h.code!=200){
                 that.$toast(res.data.h.msg)
             }else if(res.data.h.code == 200){

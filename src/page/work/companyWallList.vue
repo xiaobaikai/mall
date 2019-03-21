@@ -25,7 +25,7 @@
                     </div>
                 </li>
 
-                <li v-if="datas.articleList.length" v-for="item in datas.articleList" :key="item.id" @click="go_article(item)">
+                <li v-if="datas.articleList.length" v-for="item in datas.articleList" class="article" :key="item.id" @click="go_article(item)">
                     <div class="svg">
                         <svg class="icon" aria-hidden="false" style="width:0.20rem;height:0.20rem;color:#609df6">
                             <use xlink:href="#icon-cloud-document"></use>
@@ -40,6 +40,7 @@
                         </svg>
                         {{item.readTimes}}
                     </div>
+                    <img v-if="!item.readFlag" src="../../assets/new.png">
                 </li>
 
                 <li v-if="datas.thirdCategories.length" v-for="item in datas.thirdCategories" :key="item.id" @click="go_articleorthirdcategory(item)">
@@ -50,6 +51,7 @@
                     </div>
                     <div class="text line1">
                         {{item.name}}
+                        <span style="color:red" v-if="item.unread">({{item.unread}})</span>
                     </div>
                     <div class="look">
                         <svg class="icon" aria-hidden="false" style="width:0.14rem;height:0.14rem;">
@@ -125,6 +127,7 @@
                     this.axios.get('/user/collect/list',{
                         params:{
                             collecType:'4',
+                            
                         }
                     }).then(res=>{
                         that.collect = res.data.b;
@@ -146,6 +149,9 @@
                 this.$router.push({path:'/companyWallList',query:{id:item.id,title:item.name}})
             },
             go_article(item){
+                setTimeout(()=>{
+                    item.readFlag = true;
+                },200)
                 if(item.type==3){
                     this.axios.get('/wall/article/info',{
                         params:{
@@ -167,10 +173,8 @@
 
                 }else{
                     let data = JSON.stringify(item)
-                    console.log(data)
                     window.location.href = "epipe://?&mark=articleDetails&title="+item.title+'&type=1&_id='+item.id;
 
-                    // this.$router.push({path:'/articleDetails',query:{id:item.id}})
                 }
             },
             go_collectArticle(item){
@@ -182,6 +186,18 @@
 </script>
 
 <style scoped lang="stylus">
+
+.article{
+    position relative
+
+    img{
+        position absolute
+        top:0;
+        right:0;
+        width:0.1rem;
+        height:0.1rem;
+    }
+}
 
 .line1{
         white-space: nowrap;

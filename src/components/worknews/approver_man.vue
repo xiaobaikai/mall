@@ -185,10 +185,10 @@
     <ul class="day_chose_ul2">
       <li class="day_chose_ul4">
         <div class="day_div_one">
-           <span class="title_h">审批人</span>
+           <span class="title_h">{{title?title:'审批人'}}</span>
            <span v-if="has_journal&data_list.length!=false">（已添加{{data_list.length}}人）</span>
-           <span v-if="!data_list.length">（请添加审批人）</span>
-           <span style="color:#609ef7" @click="isShowGuide=true">添加指引</span>
+           <span v-if="!data_list.length">({{minTitle?minTitle:'审批人'}})</span>
+           <span style="color:#609ef7" v-if="!title" @click="isShowGuide=true">添加指引</span>
            </div>
         <div v-if="more_prople&data_list.length>3"  @click="open_people" class="day_div_two">点击收缩</div>
         <div v-if="!more_prople&data_list.length>3"  @click="open_people" class="day_div_two">
@@ -277,7 +277,7 @@
         more_prople: true,
         isShowGuide:false,
         guideData:[
-          ['发起人','部门负责人','人事行政部门','总经理','人事行政部门'],
+          ['发起人','部门负责人','人事行政部门','总经理','人事行政部门'],// 
           ['发起人','部门负责人','财务管理中心','总经理','人事行政部门'],
           ['发起人','部门负责人','财务管理中心','法务部','总经理','董事办'],
           ['发起人','相关领导1','相关领导2','相关领导3','公司领导','董事办'],
@@ -286,15 +286,15 @@
           ['发起人','部门负责人','综合管理中心','财务管理中心','总经理','董事办'],//离职
           ['发起人','部门负责人','总经理','综合管理中心','董事办'], //接待
           ['发起人','部门负责人','综合管理中心','总经理','人事行政部门'], //补卡
-          ['发起人','部门负责人','综合管理中心','总经理','董事办'],//用人
+          ['发起人','部门负责人','综合管理中心','总经理','董事办'],//用人 转正
           ['发起人','部门负责人','财务管理中心','总经理','董事办'],//付款 借款
           ['发起人','部门负责人','综合管理中心'],//用车
-
+          ['发起人','部门负责人','研发中心负责人','总经理','董事办'],//项目立项
         ]
       }
     },
     props: [
-      'color', 'data_list', 'has_journal','special_class','isGroup','type'
+      'color', 'data_list', 'has_journal','special_class','isGroup','type','title','minTitle'
     //  颜色  选中的联系人数据  
     ],
     methods: {

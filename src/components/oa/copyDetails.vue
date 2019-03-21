@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="styles copy">
-                <p class="title">抄送人<span>（已抄送{{dataObj.receivers.length+newCopy.length}}人）</span></p>
+                <p class="title">{{title?title:'抄送人'}}<span v-if="!title">（已抄送{{dataObj.receivers.length+newCopy.length}}人）</span></p>
                 
                 <ul class="list">
                     <li v-for="(item,index) in dataObj.receivers" class="list_item" :key="index"> 
@@ -43,8 +43,11 @@
             remove:function(index){
                 this.$emit('remove',index)
             },
+            go_user(id){
+                window.location.href = "epipe://?&mark=userinfo&_id="+id;
+            }
         },
-        props:['dataObj','newCopy','color']
+        props:['dataObj','newCopy','color','title']
     }
 </script>
 

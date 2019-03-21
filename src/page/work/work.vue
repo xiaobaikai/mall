@@ -702,7 +702,7 @@
         window.location.href = "epipe://?&mark=materieldaily";
         TDGA.onEvent('materialControl','物料管理')        
       },
-      //设备管理
+      //-
       go_machine(){
         window.location.href = "epipe://?&mark=warning";
         TDGA.onEvent('equipmentControl ','设备管理')                        

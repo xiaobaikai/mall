@@ -217,7 +217,7 @@
       </div>
       <div class="im_div">
         <div @click="open_all" class="im_div1">
-          <span>{{datalist.companyName}}</span>
+          <span>{{datalist.name}}</span>
           <div style="padding-right: 0.15rem;">
             <svg v-bind:class="{top_ul_yuan22:all_bool}" style="width: 0.15rem;height: 0.15rem" class="icon"
                  aria-hidden="false">
@@ -228,7 +228,7 @@
         <ul v-show="all_bool" class="im_div2">
           <div v-for="(item,index) in datalist.offices">
             <li @click="open_item(index)">
-              <span>{{item.name}}&nbsp （{{item.personNO}}）</span>
+              <span>{{item.name}}&nbsp; （{{item.personNO}}）</span>
               <div style="padding-right: 0.15rem;">
                 <svg v-bind:class="{top_ul_yuan22:item.open}" style="width: 0.15rem;height: 0.15rem" class="icon"
                      aria-hidden="false">
@@ -347,8 +347,10 @@
         'change_man','approver_man'
       ]),
       open_item(index){  //点开分组
+      console.log(index)
         let array = []
         this.datalist.offices[index].open = !this.datalist.offices[index].open
+        console.log(this.datalist.offices[index].open)
       },
       chose_item(index, p, num){ //点击选中某个人  通过遍历改变mark_chose的布尔值
         let array = []
@@ -525,7 +527,7 @@
         }
       }).then(function (data) {
         if(data.data.h.code == 200) {
-          that.datalist = data.data.b
+          that.datalist = data.data.b.data[0]
           let arrs = [];
           if(that.type_num){
             arrs = that.chosed_man_state;
@@ -533,25 +535,26 @@
             arrs = that.approver_man_state;
           }
 
-          console.log(that.type_num)
+          console.log(data.data.b.data[0].offices)
+
           if(that.type_num){
-            for (let i = 0; i < data.data.b.offices.length; i++) {
-              data.data.b.offices[i].open = false
-              for (let a = 0; a < data.data.b.offices[i].persons.length; a++) {
+            for (let i = 0; i < data.data.b.data[0].offices.length; i++) {
+              data.data.b.data[0].offices[i].open = false
+              for (let a = 0; a < data.data.b.data[0].offices[i].persons.length; a++) {
                 for (let b = 0; b <arrs.length; b++) {
-                  if (arrs[b].receiverId == data.data.b.offices[i].persons[a].userId) {
-                    data.data.b.offices[i].persons[a].mark_chose = true
+                  if (arrs[b].receiverId == data.data.b.data[0].offices[i].persons[a].userId) {
+                    data.data.b.data[0].offices[i].persons[a].mark_chose = true
                   }
                 }
               }
             }
           }else{
-            for (let i = 0; i < data.data.b.offices.length; i++) {
-              data.data.b.offices[i].open = false
-              for (let a = 0; a < data.data.b.offices[i].persons.length; a++) {
+            for (let i = 0; i < data.data.b.data[0].offices.length; i++) {
+              data.data.b.data[0].offices[i].open = false
+              for (let a = 0; a < data.data.b.data[0].offices[i].persons.length; a++) {
                 for (let b = 0; b <arrs.length; b++) {
-                  if (arrs[b].auditUserId == data.data.b.offices[i].persons[a].userId) {
-                    data.data.b.offices[i].persons[a].mark_chose = true
+                  if (arrs[b].auditUserId == data.data.b.data[0].offices[i].persons[a].userId) {
+                    data.data.b.data[0].offices[i].persons[a].mark_chose = true
                   }
                 }
               }

@@ -151,8 +151,7 @@
 
                 <div  class="skip" tag="div">
                     查看详情
-                    </div>
-
+                </div>
              </div>
              <div v-if="item.typecode == 5" @click="go_Apply(item,'trip')"   class="affairs_item myaffairs_shadow" >
                 <div class="item_infor">
@@ -452,7 +451,7 @@
                     </div>
                 </div>
                 <div  class="skip" tag="div">
-                        查看详情
+                        查看详情 
                 </div>
             </div> 
 
@@ -521,8 +520,8 @@
                                     <p class="line1">{{item.carType}} </p>
                                 </div>
                                <div class="request_infor lineHeight">
-                                    <span >数量（辆） : </span>
-                                    <p class="line1">{{item.carNum}} </p>
+                                    <span >数量 (辆) : </span>
+                                    <p class="line1">{{item.num}} </p>
                                 </div>
                                 <div class="request_infor lineHeight">
                                     <span>开始时间 :</span>
@@ -558,21 +557,21 @@
                         <div>
                             <div class="affairs_title">
                                 <img :src="item.profileImg"/>
-                                <h2>{{item.title}}的用人申请</h2>
+                                <h2>{{item.title}}的人员需求...</h2>
                                 <time >{{item.applyTime | timeFormat}}</time>
                             </div>
                             <div class="affairs_infor">
                                <div class="request_infor lineHeight">
                                     <span >招聘岗位 : </span>
-                                    <p class="line1">{{item.employeePosition}} </p>
+                                    <p class="line1">{{item.position}} </p>
                                 </div>
                                 <div class="request_infor lineHeight">
                                     <span>需求人数 :</span>
-                                    <p class="line1"> {{item.employeeNum }}</p>
+                                    <p class="line1"> {{item.num }}</p>
                                 </div>
                                 <div class="request_infor lineHeight">
                                     <span >到岗日期 :</span>
-                                    <p class="line1">{{item.employeeArrivDate|timeSlice }} </p>
+                                    <p class="line1">{{item.hireDate|timeSlice }} </p>
                                 </div>
                                 <div class="request_infor lineHeight">
                                     <span>申请理由 :</span>
@@ -585,7 +584,163 @@
                 <div  class="skip" tag="div">
                         查看详情
                 </div>
-            </div> 
+            </div>
+            <div v-else-if="item.typecode == 15" @click="go_Apply(item,'project')"   class="affairs_item" >
+                <div class="item_infor">
+                    <div class="select" v-if="redactState">
+                             <svg v-if="item.isDel" class="icon" style="font-size:0.16rem;color:#f80" aria-hidden="false">
+                                <use xlink:href="#icon-xuanzhong2"></use>
+                            </svg>
+                            <svg v-else  class="icon" style="font-size:0.16rem;" aria-hidden="false">
+                                <use xlink:href="#icon-meiyouxuanzhong"></use>
+                            </svg>
+                    </div>
+                    <div class="affirs_child">
+                        <div>
+                            <div class="affairs_title">
+                                <img :src="item.profileImg"/>
+                                <h2>{{item.title}}的项目立项...</h2>
+                                <time >{{item.applyTime | timeFormat}}</time>
+                            </div>
+                            <div class="affairs_infor">
+                                <div class="request_infor lineHeight">
+                                    <span>项目名称 :</span><p class="line1">{{item.projectName}} </p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span>预估金额 :</span>
+                                    <p class="line1">{{item.projectBudget }}</p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span >立项时间 :</span>
+                                    <p class="line1">{{item.buildDate |timeSlice }} </p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span>项目周期 :</span>
+                                    <p class="line2" style="line-height:0.2rem;">{{item.projectDate}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div  class="skip" tag="div">
+                        查看详情
+                </div>
+            </div>
+            <div v-else-if="item.typecode == 16" @click="go_Apply(item,'regular')"   class="affairs_item" >
+                <div class="item_infor">
+                    <div class="select" v-if="redactState">
+                             <svg v-if="item.isDel" class="icon" style="font-size:0.16rem;color:#f80" aria-hidden="false">
+                                <use xlink:href="#icon-xuanzhong2"></use>
+                            </svg>
+                            <svg v-else  class="icon" style="font-size:0.16rem;" aria-hidden="false">
+                                <use xlink:href="#icon-meiyouxuanzhong"></use>
+                            </svg>
+                    </div>
+                    <div class="affirs_child">
+                        <div>
+                            <div class="affairs_title">
+                                <img :src="item.profileImg"/>
+                                <h2>{{item.title}}的员工转正...</h2>
+                                <time >{{item.applyTime | timeFormat}}</time>
+                            </div>
+                            <div class="affairs_infor">
+                               <div class="request_infor lineHeight">
+                                    <span>职&emsp;&emsp;务 :</span><p class="line1">{{item.position}} </p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span>入司时间 :</span>
+                                    <p class="line1">{{item.hireDate|timeSlice }}</p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span >试用开始时间 :</span>
+                                    <p class="line1">{{item.beginTime |timeSlice }} </p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span>试用结束时间 :</span>
+                                    <p class="line2" style="line-height:0.2rem;">{{item.endTime|timeSlice}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div  class="skip" tag="div">
+                        查看详情
+                </div>
+            </div>
+            <div v-else-if="item.typecode == 17" @click="go_Apply(item,'meal')"   class="affairs_item" >
+                <div class="item_infor">
+                    <div class="select" v-if="redactState">
+                             <svg v-if="item.isDel" class="icon" style="font-size:0.16rem;color:#f80" aria-hidden="false">
+                                <use xlink:href="#icon-xuanzhong2"></use>
+                            </svg>
+                            <svg v-else  class="icon" style="font-size:0.16rem;" aria-hidden="false">
+                                <use xlink:href="#icon-meiyouxuanzhong"></use>
+                            </svg>
+                    </div>
+                    <div class="affirs_child">
+                        <div>
+                            <div class="affairs_title">
+                                <img :src="item.profileImg"/>
+                                <h2>{{item.title}}的就餐申请...</h2>
+                                <time >{{item.applyTime | timeFormat}}</time>
+                            </div>
+                            <div class="affairs_infor">
+                               <div class="request_infor lineHeight">
+                                    <span>就餐人数 :</span><p class="line1">{{item.position}} </p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span>开始时间 :</span>
+                                    <p class="line1">{{item.beginTime|timeSlice }}</p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span >结束时间 :</span>
+                                    <p class="line1">{{item.endTime |timeSlice }} </p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span>就餐标准 :</span>
+                                    <p class="line2" style="line-height:0.2rem;">{{item.mealStandard}}</p>
+                                </div> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div  class="skip" tag="div">
+                        查看详情
+                </div>
+            </div>
+            <div v-else-if="item.typecode == 18" @click="go_Apply(item,'document')"   class="affairs_item" >
+                <div class="item_infor">
+                    <div class="select" v-if="redactState">
+                             <svg v-if="item.isDel" class="icon" style="font-size:0.16rem;color:#f80" aria-hidden="false">
+                                <use xlink:href="#icon-xuanzhong2"></use>
+                            </svg>
+                            <svg v-else  class="icon" style="font-size:0.16rem;" aria-hidden="false">
+                                <use xlink:href="#icon-meiyouxuanzhong"></use>
+                            </svg>
+                    </div>
+                    <div class="affirs_child">
+                        <div>
+                            <div class="affairs_title">
+                                <img :src="item.profileImg"/>
+                                <h2>{{item.title}}的行文呈批...</h2>
+                                <time >{{item.applyTime | timeFormat}}</time>
+                            </div>
+                            <div class="affairs_infor">
+                               <div class="request_infor lineHeight">
+                                    <span>文件编号 :</span><p class="line1">{{item.documentNo}} </p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span>主&emsp;&emsp;送 :</span>
+                                    <p class="line2" style="line-height:0.2rem;">{{item.sendTo}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div  class="skip" tag="div">
+                        查看详情
+                </div>
+            </div>
   
          </div>   
         </div>
@@ -694,56 +849,6 @@
                 window.location.href = "epipe://?&mark="+typeName+"&_id="+item.applyId;
             },
 
-            goLeaveDraft(item){
-                this.delFor(item)
-                if(this.redactState) return
-                window.location.href = "epipe://?&mark=leave&_id="+item.applyId;
-            },
-            goLetterDraft(item){
-                this.delFor(item)
-                if(this.redactState) return
-                window.location.href = "epipe://?&mark=letterOfRequest&_id="+item.applyId;
-            },
-            goContractDraft(item){    
-                this.delFor(item)
-                if(this.redactState) return
-                window.location.href = "epipe://?&mark=contract&_id="+item.applyId;
-            },
-            goOutWork(item){
-                this.delFor(item)
-                if(this.redactState) return
-                window.location.href = "epipe://?&mark=goOutWork&_id="+item.applyId;
-            },
-            tripDraft(item){
-                this.delFor(item)
-                if(this.redactState) return
-                window.location.href = "epipe://?&mark=trip&_id="+item.applyId;
-            },
-            stampDraft(item){
-                this.delFor(item)
-                if(this.redactState) return
-                window.location.href = "epipe://?&mark=stamp&_id="+item.applyId;
-            },
-            reimburseDraft(item){
-                this.delFor(item)
-                if(this.redactState) return
-                window.location.href = "epipe://?&mark=reimburse&_id="+item.applyId;
-            },
-            payApplyDetails(item){
-                this.delFor(item)
-                if(this.redactState) return
-                window.location.href = "epipe://?&mark=payApply&_id="+item.applyId;
-            },
-            dimissionDetails(item){
-                this.delFor(item)
-                if(this.redactState) return
-                window.location.href = "epipe://?&mark=dimission&_id="+item.applyId;
-            },
-            go_Details(item,url){
-                this.delFor(item)
-                if(this.redactState) return
-                window.location.href = "epipe://?&mark="+url+"&_id="+item.applyId;
-            },
             redact(){ //编辑
                 this.redactState = !this.redactState
 
@@ -786,9 +891,12 @@
                     if(res.data.h.code==200){
                         for(let i=0;i<that.draftsData.length;i++){
                             for(let j=0;j<that.deleteArr.length;j++){
+                                // console.log(that.draftsData,that.draftsData[i])
+                                // console.log(i,j)
+                                // console.log(that.deleteArr)
+                                // console.log('================================')
                                 if(that.draftsData[i].applyId==that.deleteArr[j]){
                                     that.draftsData.splice(i,1)
-                                    i--
                                 }
                             }
                         }

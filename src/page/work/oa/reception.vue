@@ -97,7 +97,7 @@
                 v-on:remove_item="remove_item"
                 :special_class='1'
                 :isGroup = true
-                type = 2
+                type = 7
             ></ApproverMan>
 
             <CopeMan 

@@ -5,6 +5,7 @@
         :bgcolor='color'
         :title='"转交给"+name'
         ></TopHead>
+      <div style="height:0.59rem;"></div>
         <div class="main">
             <div class="content">
                 <textarea placeholder="请输入转交备注" v-model="textVal" maxlength="500"></textarea>
@@ -198,7 +199,6 @@ export default {
 
 <style lang="stylus" scoped>
       .main{
-        margin-top 0.59rem;
         padding 0 0.15rem;
     }
     .content{

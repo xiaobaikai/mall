@@ -78,7 +78,7 @@
                 v-on:remove_item="remove_item"
                 :special_class='1'
                 :isGroup = true
-                type = 2
+                type = 11
             ></ApproverMan>
 
             <CopeMan 
@@ -132,8 +132,10 @@ let save_leave = (index,text,that) =>{
 	    that.$toast('车辆数量不能为0')
     }else if(that.useDate == '请选择使用日期'){
         that.$toast('请选择使用日期')
-    }else if(that.returnDate == '请选择预计归还日期'){
-        that.$toast('请选择预计归还日期')
+    }else if(that.returnDate == '请选择返回日期'){
+        that.$toast('请选择返回日期')
+    }else if(that.followPerson==''){
+	    that.$toast('随行人员不能为空')
     }else if(that.followPerson.length>30){
 	    that.$toast('随行人员不能超过30个字符')
     }else if(that.carReason == ''){
@@ -215,7 +217,7 @@ let save_leave = (index,text,that) =>{
 
                                 that.$toast('已保存至草稿箱!')
                                 setTimeout(()=>{
-                                    if(that.$route.query.borrowId){
+                                    if(that.$route.query.carId){
                                         window.location.href = "epipe://?&mark=goWork"
                                     }else{
                                         window.location.href = "epipe://?&mark=history_back" 
@@ -225,11 +227,11 @@ let save_leave = (index,text,that) =>{
                                 that.$toast('提交成功！')
                                 window.location.href = "epipe://?&mark=workUpdate";
                                 setTimeout(()=>{
-                                    window.location.href = "epipe://?&mark=submitBorrow&_id="+res.data.b.borrowApplyId;
+                                    window.location.href = "epipe://?&mark=submitCar&_id="+res.data.b.carApplyId;
                                     
                                 },500)
                             }
-                            localStorage.removeItem('borrowApply')
+                            localStorage.removeItem('carApply')
                         }
                  })
     }
@@ -252,10 +254,8 @@ export default {
                 departmentName : '',//用车部门
 	              carType: '',  //车辆类型
                 carNum: '',  //数量
-                //useDate:'请选择使用日期',
-	              useDate:  '2018-12-24 15:26:52',
-                //returnDate:'请选择预计归还日期',
-	              returnDate: '2018-12-25 16:00:00',
+                useDate:'请选择使用日期',
+                returnDate:'请选择返回日期',
                 followPerson: '',  //随行人员
 	              carReason : '',//用车理由
                 chosed_list : [], //抄送人
@@ -291,16 +291,16 @@ export default {
         },
         lf_click(){
             this.isShow=false;
-            if(this.$route.query.borrowApplyId&&!this.$route.query.resubmit){
+            if(this.$route.query.carId&&!this.$route.query.resubmit){
                  save_leave(1, "存入草稿成功", this)
             }else{
-                localStorage.setItem('borrowApply',JSON.stringify(this.$data))
+                localStorage.setItem('carApply',JSON.stringify(this.$data))
             }
             window.location.href = "epipe://?&mark=history_back"
         },
         rg_click(){
             this.isShow=false;
-            localStorage.removeItem('borrowApply')
+            localStorage.removeItem('carApply')
             window.location.href = "epipe://?&mark=history_back"
         },
         isUpdate(){
@@ -390,7 +390,7 @@ export default {
                     }
 
                     if(!num){
-                    if(that.returnDate!='请选择预计归还日期'){
+                    if(that.returnDate!='请选择返回日期'){
                         let endDate = that.tiemF(that.returnDate)
                         if(date.getTime()>endDate.getTime()||date.getTime()==endDate.getTime()){
                             that.$toast('开始时间不能大于等于结束时间')
@@ -436,21 +436,16 @@ export default {
             this.chosed_list = this.chosed_man_state
          },
          created() {
-             if(localStorage.getItem('borrowApply')){
-                let borrowApplydata = JSON.parse(localStorage.getItem('borrowApply'))
-                for(let key in borrowApplydata){
-                    this.$data[key] = borrowApplydata[key]
+             if(localStorage.getItem('carApply')){
+                let carApplydata = JSON.parse(localStorage.getItem('carApply'))
+                for(let key in carApplydata){
+                    this.$data[key] = carApplydata[key]
                 }
                 this.approver_man(this.$data.approver_list)
                 this.change_man(this.$data.chosed_list)
             }
             this.oldData = JSON.parse(JSON.stringify(this.$data))
 
-             eventBus.$on('leaveType', res =>{
-                if(res.name=='') return;
-                this.borrowType = res.index;
-                this.borrowName = res.name;
-            })
          },
         mounted(){
             let that = this;
@@ -471,11 +466,11 @@ export default {
                 that.oldData = JSON.parse(JSON.stringify(that.$data))
             })
 
-            if(this.$route.query.carApplyId){
+            if(this.$route.query.carId){
                   this.axios.get('/work/car/info',{
                     params:{
                         type:that.$route.query.resubmit,
-	                      carApplyId:this.$route.query.carApplyId
+	                    carApplyId:this.$route.query.carId
                     }
                 }).then(function(res){
                    let data = res.data.b;
@@ -500,9 +495,6 @@ export default {
                     })
                     return
             }
-        },
-        beforeDestroy() {
-            eventBus.$off('leaveType');
         },
         computed: mapState(["chosed_man_state","approver_man_state"])
         

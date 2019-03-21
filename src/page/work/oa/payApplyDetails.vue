@@ -133,7 +133,17 @@
           v-on:print="print"
         >
         </MoreBtn>
-          
+
+        <Dialog
+            lfText="确认"
+            rgText="取消"
+            content="是否提醒审批人审批？"
+            v-on:lfClick="urge"
+            v-on:rgClick="isBackout=false"
+            v-show="isBackout"
+            >
+        </Dialog>
+
     </section>
 </template>
 

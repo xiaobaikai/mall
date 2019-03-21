@@ -15,7 +15,7 @@
                     <span style="float:right;">阅读次数:{{datas.readTimes}}</span>
                 </p>
             </div>
-            <div v-html="count">
+            <div v-html="count" class="content">
 
             </div>
         </div>
@@ -55,6 +55,15 @@
 
     .article{
         padding 0 0.15rem;
+    }
+
+    .content{
+
+        img{
+            max-width 100%;
+            height auto;
+            margin 0 auto ;
+        }
     }
 
     .infor{

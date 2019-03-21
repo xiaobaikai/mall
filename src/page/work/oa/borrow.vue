@@ -82,7 +82,7 @@
                 v-on:remove_item="remove_item"
                 :special_class='1'
                 :isGroup = true
-                type = 2
+                type = 10
             ></ApproverMan>
 
             <CopeMan 
@@ -104,7 +104,7 @@
             noSvg = true
             bgcolor="#fd545c"
         ></WorkButton>
-          <Dialog
+        <Dialog
             lfText="保存"
             rgText="不保存"
             content="保存此次编辑?"
@@ -277,6 +277,7 @@ export default {
                 chosed_list : [], //抄送人
                 approver_list : [], //审批人
                 accessory : [],
+                textNum:0,
                 isDraftFlag : 0, //判断是不是草稿
                 isShow:false,
             }

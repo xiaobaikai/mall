@@ -46,7 +46,7 @@
         obj.imageUrl = item.coverImg;
         obj.text =  Util.Title_format(item.content.slice(0,40));
         let data = JSON.stringify(obj)
-        window.location.href = "epipe://?&mark=newsdetail&title=" + obj.title + "&_id=" + item.id+'&data='+data;
+        window.location.href = "epipe://?&mark=newsdetail&title=" + obj.title + "&_id=" + item.id+'TTTTTT&data='+data;
       }, onInfinite(){
         let that = this;
         //招投标

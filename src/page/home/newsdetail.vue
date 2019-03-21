@@ -51,9 +51,9 @@
     mounted() {
       let _id = this.$route.query.id
        let that = this;
-      // if (_id.indexOf("TTTTTT")>0) {
+      if (_id.indexOf("TTTTTT")>0) {
         
-      //   _id=_id.replace("TTTTTT",'');
+        _id=_id.replace("TTTTTT",'');
         
         this.home = true;
         //改版头条
@@ -72,20 +72,20 @@
             window.location.href = "epipe://?&mark=isCollect"+'&data='+dataStr;
           }
         })
-      // } else {
-      //   //首页头条
-      //   this.axios.get(this.Service.content_Detail, {
-      //     params: {
-      //       headlineId: _id
-      //     }
-      //   }).then(function (data) {
-      //     if (data.data.b) {      
-      //       that.is_show = true;
-      //       document.title = data.data.b.title;
-      //       that.content = Util.HTMLDecode(data.data.b.content)
-      //     }
-      //   })
-      // }
+      } else {
+        //首页头条
+        this.axios.get(this.Service.content_Detail, {
+          params: {
+            headlineId: _id
+          }
+        }).then(function (data) {
+          if (data.data.b) {      
+            that.is_show = true;
+            document.title = data.data.b.title;
+            that.content = Util.HTMLDecode(data.data.b.content)
+          }
+        })
+      }
     }
   }
 </script>

@@ -206,7 +206,8 @@
   <section>
     <div v-show="!is_search">
       <TopHead mark="mark" v-on:history_back="history_back_click" :bgcolor="bgcolor" title="选择联系人" :show='states'></TopHead>
-      <div :style="states=='pro'?'':'margin-top: 0.44rem'" @click="is_search=!is_search" class="im_top_div_2">
+      <div style="height:0.44rem;" v-if="states!='pro'"></div>
+      <div  @click="is_search=!is_search" class="im_top_div_2">
         <div style="box-shadow: 0 10px 16px #ddd, 0 0 10px #ddd, 0 0 10px #ddd;  " class="im_top_div_3">
           <svg style="font-size: 0.17rem" class="icon"
                aria-hidden="false">
@@ -229,7 +230,7 @@
             </li>
             <div v-show="item.open" v-for="(p,num) in item.offices" class="im_div4" style="padding:0" :key="num">   
                 <li @click="open_child(index,num)" style="padding-left:0.3rem;">
-                <span>{{p.name}}&nbsp （{{p.personNO}}）</span>
+                <span>{{p.name}}&nbsp; （{{p.personNO}}）</span>
                 <div style="padding-right: 0.15rem;">
                     <svg v-bind:class="{top_ul_yuan22:p.open}" style="width: 0.15rem;height: 0.15rem" class="icon"
                         aria-hidden="false">
@@ -254,7 +255,7 @@
           </div>
           <div v-if="item.offices==0" v-for="(item,index) in datalist.offices">
             <li @click="open_item(index)">
-              <span>{{item.name}}&nbsp （{{item.personNO}}）</span>
+              <span>{{item.name}}&nbsp; （{{item.personNO}}）</span>
               <div style="padding-right: 0.15rem;">
                 <svg v-bind:class="{top_ul_yuan22:item.open}" style="width: 0.15rem;height: 0.15rem" class="icon"
                      aria-hidden="false">
@@ -366,6 +367,7 @@
         states : '',
         peerData:[],//同行人员
         iscareOf:false,
+        showGroup:true,
       }
     },
     components: {
@@ -406,10 +408,12 @@
       },
       chose_child(index,num,el,c){
           if(this.iscareOf){
+
            if(el.mark_chose){
              this.$toast('该用户为审批人')
              return;
            }
+
             this.$router.push({path:'/deliverExplain',query:{
               id:this.$route.query.id,
               userName:el.name,
@@ -430,6 +434,7 @@
         }else{
             this.datalist[index].staff[num].mark_chose = !this.datalist[index].staff[num].mark_chose  //设置这个人是否被选中
         }
+
         
         if(this.type_num){
           
@@ -449,7 +454,6 @@
 
           if(c!='department'){
               if(this.datalist[index].offices[num].staff[c].mark_chose){
-              
                   let flag = true;
 
                   for(let i =0;i<this.approver_array.length;i++){
@@ -462,14 +466,15 @@
                       el.auditUserId = el.userId;
                       this.approver_array.push(el)
                       this.approver_man(this.approver_array)
-                      window.history.back()
+                      // window.history.back()
                   }
+
             }else{
                 for(let i =0;i<this.approver_array.length;i++){
                   if(this.approver_array[i].auditUserId === el.userId){
                       this.approver_array.splice(i,1)
                       this.approver_man(this.approver_array)
-                      window.history.back()
+                      // window.history.back()
                   }
                 }
             }
@@ -542,6 +547,7 @@
       history_back: function () {
         if(this.states=='pro'){
             let str = JSON.stringify(this.chose_array)
+            console.log(str)
             window.location.href = "epipe://?&data="+str;
         }else{
           window.history.back()
@@ -651,6 +657,9 @@
     mounted(){
       
       this.states = this.$route.query.state;
+      if(this.states=='pro'){
+        this.showGroup = false;
+      }
       this.iscareOf = this.$route.query.careOf
         //以上代码判断是由什么入口进入该界面
       this.bgcolor = this.$route.query.bgcolor
@@ -666,11 +675,9 @@
       }
 
       let that = this;
-      // this.axios.get('https://apps.epipe.cn/member/v3/organ/addressbook',{
-      // this.axios.get('https://apps.epipe.cn/member/v3/organ/addressbook',{
       this.axios.get('/organ/addressbook',{
         params:{
-          showGroup : true,
+          showGroup : this.showGroup,
         }
       }).then(function (data) {
         if(data.data.h.code == 200) {

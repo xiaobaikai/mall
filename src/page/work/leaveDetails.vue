@@ -253,11 +253,6 @@
             go_user(id){
                 window.location.href = "epipe://?&mark=userinfo&_id="+id;
             },
-            go_imgdetail: function (index) { //查看图片详情
-                let that = this;
-                let obj = {index_num: index, data: that.dataObj.images,type:0}
-                window.location.href = "epipe://?&mark=imgdetail&url=" + JSON.stringify(obj);
-             },
             go_fildDetails: function (url) { //附件
                 let that = this;
                 let obj = {index_num: 0, data:[url],type:0}

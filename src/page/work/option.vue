@@ -8,6 +8,7 @@
         v-on:history_back='history_back'
         ></TopHead>
         <div class="main">
+            <div style="height:0.59rem;"></div>
             <ul class="list" v-if="type=='leave'">
                 <li v-for="(item,index) in data" @click="clickEvent(index+1,item.name)" :key="index">
                     <div class="li">
@@ -120,13 +121,31 @@ export default {
           }else if(this.type=='sex'){
               this.title = '性别选择';
                 this.axios.get('/work/sex/type').then(function(res){
-                    if(res.data.h.code =200 ) that.data = res.data.b;
+                    if(res.data.h.code =200 ){
+                        that.data = res.data.b
+                        if(that.$route.query.remove){
+                            that.data.splice(that.data.length-1,1)
+                        }
+                    } 
                 })
           }else if(this.type=='marriage'){
                 this.title = '婚姻状况';
                 this.axios.get('/work/marriage/type').then(function(res){
                     if(res.data.h.code =200 ) that.data = res.data.b;
                 })
+          }else if(this.type=='remind'){
+                this.title = '提醒时间';
+                this.axios.get('/agenda/remind/type').then(function(res){
+                    if(res.data.h.code =200 ) that.data = res.data.b;
+                })
+          }else if(this.type=='meal'){
+               this.title = '就餐类型';
+                this.axios.get('/work/meal/type').then(function(res){
+                    if(res.data.h.code =200 ) that.data = res.data.b;
+                })
+          }else if(this.type=="overtime"){
+               this.title = '是否法定假日';
+               that.data = [{key:'是',value:true},{key:'否',value:false}]
           }
           else{
            this.axios.get('/work/leave/type/list').then(function(res){
@@ -144,13 +163,12 @@ export default {
 
 <style lang="stylus" scoped>
     .main{
-        margin-top 0.59rem;
         padding 0 0.15rem;
     }
 
     .list{
-         -webkit-box-shadow: 0 0 0.2rem rgba(238,65,54,.1);    
-        box-shadow 0 0 0.2rem rgba(238,65,54,.1);
+        //  -webkit-box-shadow: 0 0 0.2rem rgba(238,65,54,.1);    
+        // box-shadow 0 0 0.2rem rgba(238,65,54,.1);
         background-color #fff;
     }
 

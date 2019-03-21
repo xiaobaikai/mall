@@ -126,6 +126,7 @@
               vm.$toast("撤销失败:"+res.data.h.code);
             }else{
               vm.$toast("撤销成功");
+              window.location.href = "epipe://?&mark=revokeOrganization";
             }
             setTimeout(() =>{
               vm.$router.push({path:'/work'});

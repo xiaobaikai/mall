@@ -37,7 +37,7 @@
         obj.collectState = item.collectState;
         let data = JSON.stringify(obj)
         console.log(item.id)
-        window.location.href = "epipe://?&mark=newsdetail&title=" + obj.title + "&_id=" + item.id+'&data='+data;
+        window.location.href = "epipe://?&mark=newsdetail&title=" + obj.title + "&_id=" + item.id+'&TTTTTTdata='+data;
       }, onInfinite(){
         let that = this;
         //供需

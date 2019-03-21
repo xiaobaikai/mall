@@ -2,7 +2,7 @@
     <section>
         <TopHead
         mark = 'mark'
-        bgcolor = '#0fc37c'
+        bgcolor = '#609df6'
         title="人员需求" 
         v-on:history_back="history_back_click"
          ></TopHead>
@@ -34,7 +34,7 @@
                  <div class="bor_bottom choose" @click="getTime(0)">
                      <span class="title">希望到岗日期</span>
                     <p>
-                        <span class="nullValue">{{arrivalDate.slice(0,-8)}}</span>
+                        <span class="nullValue">{{arrivalDate}}</span>
                         <svg class="icon icon-back" aria-hidden="false">
                                 <use xlink:href="#icon-right"></use>
                         </svg>
@@ -51,7 +51,8 @@
                         <span>{{textNum}}/1000</span>
                 </div>
             </div>
-            <p>应聘条件</p>
+            <p class="content-title">应聘条件</p>
+
             <div class="styles input_group">
                 <router-link :to="{ path:'/option', query: {indexs:sex,type:'sex',color:'#609df6'}}"  class="bor_bottom choose" tag="div">
                     <span class="title">性别</span>
@@ -133,17 +134,17 @@
             
             <ApproverMan 
                 :has_journal="!has_journal"
-                color="#0fc37c"
+                color="#609df6"
                 :data_list=approver_list
                 v-on:remove_item="remove_item"
                 :special_class='1'
                 :isGroup = true
-                type = 2
+                type = 9
             ></ApproverMan>
 
             <CopeMan 
                 :has_journal="!has_journal"
-                color="#0fc37c"
+                color="#609df6"
                 :data_list=chosed_list
                 v-on:remove_item="remove_item"
                 :special_class='1'
@@ -184,6 +185,8 @@ let save_leave = (index,text,that) =>{
         that.$toast('文件标题不能低于6个或超过30个字符')
     }else if(that.arrivalDate == '请选择到岗日期'){
         that.$toast('请选择到岗日期')
+    }else if(that.num==''){
+        that.$toast('需求人数不能为空')
     }else if(isNaN(that.num)){
         that.$toast('需求人数为数字')
     }else if(that.num>10){
@@ -230,6 +233,8 @@ let save_leave = (index,text,that) =>{
         that.$toast('优先录用内容不能超过30字符')
     }else if(that.other.length>500){
         that.$toast('其他要求内容不能超过500字符')
+    }else if(that.responsibility.length>1000||that.responsibility.length<6){
+        that.$toast('工作职责不能少于6个或超过1000字符')
     }else if(that.employeeReason.length>1000||that.employeeReason.length<6){
         that.$toast('申请理由不能少于6个或超过1000字符')
     }else if(that.approver_list.length == 0){
@@ -794,6 +799,11 @@ export default {
 
     .nullValue{
         color:#666;
+    }
+
+    .content-title{
+        margin-bottom:0.05rem;
+        color #609ef7
     }
 
     

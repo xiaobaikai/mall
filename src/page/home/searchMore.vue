@@ -52,6 +52,7 @@
             }).then(function(res){
                 that.searchData = res.data.b;
             })
+
         },
 
         mounted() {
@@ -72,7 +73,7 @@
                 obj.imageUrl = item.converImgUrl;
                 obj.text = Util.Title_format(item.summary);
                 let data = JSON.stringify(obj)
-                window.location.href = "epipe://?&mark=newsdetail&title=" + title + "&_id=" + item.resId+'&data='+data;
+                window.location.href = "epipe://?&mark=newsdetail&title=" + title + "&_id=" + item.resId+'TTTTTT&data='+data;
             },
             onInfinite(){ //上拉加载更多
                 let that = this;

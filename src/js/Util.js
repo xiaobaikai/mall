@@ -99,20 +99,6 @@ const Util = {
 
   },
   
-  isImg:function(str){
-    //判断是否是图片 - strFilter必须是小写列举
-   var strFilter=".jpeg|.gif|.jpg|.png|.bmp|.pic|"
-   if(str.indexOf(".")>-1){
-       var p = str.lastIndexOf(".");
-       var strPostfix=str.substring(p,str.length) + '|';        
-       strPostfix = strPostfix.toLowerCase();
-       if(strFilter.indexOf(strPostfix)>-1)
-       {
-           return true;
-       }
-   }        
-    return false;   
-  },
   appAndCopy:function(arr,type){ //同意或拒绝oa的时候 审批人
     if(!type) type='userId'
     let str = '';
@@ -121,24 +107,134 @@ const Util = {
             str = str + "|" + obj[type]
     }
     return str.slice(1);
-},
-  axios:function(that,url,param,callBack){
-        this.axios({
-          method:"post",
-          url:url,
-          headers:{
-              'Content-type': 'application/x-www-form-urlencoded'
-          },
-          data:param,
-          transformRequest: [function (data) {
-            let ret = ''
-            for (let it in data) {
-            ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
-            }
-            return ret
-        }],
-      })
-  }
+  },
+  people:function(bool,arr,type){
+    let id = '';
+   
+      if(type==1){
+        for (let i = 0; i < arr.length; i++) {
+          id = id + "|" + arr[i].receiverId
+        }
+      }else{
+        for (let i = 0; i < arr.length; i++) {
+          id = id + "|" + arr[i].auditUserId
+        }
+      }
+    
+    return id;
+  },
+  fileFo:function(accessory){
+    let obj = {urlStr:"",fileSizeStr:"",fileNameStr:""}
+    for(let i=0;i<accessory.length;i++){
+        obj.urlStr+=accessory[i].url+'|';
+        obj.fileSizeStr+=accessory[i].fileSize+'|'
+        obj.fileNameStr+=accessory[i].fileName+"|"  
+    }
+    obj.urlStr = obj.urlStr.slice(0,-1)
+    obj.fileSizeStr = obj.fileSizeStr.slice(0,-1)
+    obj.fileNameStr = obj.fileNameStr.slice(0,-1)
+    return obj
+  },
+  isImg:function(str){
+      //判断是否是图片 - strFilter必须是小写列举
+    var strFilter=".jpeg|.gif|.jpg|.png|.bmp|.pic|"
+    if(str.indexOf(".")>-1){
+        var p = str.lastIndexOf(".");
+        var strPostfix=str.substring(p,str.length) + '|';        
+        strPostfix = strPostfix.toLowerCase();
+        if(strFilter.indexOf(strPostfix)>-1){
+            return true;
+        }
+    }        
+      return false;   
+  },
+  timeFo:function(){
+    timeStr+=':00';
+    timeStr = timeStr.split(/[- : \/]/);
+    return new Date(timeStr[0],timeStr[1]-1,timeStr[2],timeStr[3],timeStr[4])
+  },
+  accessoryFor:function(data){
+    if(!data.accessory||data.accessory.url==null) return false;
 
+     let urlArr = data.accessory.url.split('|')
+     let fileSizeArr = data.accessory.fileSize.split('|')
+     let fileNameArr = data.accessory.fileName.split('|')
+     let obj ={};
+
+      for(let i=0;i<urlArr.length;i++){
+        obj.push({
+              url:urlArr[i],
+              fileSize:fileSizeArr[i],
+              fileName:fileNameArr[i]
+          })
+      }
+      return obj
+  },
+  isAlter(nowData,oldData){
+    let data = nowData;
+    for(let key in data){
+       if(key=='approver_list'||key=='chosed_list'||key=='accessory'){
+            if(data[key].length!=oldData[key].length){
+                return true
+            }
+            for(let i=0;i<data[key].length;i++){
+
+                if(key!='accessory'&&data[key][i].auditUserId!=oldData[key][i].auditUserId){
+                    return true
+                }else if(key=='accessory'&&data[key][i].url!=oldData[key][i].url){
+                    return true
+                }
+            }
+
+        }else if(key!='oldData'&&key!='approver_list'&&key!='chosed_list'&&key!='accessory'){
+            if(data[key]!=oldData[key]){
+                    return true;
+            }
+        }
+    }
+    return false
+  },
+  oaAxios:function(that,params,type){
+    that.axios({
+        method:"post",
+        url:"/work/"+type+"/save",
+        headers:{
+            'Content-type': 'application/x-www-form-urlencoded'
+        },
+        data:params,
+        transformRequest: [function (data) {
+                let ret = ''
+                for (let it in data) {
+                ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+                }
+                return ret
+            }],
+        }).then((res)=>{                    
+
+            if(res.data.h.code!=200){
+                that.$toast(res.data.h.msg)
+            }else if(res.data.h.code == 200){
+                if(index){
+                    that.$toast('已保存至草稿箱!')
+                    setTimeout(()=>{
+                      if(that.$route.query.letterId){
+                            window.location.href = "epipe://?&mark=goWork"
+                        }else{
+                            window.location.href = "epipe://?&mark=history_back" 
+                        }
+                    },700)
+                }else{
+                    that.$toast('提交成功！')
+                    window.location.href = "epipe://?&mark=workUpdate";
+                    setTimeout(()=>{
+                        window.location.href = "epipe://?&mark=submitLetter&_id="+res.data.b;
+                    },500)
+                    localStorage.removeItem(type)
+                
+                }
+            }
+        })
+
+      }
 }
 module.exports = Util

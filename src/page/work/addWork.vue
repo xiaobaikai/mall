@@ -2,9 +2,10 @@
     <div>
         <TopHead
             :bgcolor = color
-            title ='全部应用'
-            native="native"
+            title ='常用应用管理'
+            mark='mark'
             :is_relative_approva="is_relative_approva"
+            v-on:history_back="history_back"
             v-on:show_edit='compile'
         ></TopHead>
 
@@ -13,11 +14,29 @@
             <div class="menu-item">
                     <p class="item-title"> <i></i> <span>常用应用</span>  </p>
                     <ul>
-                        <li>
+                        <li >
                          <svg style="font-size: 0.33rem;"  class="icon img" aria-hidden="false">
-                            <use xlink:href="#icon-jiyao"></use>
+                            <use xlink:href="#icon-daibanshiyi"></use>
                         </svg>
-                        <span>我的审批</span>
+                        <span>待办事宜</span>
+                    </li>
+                    <li>
+                         <svg style="font-size: 0.33rem;"  class="icon img" aria-hidden="false">
+                            <use xlink:href="#icon-yiban"></use>
+                        </svg>
+                        <span>已办事宜</span>
+                    </li>
+                    <li >
+                         <svg style="font-size: 0.33rem;"  class="icon img" aria-hidden="false">
+                            <use xlink:href="#icon-chaosong"></use>
+                        </svg>
+                        <span>我的抄送</span>
+                    </li>
+                     <li>
+                         <svg style="font-size: 0.33rem;"  class="icon img" aria-hidden="false">
+                            <use xlink:href="#icon-wodeshenqing-mian"></use>
+                        </svg>
+                        <span>我的申请</span>
                     </li>
                     <li>
                          <svg style="font-size: 0.33rem;"  class="icon img" aria-hidden="false">
@@ -35,14 +54,14 @@
                     </ul>
             </div>
 
-            <div class="menu-item" v-for="(item,index) in workData" :key="index" v-if="item.id>-1&&item.apps.length">
+            <div class="menu-item" v-for="(item,index) in workData" :key="index" v-if="index!=0&&item.apps.length&&item.show=='show'">
                     <p class="item-title"> <i></i> <span>{{item.name}}</span> <a class="manage"></a></p>
                     <ul :class="item.hideFlag==='1'?'opacity':''">
                         <li v-for="(c,i) in item.apps" :key="i" @click="go_jump(c)"  v-if="c.delFlag!='1'">
                             <img :src="c.icon"/>
                             <span>{{c.name}}</span>
 
-                            <svg style="font-size: 0.12rem;color:#609ef7" class="icon delete" aria-hidden="false" @click="addApps(c,i)"  v-if="isRedact&&addData.length<6">
+                            <svg style="font-size: 0.12rem;color:#609ef7" class="icon delete" aria-hidden="false" @click="addApps(c,i)"  v-if="isRedact&&addData.length<3">
                                 <use xlink:href="#icon-tianjia"></use>
                             </svg>
                         </li>
@@ -59,21 +78,22 @@
             return {
                 workData : [],
                 oldData : [],
-                is_relative_approva : {title:'编辑',isShow:true},
+                is_relative_approva : {title:'完成',isShow:true},
                 addData : [],
-                isRedact : false, //是否编辑状态
+                isRedact : true, //是否编辑状态
             }
         },
         created() {
-
-        },
-        mounted() {
-             let _this = this;
+            let _this = this;
             this.axios.get('/work/app/list').then(res=>{
                 _this.workData = res.data.b.appCategorys;
                 _this.oldData = JSON.parse(JSON.stringify(this.workData))
                 _this.addData = res.data.b.appCategorys[0].apps;
+                _this.isHide()
+
             })
+        },
+        mounted() {
         },
 
         methods:{
@@ -92,6 +112,7 @@
             addApps(item,index){
                 item.delFlag = '1';
                 this.addData.push(item)
+                this.isHide();
             },
             delApps(data,index){
                 this.workData.forEach(element => {
@@ -102,6 +123,8 @@
                         })
                 });
                 this.addData.splice(index,1)
+                this.isHide();
+
             },
             finish(){
                 // let arr = [];
@@ -135,9 +158,24 @@
                 }).then((res)=>{ 
                     console.log(res)
                 })
-
+            },
+            isHide(){
+                this.workData.forEach(el=>{
+                    el.show = 'hide'
+                    el.apps.forEach(item=>{
+                        if(item.delFlag=='0'){
+                            el.show = 'show'
+                        }
+                    })
+                })
+            },
+            history_back(){
+                if(this.$route.query.type=='add'){
+                    history.back()
+                }else{
+                     window.location.href = "epipe://?&mark=history_back"
+                }
             }
-
         },
         components:{
             TopHead,

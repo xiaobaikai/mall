@@ -1,7 +1,7 @@
 <template>
   <div class="noword_div">
     <img src="../assets/no_record.png"/>
-    <div>暂时没有考勤统计哦~</div>
+    <div>恭喜，暂时没有考勤异常统计~</div>
   </div>
 </template>
 

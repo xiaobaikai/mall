@@ -73,8 +73,8 @@
            <span v-if="types==2" class="title_h">抄送人</span>
            <span v-if="types==3" class="title_h">审批人</span>
            <span v-if="has_journal&data_list.length!=false">（已添加{{data_list.length}}人）</span>
-           <span v-if="!data_list.length&types==2">（审批通过后抄送相关人员）</span>
-           <span v-if="!data_list.length&types==3">（请添加审批人）</span>
+           <span v-if="!data_list.length&types==2&hint!=1">（审批通过后抄送相关人员）</span>
+           <span v-if="!data_list.length&types==3&hint!=1">（请添加审批人）</span>
            </div>
         <div v-if="more_prople&data_list.length>4"  @click="open_people" class="day_div_two">点击收缩</div>
         <div v-if="!more_prople&data_list.length>4"  @click="open_people" class="day_div_two">
@@ -110,7 +110,7 @@
       }
     },
     props: [
-      'color', 'data_list', 'has_journal','special_class','types','isGroup'
+      'color', 'data_list', 'has_journal','special_class','types','isGroup','hint'
     //  颜色  选中的联系人数据  
     ],
     methods: {

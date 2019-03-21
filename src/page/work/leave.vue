@@ -123,42 +123,14 @@ let save_leave = (index,text,that) =>{
     }else if(that.leaveDay==''||that.leaveDay*10%5!=0){
         that.$toast('请输入正确的请假天数')
     }else{
-        let chosed_id = ''; //抄送人
-        if(!that.isDraft){
-            for (let i = 0; i < that.chosed_list.length; i++) {
-                chosed_id = chosed_id + "|" + that.chosed_list[i].userId
-            }
-        }else{
-            for (let i = 0; i < that.chosed_list.length; i++) {
-                chosed_id = chosed_id + "|" + that.chosed_list[i].receiverId
-            }
-        }
-        chosed_id = chosed_id.slice(1)
 
-        let approver_id = '' //审批人
+        let approver_id = '',chosed_id = ''
+        chosed_id = that.Util.people(that.isDraft,that.chosed_list,1).slice(1)
 
-        if(!that.isDraft){
-            for (let i = 0; i < that.approver_list.length; i++) {
-                approver_id = approver_id + "|" + that.approver_list[i].userId
-            }
-        }else{
-            for (let i = 0; i < that.approver_list.length; i++) {
-                approver_id = approver_id + "|" + that.approver_list[i].auditUserId
-            }
-        }
-        
-        approver_id = approver_id.slice(1)
+        approver_id = that.Util.people(that.isDraft,that.approver_list,2).slice(1)
 
-        let urlStr = '',fileSizeStr = '',fileNameStr = '';//附件
-
-        for(let i=0;i<that.accessory.length;i++){
-            urlStr+='|'+that.accessory[i].url;
-            fileSizeStr+='|'+that.accessory[i].fileSize;
-            fileNameStr+='|'+that.accessory[i].fileName;  
-        }
-        urlStr = urlStr.slice(1)
-        fileSizeStr = fileSizeStr.slice(1)
-        fileNameStr = fileNameStr.slice(1)
+        let fileObj = {},params={}
+        fileObj = that.Util.fileFo(that.accessory)
 
         that.axios.post(that.Service.saveLeave + that.Service.queryString({
           Id :that.leaveId, // id
@@ -169,9 +141,9 @@ let save_leave = (index,text,that) =>{
           auditUserIds: approver_id, //审批人
           receiverIds: chosed_id, //抄送人
           reason : encodeURI(that.reasonText), //请假事由
-          url : urlStr, //附件
-          fileName :fileNameStr, //文件名称 
-          fileSize :fileSizeStr, //文件大小
+          url : fileObj.urlStr, //附件
+          fileName :fileObj.fileNameStr, //文件名称 
+          fileSize :fileObj.fileSizeStr, //文件大小
           draftFlag : index, //草稿还是发送
         })).then(function (res){
             if(res.data.h.code!=200){
@@ -191,7 +163,7 @@ let save_leave = (index,text,that) =>{
                     window.location.href = "epipe://?&mark=workUpdate";
                     setTimeout(()=>{
                             window.location.href = "epipe://?&mark=submitLeave&_id="+res.data.b.leaveId+'&title=我的请假审批';
-                    },500)
+                    },300)
                 }
                 localStorage.removeItem('leave')
             }
@@ -289,33 +261,9 @@ export default {
             localStorage.removeItem('leave')
             window.location.href = "epipe://?&mark=history_back"
         },
-        get_camera: function () { //调用原生图片
-            let that = this;
-            if (that.URL.length >= 5) {
-                this.$alert("最多选择5张图片")
-            } else {
-                window.location.href = "epipe://?&mark=camera&num=" + that.URL.length
-                window["epipe_camera_callback"] = URL => {
-                    that.URL = that.URL.concat(URL);
-                }
-            }
-        },
-        go_imgdetail: function (index) { //查看图片详情
-            let that = this;
-            let obj = {index_num: index, data: this.URL,type:1}
-            window.location.href = "epipe://?&mark=imgdetail&url=" + JSON.stringify(obj);
-            window["epipe_removephoto_callback"] = index => {//原生的调用删除图片的方法
-                that.URL.splice(parseInt(index), 1)
-            }
-        },
-        tiemF(timeStr){
-            timeStr+=':00';
-            timeStr = timeStr.split(/[- : \/]/);
-            return new Date(timeStr[0],timeStr[1]-1,timeStr[2],timeStr[3],timeStr[4])
-        },
         getLeaveDay(){
-            let bTime = this.tiemF(this.beginTime)
-            let eTime = this.tiemF(this.endTime)
+            let bTime = this.Util.timeFo(this.beginTime)
+            let eTime = this.Util.timeFo(this.endTime)
             let time =eTime.getTime() - bTime.getTime()
             let dayTime =  parseInt( time/(24*60*60*1000));
             if(time/(1000*60*60)<=4){
@@ -335,14 +283,14 @@ export default {
                     let date = null;
                 if(str.indexOf('/')>0){
                     flag = true;
-                    date = that.tiemF(str)
+                    date = that.Util.timeFo(str)
                     str = str.split(/[- : \/]/);
                 }else{
                     date = new Date(str)
                 }
                 if(!num){
                     if(that.endTime!='请选择结束时间'){
-                        let endDate = that.tiemF(that.endTime)
+                        let endDate = that.Util.timeFo(that.endTime)
                         if(date.getTime()>endDate.getTime()){
                             that.$toast('开始时间不能大于结束时间')
                         }else if(date.getTime()==endDate.getTime()){
@@ -356,7 +304,7 @@ export default {
                     }
                 }else{            
                     if(that.beginTime!='请选择开始时间'){
-                        let beginDate = that.tiemF(that.beginTime);
+                        let beginDate = that.Util.timeFo(that.beginTime);
                         if(date.getTime()<beginDate.getTime()){
                             that.$toast('结束时间不能小于开始时间')
                         }else if(date.getTime()==beginDate.getTime()){
@@ -409,22 +357,6 @@ export default {
         addAccessory:function(){
             window.location.href = "epipe://?&mark=addAccessory"
         },
-        clone(obj,that){
-                let temp = null;
-                if(obj instanceof Array){
-                    temp = obj.concat();
-                }else if(obj instanceof Function){
-                    //函数是共享的是无所谓的，js也没有什么办法可以在定义后再修改函数内容
-                    temp = obj;
-                }else{
-                    temp = new Object();
-                    for(let item in obj){
-                        let val = obj[item];
-                        temp[item] = typeof val == 'object'?that.clone(val):val; //这里也没有判断是否为函数，因为对于函数，我们将它和一般值一样处理
-                    }
-                }
-                return temp;
-            }
     },
     watch:{
             reasonText : function(){
@@ -444,7 +376,6 @@ export default {
             }
             this.approver_man(this.$data.approver_list)
             this.change_man(this.$data.chosed_list)
-            // this.oldData = this.clone(this.$data,this)
         }
         this.oldData = JSON.parse(JSON.stringify(this.$data))
         eventBus.$on('leaveType', res =>{

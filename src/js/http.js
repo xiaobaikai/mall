@@ -10,7 +10,7 @@ const dev = 'http://192.168.3.166:8280/member/v1'; //测试
 // const dev = 'http://192.168.3.185:8280/member/v3'; // 闵文杰
 // const dev = 'http://192.168.3.29:8280/member/v1'; //自动化测试
 // const dev = 'http://192.168.3.241:8882/member/v1'; //自动化测试
-const product = 'https://apps.epipe.cn/member/v4';//正式环境
+const product = 'https://apps.epipe.cn/member/v1';//正式环境
 // const product = "http://21874u8g05.iask.in:19054/member/v1"; //正式
 axios.defaults.baseURL = window.location.href.indexOf("apps.epipe.cn")>0 ? product : dev;
 //  axios.defaults.baseURL = product;
@@ -20,7 +20,6 @@ function getCookie(name) {
   if (arr = document.cookie.match(reg)){
     let str = unescape(arr[2]);
     return str;
-    
   }else{
     return null;
   }

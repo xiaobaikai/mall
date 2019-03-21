@@ -324,7 +324,7 @@ export default {
     this.contractId = this.$route.query.contractId
      let pusthId = this.$route.query.pushId
     this.axios
-      .post("/work/contract/info?contractId=" + this.contractId+'&pushId='+pusthId)
+      .get("/work/contract/info?contractId=" + this.contractId+'&pushId='+pusthId)
       .then(function(res) {
         that.dataObj = res.data.b.data[0];
         that.accessory = that.accessoryFors(that.dataObj.accessory)

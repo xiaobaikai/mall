@@ -11,7 +11,8 @@
                         <div class="affairs_infor">
                             <p>请假类型 :<span style="color:#609ef6">{{item.leaveType}}</span></p>
                         
-                            <p >审批时间 :<span>{{item.applyTime}}</span></p>
+                            <p >开始时间 :<span>{{item.beginTime}}</span></p>
+                            <p >结束时间 :<span>{{item.endTime}}</span></p>
                         </div>
                     </div>
                     <div   class="skip" >
@@ -396,8 +397,8 @@
                                     <span>车辆类型</span><p class="line1">{{item.carType}} </p>
                                 </div>
                                 <div class="request_infor lineHeight">
-                                    <span>数量（辆） :</span>
-                                    <p class="line1">{{item.carNum }}</p>
+                                    <span>数量 (辆) :</span>
+                                    <p class="line1">{{item.num }}</p>
                                 </div>
                                 <div class="request_infor lineHeight">
                                     <span >开始时间 :</span>
@@ -420,25 +421,25 @@
 
                 </div>
             </div>
-            <div v-else-if="item.typecode == 14" @click="goDetails(item,'recruitment')"   class="affairs_content" >
+            <div v-else-if="item.typecode == 14" @click="goDetails(item,'employee')"   class="affairs_content" >
                 <div class="affirs_child">
                         <div>
                             <div class="affairs_title">
                                 <img :src="item.profileImg"/>
-                                <h2>{{item.title}}的用人申请</h2>
+                                <h2>{{item.title}}的人员需求...</h2>
                                 <time >{{item.applyTime | timeSlice}}</time>
                             </div>
                             <div class="affairs_infor">
                                 <div class="request_infor lineHeight">
-                                    <span>招聘岗位 :</span><p class="line1">{{item.employeePosition}} </p>
+                                    <span>招聘岗位 :</span><p class="line1">{{item.position}} </p>
                                 </div>
                                 <div class="request_infor lineHeight">
                                     <span>需求人数 :</span>
-                                    <p class="line1">{{item.employeeNum }}</p>
+                                    <p class="line1">{{item.num }}</p>
                                 </div>
                                 <div class="request_infor lineHeight">
                                     <span >到岗日期 :</span>
-                                    <p class="line1">{{item.employeeArrivDate|timeSlice }} </p>
+                                    <p class="line1">{{item.hireDate|timeSlice }} </p>
                                 </div>
                                 <div class="request_infor lineHeight">
                                     <span>申请理由 :</span>
@@ -450,6 +451,130 @@
                             查看详情
                         </div>
                    <i v-if="item.readFlag=='0'&&isCopy"></i>
+
+                </div>
+            </div>
+            <div v-else-if="item.typecode == 15" @click="goDetails(item,'project')"   class="affairs_content" >
+                <div class="affirs_child">
+                        <div>
+                            <div class="affairs_title">
+                                <img :src="item.profileImg"/>
+                                <h2>{{item.title}}的项目立项...</h2>
+                                <time >{{item.applyTime | timeSlice}}</time>
+                            </div>
+                            <div class="affairs_infor">
+                                <div class="request_infor lineHeight">
+                                    <span>项目名称 :</span><p class="line1">{{item.projectName}} </p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span>预估金额 :</span>
+                                    <p class="line1">{{item.projectBudget }}</p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span >立项时间 :</span>
+                                    <p class="line1">{{item.buildDate|timeSlice }} </p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span>项目周期 :</span>
+                                    <p class="line2" style="line-height:0.2rem;">{{item.projectDate}}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div  class="skip" tag="div">
+                            查看详情
+                        </div>
+                   <i v-if="item.readFlag=='0'&&isCopy"></i>
+
+                </div>
+            </div>
+            <div v-else-if="item.typecode == 16" @click="goDetails(item,'regular')"   class="affairs_content" >
+                <div class="affirs_child">
+                        <div>
+                            <div class="affairs_title">
+                                <img :src="item.profileImg"/>
+                                <h2>{{item.title}}的员工转正...</h2>
+                                <time >{{item.applyTime | timeSlice}}</time>
+                            </div>
+                            <div class="affairs_infor">
+                                <div class="request_infor lineHeight">
+                                    <span>职&emsp;&emsp;务 :</span><p class="line1">{{item.position}} </p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span>入司时间 :</span>
+                                    <p class="line1">{{item.hireDate|timeSlice}}</p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span >试用开始时间 :</span>
+                                    <p class="line1">{{item.beginTime|timeSlice }} </p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span>试用结束时间 :</span>
+                                    <p class="line2" style="line-height:0.2rem;">{{item.endTime|timeSlice}}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div  class="skip" tag="div">
+                            查看详情
+                        </div>
+                   <i v-if="item.readFlag=='0'&&isCopy"></i>
+
+                </div>
+            </div>
+            <div v-else-if="item.typecode == 17" @click="goDetails(item,'meal')"   class="affairs_content" >
+                <div class="affirs_child">
+                        <div>
+                            <div class="affairs_title">
+                                <img :src="item.profileImg"/>
+                                <h2>{{item.title}}的就餐申请</h2>
+                                <time >{{item.applyTime | timeSlice}}</time>
+                            </div>
+                            <div class="affairs_infor">
+                                <div class="request_infor lineHeight">
+                                    <span>就餐人数 :</span><p class="line1">{{item.num}} </p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span>开始时间 :</span>
+                                    <p class="line1">{{item.beginTime|timeSlice}}</p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span >结束时间 :</span>
+                                    <p class="line1">{{item.endTime|timeSlice }} </p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span>就餐标准 :</span>
+                                    <p class="line2" style="line-height:0.2rem;">{{item.mealStandard}}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div  class="skip" tag="div">
+                            查看详情
+                        </div>
+                   <i v-if="item.readFlag=='0'&&isCopy"></i>
+
+                </div>
+            </div>
+            <div v-else-if="item.typecode == 18" @click="goDetails(item,'document')"   class="affairs_content" >
+                <div class="affirs_child">
+                        <div>
+                            <div class="affairs_title">
+                                <img :src="item.profileImg"/>
+                                <h2>{{item.title}}的行文呈批...</h2>
+                                <time >{{item.applyTime | timeSlice}}</time>
+                            </div>
+                            <div class="affairs_infor">
+                                <div class="request_infor lineHeight">
+                                    <span>文件编号 :</span><p class="line1">{{item.documentNo}} </p>
+                                </div>
+                                <div class="request_infor lineHeight">
+                                    <span>主&emsp;&emsp;送 :</span>
+                                    <p class="line1">{{item.sendTo}}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div  class="skip" tag="div">
+                            查看详情
+                        </div>
+                    <i v-if="item.readFlag=='0'&&isCopy"></i>
 
                 </div>
             </div>

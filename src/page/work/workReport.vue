@@ -2,7 +2,7 @@
     <div>
          <TopHead
         native='native'
-        bgcolor = '#499844'
+        bgcolor = '#42a653'
         :title='title'
          ></TopHead>
          <section class="main" v-if="type==1">
@@ -41,8 +41,6 @@
                 </div>
             </div>
             <div class="main-ul">
-                
-                
 
             </div>
          </section>

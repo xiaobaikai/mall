@@ -87,7 +87,6 @@
              v-on:remove = "removeCopy"
              color="#609df6"
             >
-
             </Copy>
 
             <div class="foot-box">
@@ -202,7 +201,7 @@
             },
             deliverTo(){ //转交
                 let newApprStr = this.appAndCopy(this.newAppr,'auditUserId')
-                let newCopy = this.appAndCopy(this.newCopy)
+                let copyStr = this.appAndCopy(this.newCopy)
                 this.$router.push({path:'/imchoices',query:{id:this.dataObj.tripId,receiverIds:copyStr,bgcolor:'#609df6', careOf:true,typeName:'trip',applyType:4,auditerIds:newApprStr,num:1}})
             },
             approveBack(){ //退回

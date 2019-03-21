@@ -51,7 +51,7 @@
                 v-on:remove_item="remove_item"
                 :special_class='1'
                 :isGroup = true
-                type= 1
+                type= 8
             ></ApproverMan>
 
             <CopeMan 
