@@ -51,13 +51,17 @@
       </div>
     </div>
     <div class="orders" v-if="this.mallType.type === '2b'">
-      <router-link to="MyInquiryOrder" class="link-item">
+      <router-link to="inquirylist" class="link-item">
         <div class="link-title">我的询价单</div>
         <div class="link-icon">
           <i class="iconfont icon-jinru"></i>
         </div>
       </router-link>
       <div class="status inquiry-status">
+        <router-link :to="{path: 'inquirylist'}" tag="div" class="status-item">
+          <p><i class="iconfont icon-xunjia"></i></p>
+          <p class="item-title">待询价</p>
+        </router-link>
         <router-link :to="{path:'MyInquiryOrder',query:{state:1}}" tag="div" class="status-item">
           <p><i class="iconfont icon-maijiabaojia"></i></p>
           <p class="item-title">卖家报价</p>

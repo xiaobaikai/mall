@@ -75,9 +75,15 @@ const ForgetPassword = r => require.ensure([], () => r(require('@/page/mall/logi
 const Register = r => require.ensure([], () => r(require('@/page/mall/login/Register.vue')), 'group-mall')
 const MallAgreement = r => require.ensure([], () => r(require('@/page/mall/login/MallAgreement.vue')), 'group-mall')
 const MallHome = r => require.ensure([], () => r(require('@/page/mall/home/MallHome.vue')), 'group-mall')
+const PlasticList = r => require.ensure([], () => r(require('@/page/mall/home/PlasticList.vue')), 'group-mall')
+const ConduitList = r => require.ensure([], () => r(require('@/page/mall/home/ConduitList.vue')), 'group-mall')
+const HardwareList = r => require.ensure([], () => r(require('@/page/mall/home/HardwareList.vue')), 'group-mall')
+const SupplyDemandList = r => require.ensure([], () => r(require('@/page/mall/home/SupplyDemandList.vue')), 'group-mall')
+const SupplyDemandDetail = r => require.ensure([], () => r(require('@/page/mall/home/SupplyDemandDetail.vue')), 'group-mall')
 const GoodsClassification = r => require.ensure([], () => r(require('@/page/mall/class/GoodsClassification.vue')), 'group-mall')
 const ClassSearch = r => require.ensure([], () => r(require('@/page/mall/class/ClassSearch.vue')), 'group-mall')
 const GoodsDetail = r => require.ensure([], () => r(require('@/page/mall/goods/GoodsDetail.vue')), 'group-mall')
+const HWphone = r => require.ensure([], () => r(require('@/page/mall/goods/HWphone.vue')), 'group-mall')
 const TestDetail = r => require.ensure([], () => r(require('@/page/mall/goods/TestDetail.vue')), 'group-mall')
 const MallSearch = r => require.ensure([], () => r(require('@/page/mall/home/MallSearch.vue')), 'group-mall')
 const Login = r => require.ensure([], () => r(require('@/page/home/login.vue')), 'group-foo')
@@ -306,7 +312,6 @@ export default new Router({
     },
     {
       path: '/outputcount',  //产出统计
-      component: OutputCount,
     },
     {
       path: '/outputdaily',  //产出看板
@@ -425,6 +430,26 @@ export default new Router({
       path: '/mallhome',  //商城首页
       component: MallHome,
     },
+	  {
+	  	path: '/plasticlist', //塑料汇
+		  component: PlasticList,
+	  },
+	  {
+		  path: '/conduitlist', //管道城
+		  component: ConduitList,
+	  },
+	  {
+		  path: '/hardwarelist', //智能硬件
+		  component: HardwareList,
+	  },
+	  {
+		  path: '/supplydemandlist',  //供需列表
+		  component: SupplyDemandList,
+	  },
+	  {
+		  path: '/supplydemanddetail',  //供需详情
+		  component: SupplyDemandDetail,
+	  },
     {
       path: '/goodsclassification',  //分类
       component: GoodsClassification,
@@ -437,6 +462,10 @@ export default new Router({
       path: '/goodsdetail',  //商品详情
       component: GoodsDetail,
     },
+	  {
+		  path: '/HWphone',  //华为专场
+		  component: HWphone,
+	  },
     {
       path: '/testdetail',  //商品详情测试
       component: TestDetail,
@@ -772,7 +801,7 @@ export default new Router({
     },{
       path:'/waitPay', //待付款
       component:WaitPay,
-    },
+    }
     // {
     //   path:'/neatenWork',
     //   component:NeatenWork
