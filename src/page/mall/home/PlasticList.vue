@@ -128,7 +128,32 @@
 		    this.pageNo = 1;
 		    this.resultList = [];
 		    this.loadMore();
-      }
+      },
+	    buyNow(index,type){
+		    console.log(index);
+		    this.axios.post(this.baseURL.mall + "/m/cart/"+type+this.Service.queryString({
+			    token:this.mallToken.getToken(),
+			    goodsId:this.resultList[index].goodsId,
+			    count:1,
+			    specId:this.resultList[index].specId
+		    })).then(res=>{
+			    console.log(res);
+			    if(res.data.h.code==200){
+				    localStorage.setItem("settleOrder",JSON.stringify(res.data.b));
+				    if(localStorage.getItem("settleOrder")){
+					    this.$router.push({path:'/ConfirmOrder'});
+				    }
+			    }else  if(res.data.h.code === 50 || res.data.h.code === 30){
+				    if(this.isApp.state){
+					    window.location.href = "epipe://?&mark=login";
+				    }else{
+					    this.$router.replace("/verificationlogin?loginUrl="+encodeURIComponent(window.location.href)+"?key="+this.searchKey);
+				    }
+			    }else{
+				    this.$toast(res.data.h.msg);
+			    }
+		    })
+	    },
     },
     created () {
 	    document.title="塑料汇";

@@ -19,7 +19,7 @@
     </div>
     <div class="info">
       <div class="tit">详细描述</div>
-      <div class="content">{{type === 'D' ? infoObj.demandDescription : infoObj.supplyDescription}}</div>
+      <div class="content" v-html="type === 'D' ? infoObj.demandDescription : infoObj.supplyDescription"></div>
     </div>
   </div>
 </template>

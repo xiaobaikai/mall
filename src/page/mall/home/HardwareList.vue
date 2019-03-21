@@ -22,11 +22,8 @@
               <div class="promotion-flag" v-if="item.promotionType === 'TG'">团</div>
             </div>
             <div class="item-price" v-if="item.priceNegotiable == 1">待询价</div>
-            <div class="buy">
-              <svg class="icon icon-car" aria-hidden="false">
-                <use xlink:href="#icon-gouwuche-xuanzhongicon"></use>
-              </svg>
-            </div>
+            <div class="buy"  @click.prevent="buyNow(index,'buy_now')" v-if="item.priceNegotiable === 1">立即询价</div>
+            <div class="buy"  @click.prevent="buyNow(index,'buy_now')" v-if="item.priceNegotiable === 0">立即购买</div>
           </div>
         </div>
       </router-link>
@@ -127,7 +124,32 @@
 				this.pageNo = 1;
 				this.resultList = [];
 				this.loadMore();
-			}
+			},
+			buyNow(index,type){
+				console.log(index);
+				this.axios.post(this.baseURL.mall + "/m/cart/"+type+this.Service.queryString({
+					token:this.mallToken.getToken(),
+					goodsId:this.resultList[index].goodsId,
+					count:1,
+					specId:this.resultList[index].specId
+				})).then(res=>{
+					console.log(res);
+					if(res.data.h.code==200){
+						localStorage.setItem("settleOrder",JSON.stringify(res.data.b));
+						if(localStorage.getItem("settleOrder")){
+							this.$router.push({path:'/ConfirmOrder'});
+						}
+					}else  if(res.data.h.code === 50 || res.data.h.code === 30){
+						if(this.isApp.state){
+							window.location.href = "epipe://?&mark=login";
+						}else{
+							this.$router.replace("/verificationlogin?loginUrl="+encodeURIComponent(window.location.href)+"?key="+this.searchKey);
+						}
+					}else{
+						this.$toast(res.data.h.msg);
+					}
+				})
+			},
 		},
 		created () {
 			document.title="智能硬件";
@@ -278,6 +300,16 @@
       display flex;
       justify-content space-between;
       margin-top .1rem;
+    }
+    .buy{
+      width .65rem;
+      height .24rem;
+      line-height .24rem;
+      font-size .12rem;
+      color #fff;
+      background #d74a45;
+      border-radius 2px;
+      text-align center;
     }
     .item-price{
       font-size 0.16rem;

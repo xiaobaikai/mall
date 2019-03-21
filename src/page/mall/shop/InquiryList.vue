@@ -1,5 +1,13 @@
 <template>
   <div>
+    <div class="order-menu">
+      <router-link tag="div" :to="{path:'/inquirylist'}" class="menu-item menu-active">待询价</router-link>
+      <router-link tag="div" :to="{path:'MyInquiryOrder'}" class="menu-item">询价单</router-link>
+      <router-link tag="div" :to="{path:'MyInquiryOrder',query:{state:1}}" class="menu-item">卖家报价</router-link>
+      <router-link tag="div" :to="{path:'MyInquiryOrder',query:{state:2}}" class="menu-item">买家确认</router-link>
+      <router-link tag="div" :to="{path:'MyInquiryOrder',query:{state:3}}" class="menu-item">已下单</router-link>
+      <router-link tag="div" :to="{path:'MyInquiryOrder',query:{state:4}}" class="menu-item">已取消</router-link>
+    </div>
     <div v-if="shopList.length>0" class="shop-cart">
       <div class="hea-ope" @click="listOperate">{{operate}}</div>
       <div class="one-shop" v-for="(obj,index1) in shopList" :key="index1">
@@ -407,9 +415,51 @@
 	}
 </script>
 <style lang="stylus" scoped>
+  borderBottom(borderColor= #e9e9e9,borderWidth= 1px){
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: borderWidth;
+    background: borderColor;
+    transform: scaleY(0.5);
+    transform-origin: center;
+  }
+  .order-menu{
+    z-index 9;
+    box-sizing border-box;
+    position fixed;
+    top 0;
+    left 0;
+    display flex;
+    align-items center;
+    width 100%;
+    height 50px;
+    padding-left 0.1rem;
+    line-height 50px;
+    background white;
+  }
+  .order-menu::after{
+    borderBottom();
+  }
+  .menu-item{
+    flex: 1;
+    height inherit;
+    text-align center;
+    font-size 13px;
+    color #666;
+  }
+  .menu-active{
+    position relative;
+    color: #ff8800;
+    &::after{
+      borderBottom(#ff8800,3px);
+    }
+  }
   .shop-cart{
     overflow hidden;
-    margin-top .45rem;
+    margin-top .95rem;
     padding-bottom calc(.6rem + 50px);
     .hea-ope{
       height .45rem;
@@ -421,7 +471,7 @@
       font-size .14rem;
       position fixed;
       left 0;
-      top 0;
+      top .5rem;
       z-index 2;
       width 100%;
       box-sizing border-box;

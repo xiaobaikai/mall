@@ -50,22 +50,22 @@
             <div @click="tabClick"><span class="active">需求</span></div>
           </div>
           <div class="list-part" v-if="tabShow">
-            <div class="list-content" v-for="item in supplyList" :key="item.id">
+            <router-link tag="div" class="list-content" v-for="item in supplyList" :key="item.supplyId" :to="{path:'/SupplyDemandDetail',query:{id: item.supplyId, type: 'S'}}">
               <div class="list-content-l"><i class="iconfont icon-gong"></i></div>
               <div class="list-content-m">{{item.supplyName}}</div>
               <div class="list-content-r">{{item.createTime}}</div>
-            </div>
+            </router-link>
             <infinite-loading spinner="bubbles" @distance="1" @infinite="loadMoreSupply" ref="infiniteLoading">
               <span slot="no-more">暂无更多数据</span>
               <span slot="no-results">暂无结果</span>
             </infinite-loading>
           </div>
           <div class="list-part" v-else>
-            <div class="list-content" v-for="item in demandList" :key="item.id">
+            <router-link tag="div" class="list-content" v-for="item in demandList" :key="item.demandId" :to="{path:'/SupplyDemandDetail',query:{id: item.demandId, type: 'D'}}">
               <div class="list-content-l"><i class="iconfont icon-xu"></i></div>
               <div class="list-content-m">{{item.demandName}}</div>
               <div class="list-content-r">{{item.createTime}}</div>
-            </div>
+            </router-link>
             <infinite-loading spinner="bubbles" @distance="1" @infinite="loadMoreDemand" ref="infiniteLoading">
               <span slot="no-more">暂无更多数据</span>
               <span slot="no-results">暂无结果</span>
@@ -336,30 +336,30 @@
         })
       },
       buyNow(index,type){
-        console.log(index);
-        this.axios.post(this.baseURL.mall + "/m/cart/"+type+this.Service.queryString({
-          token:this.mallToken.getToken(),
-          goodsId:this.resultList[index].goodsId,
-          count:1,
-          specId:this.resultList[index].specId
-        })).then(res=>{
-          console.log(res);
-          if(res.data.h.code==200){
-            localStorage.setItem("settleOrder",JSON.stringify(res.data.b));
-            if(localStorage.getItem("settleOrder")){
-              this.$router.push({path:'/ConfirmOrder'});
-            }
-          }else  if(res.data.h.code === 50 || res.data.h.code === 30){
-            if(this.isApp.state){
-              window.location.href = "epipe://?&mark=login";
-            }else{
-	            this.$router.replace("/verificationlogin?loginUrl="+encodeURIComponent(window.location.href)+"?key="+this.searchKey);
-            }
-          }else{
-            this.$toast(res.data.h.msg);
-          }
-        })
-      },
+		    console.log(index);
+		    this.axios.post(this.baseURL.mall + "/m/cart/"+type+this.Service.queryString({
+			    token:this.mallToken.getToken(),
+			    goodsId:this.resultList[index].goodsId,
+			    count:1,
+			    specId:this.resultList[index].specId
+		    })).then(res=>{
+			    console.log(res);
+			    if(res.data.h.code==200){
+				    localStorage.setItem("settleOrder",JSON.stringify(res.data.b));
+				    if(localStorage.getItem("settleOrder")){
+					    this.$router.push({path:'/ConfirmOrder'});
+				    }
+			    }else  if(res.data.h.code === 50 || res.data.h.code === 30){
+				    if(this.isApp.state){
+					    window.location.href = "epipe://?&mark=login";
+				    }else{
+					    this.$router.replace("/verificationlogin?loginUrl="+encodeURIComponent(window.location.href)+"?key="+this.searchKey);
+				    }
+			    }else{
+				    this.$toast(res.data.h.msg);
+			    }
+		    })
+	    },
 	    tabClick(){
 		    this.tabShow = !this.tabShow;
 		    this.pageNo = 1;

@@ -1,6 +1,7 @@
 <template>
   <div class="wrapper">
     <div class="order-menu">
+      <router-link tag="div" :to="{path:'/inquirylist'}" class="menu-item">待询价</router-link>
       <div class="menu-item" :class="{'menu-active': index === selected}" v-for="(item,index) in menuList" :key="index" @click="tab(index)">{{item.title}}</div>
     </div>
     <div class="order-list">

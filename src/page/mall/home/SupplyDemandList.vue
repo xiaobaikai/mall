@@ -9,22 +9,22 @@
       <div @click="tabClick"><span class="active">需求</span></div>
     </div>
     <div class="list-part" v-if="tabShow">
-      <div class="list-content" v-for="item in supplyList" :key="item.id">
+      <router-link tag="div"  class="list-content" v-for="item in supplyList" :key="item.supplyId" :to="{path:'/SupplyDemandDetail',query:{id: item.supplyId, type: 'S'}}">
         <div class="list-content-l"><i class="iconfont icon-gong"></i></div>
         <div class="list-content-m">{{item.supplyName}}</div>
         <div class="list-content-r">{{item.createTime}}</div>
-      </div>
+      </router-link>
       <infinite-loading spinner="bubbles" @distance="1" @infinite="loadMoreSupply" ref="infiniteLoading">
         <span slot="no-more">暂无更多数据</span>
         <span slot="no-results">暂无结果</span>
       </infinite-loading>
     </div>
     <div class="list-part" v-else>
-      <div class="list-content" v-for="item in demandList" :key="item.id">
+      <router-link tag="div" class="list-content" v-for="item in demandList" :key="item.demandId" :to="{path:'/SupplyDemandDetail',query:{id: item.demandId, type: 'D'}}">
         <div class="list-content-l"><i class="iconfont icon-xu"></i></div>
         <div class="list-content-m">{{item.demandName}}</div>
         <div class="list-content-r">{{item.createTime}}</div>
-      </div>
+      </router-link>
       <infinite-loading spinner="bubbles" @distance="1" @infinite="loadMoreDemand" ref="infiniteLoading">
         <span slot="no-more">暂无更多数据</span>
         <span slot="no-results">暂无结果</span>
